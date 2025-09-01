@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Backend start" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="Fridge2Belly.backend.main" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="cloudflight.integra.backend.BackendApplication" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

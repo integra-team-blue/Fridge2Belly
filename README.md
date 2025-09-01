@@ -1,3 +1,5 @@
-# Spring Boot - Angular Skeleton
+# Fridge2Belly
 
-This is a basic skeleton which helps quick start with developing with Spring Boot (with Java 24) and Angular 20.
+Project done while working on INTEGRA EU Project.
+
+Contributors (coordinated by mentor [Alexandru Sîrbu](https://google.com)):
