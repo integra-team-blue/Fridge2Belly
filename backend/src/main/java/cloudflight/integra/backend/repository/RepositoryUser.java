@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface RepositoryUser {
     List<User> getAll();
     User getUser(UUID id);
-    void create(User user);
+    User create(User user);
     void delete(UUID id);
     void update(User user);
 }
