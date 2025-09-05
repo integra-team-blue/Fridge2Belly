@@ -23,10 +23,10 @@ public class UserService {
         return repositoryUser.getUser(id);
     }
 
-    public void createUser(User user) {
+    public User createUser(User user) {
         if(user.getId() == null)
             user.setId(UUID.randomUUID());
-        repositoryUser.create(user);
+        return repositoryUser.create(user);
     }
 
     public void deleteUser(UUID id) {

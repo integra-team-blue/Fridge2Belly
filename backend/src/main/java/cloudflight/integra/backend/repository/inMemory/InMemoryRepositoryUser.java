@@ -19,6 +19,7 @@ public class InMemoryRepositoryUser implements RepositoryUser {
         return new ArrayList<>(users);
     }
 
+    @Override
     public User getUser(UUID id) {
         return users.stream().filter(user -> user.getId().equals(id))
                 .findFirst()
@@ -26,8 +27,9 @@ public class InMemoryRepositoryUser implements RepositoryUser {
     }
 
     @Override
-    public void create(User user) {
+    public User create(User user) {
         users.add(user);
+        return user;
     }
 
     @Override
@@ -50,4 +52,5 @@ public class InMemoryRepositoryUser implements RepositoryUser {
                 })
                 .orElseThrow(() -> new UserNotFoundException("User with id " + user.getId() + " not found"));
     }
+
 }
