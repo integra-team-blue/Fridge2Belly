@@ -124,15 +124,14 @@ class IngredientsServiceTest {
 
     @Test
     void createIngredient_ShouldReturnCreatedIngredient_WhenValidIngredient() {
-        
         doNothing().when(validator).validateIngredient(testIngredient);
         doNothing().when(repository).create(testIngredient);
+        UUID originalId = testIngredient.getId();
 
-        
         Ingredients result = ingredientsService.createIngredient(testIngredient);
 
-        
         assertEquals(testIngredient, result);
+        assertEquals(originalId, result.getId());
         verify(validator).validateIngredient(testIngredient);
         verify(repository).create(testIngredient);
     }

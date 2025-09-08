@@ -35,7 +35,12 @@ dependencies {
 	implementation 'org.projectlombok:lombok:1.18.38'
   compileOnly 'org.projectlombok:lombok:1.18.38'
 	annotationProcessor 'org.projectlombok:lombok:1.18.38'
+    implementation 'com.fasterxml:classmate:1.5.1'
+    implementation 'org.projectlombok:lombok:1.18.38'
+    compileOnly 'org.projectlombok:lombok:1.18.38'
+    annotationProcessor 'org.projectlombok:lombok:1.18.38'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation("org.mockito:mockito-core:5.14.2")
