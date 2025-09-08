@@ -13,3 +13,4 @@ public interface RepositoryIngredients {
     void delete(UUID id);
 
 }
+
