@@ -36,3 +36,4 @@ public class InMemoryRepositoryIngredients implements RepositoryIngredients {
         ingredientsStorage.remove(id);
     }
 }
+

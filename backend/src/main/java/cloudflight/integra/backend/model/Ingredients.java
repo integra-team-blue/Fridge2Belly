@@ -52,3 +52,4 @@ public class Ingredients {
         this.id = UUID.randomUUID();
     }
 }
+
