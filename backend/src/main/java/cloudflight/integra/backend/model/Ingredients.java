@@ -33,7 +33,7 @@ public class Ingredients {
     private Double fat;
     private Double carbohydrates;
 
-    // Constructor personalizat pentru a genera UUID automat
+    
     public Ingredients(String name, Double quantity, String unit, LocalDate expirationDate,
                        Double calories, Double protein, Double fat, Double carbohydrates) {
         this.id = UUID.randomUUID();
@@ -47,7 +47,7 @@ public class Ingredients {
         this.carbohydrates = carbohydrates;
     }
 
-    // Override pentru NoArgsConstructor să genereze UUID
+   
     public Ingredients() {
         this.id = UUID.randomUUID();
     }
