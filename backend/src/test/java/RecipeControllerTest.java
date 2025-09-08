@@ -15,7 +15,7 @@ import java.util.List;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest(classes = BackendApplication.class)   // 👈 specificăm clasa principală
+@SpringBootTest(classes = BackendApplication.class)
 @AutoConfigureMockMvc
 class RecipeControllerTest {
 

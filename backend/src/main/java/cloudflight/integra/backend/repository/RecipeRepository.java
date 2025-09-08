@@ -8,4 +8,5 @@ public interface RecipeRepository {
     Optional<Recipe> findById(UUID id);
     List<Recipe> findAll();
     void deleteById(UUID id);
+
 }
