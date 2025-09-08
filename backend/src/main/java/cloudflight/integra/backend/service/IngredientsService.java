@@ -38,6 +38,11 @@ public class IngredientsService {
 
     public Ingredients createIngredient(Ingredients ingredient) {
         validator.validateIngredient(ingredient);
+
+        if (ingredient.getId() == null) {
+            ingredient.setId(UUID.randomUUID());
+        }
+
         repository.create(ingredient);
         return ingredient;
     }
@@ -64,7 +69,6 @@ public class IngredientsService {
         repository.delete(id);
     }
 
-
     private void validateId(UUID id) {
         if (id == null) {
             throw new IngredientsExeption("ID cannot be null");
@@ -75,3 +79,4 @@ public class IngredientsService {
         return repository.getIngredient(id) != null;
     }
 }
+

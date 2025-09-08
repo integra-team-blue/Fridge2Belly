@@ -22,9 +22,6 @@ public class InMemoryRepositoryIngredients implements RepositoryIngredients {
 
     @Override
     public void create(Ingredients ingredient) {
-        if (ingredient.getId() == null) {
-            ingredient.setId(UUID.randomUUID());
-        }
         ingredientsStorage.put(ingredient.getId(), ingredient);
     }
 
