@@ -8,3 +8,4 @@ public class IngredientsExeption extends RuntimeException {
     }
 
 }
+

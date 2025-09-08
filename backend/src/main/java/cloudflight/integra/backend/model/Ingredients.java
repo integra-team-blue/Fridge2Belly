@@ -34,3 +34,4 @@ public class Ingredients {
     private Double carbohydrates;
 
 }
+
