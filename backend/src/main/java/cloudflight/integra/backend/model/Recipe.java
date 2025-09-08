@@ -3,12 +3,19 @@ package cloudflight.integra.backend.model;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Recipe {
 
+    @EqualsAndHashCode.Include
     private UUID id;
 
     @NotBlank(message = "Name cannot be blank")
@@ -24,22 +31,4 @@ public class Recipe {
 
     @NotNull(message = "Ingredients cannot be null")
     private List<UUID> ingredientsId;
-
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
-
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-
-    public int getCookingTimeMinutes() { return cookingTimeMinutes; }
-    public void setCookingTimeMinutes(int cookingTimeMinutes) { this.cookingTimeMinutes = cookingTimeMinutes; }
-
-    public String getInstructions() { return instructions; }
-    public void setInstructions(String instructions) { this.instructions = instructions; }
-
-    public List<UUID> getIngredientsId() { return ingredientsId; }
-    public void setIngredientsId(List<UUID> ingredientsId) { this.ingredientsId = ingredientsId; }
 }
