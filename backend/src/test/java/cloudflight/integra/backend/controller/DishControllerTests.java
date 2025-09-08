@@ -23,86 +23,108 @@ class DishControllerIntegrationTests {
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper mapper;
 
-    private String validBody(String name) {
+    private String body(String name) {
         return """
-            {
-              "name": "%s",
-              "recipeId": "11111111-1111-1111-1111-111111111111",
-              "preparedAt": "2025-01-01T12:00:00",
-              "calories": 100,
-              "protein": 10,
-              "fat": 5,
-              "carbohydrates": 12
-            }
-            """.formatted(name);
+        {
+          "name": "%s",
+          "recipeId": "11111111-1111-1111-1111-111111111111",
+          "preparedAt": "2025-01-01T12:00:00",
+          "calories": 100, "protein": 10, "fat": 5, "carbohydrates": 12
+        }""".formatted(name);
     }
 
-    @Test
-    void create_read_update_delete_flow() throws Exception {
-        // CREATE
-        MvcResult createdResult = mvc.perform(post("/api/dishes")
+    private Dish createDish(String name) throws Exception {
+        MvcResult res = mvc.perform(post("/api/dishes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(validBody("Pasta")))
+                        .content(body(name)))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Pasta"))
                 .andReturn();
+        return mapper.readValue(res.getResponse().getContentAsString(), Dish.class);
+    }
 
-        Dish created = mapper.readValue(createdResult.getResponse().getContentAsString(), Dish.class);
-        UUID id = created.getId();
-        assertThat(id).isNotNull();
-
-        // READ ONE
-        mvc.perform(get("/api/dishes/{id}", id))
+    private Dish getDish(UUID id) throws Exception {
+        MvcResult res = mvc.perform(get("/api/dishes/{id}", id))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(id.toString()));
+                .andReturn();
+        return mapper.readValue(res.getResponse().getContentAsString(), Dish.class);
+    }
 
-        // READ ALL
-        mvc.perform(get("/api/dishes"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1));
-
-        // UPDATE
-        mvc.perform(put("/api/dishes/{id}", id)
+    private Dish updateDish(UUID id, String newName) throws Exception {
+        MvcResult res = mvc.perform(put("/api/dishes/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(validBody("NewName")))
+                        .content(body(newName)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("NewName"))
-                .andExpect(jsonPath("$.id").value(id.toString()));
+                .andReturn();
+        return mapper.readValue(res.getResponse().getContentAsString(), Dish.class);
+    }
 
-        // DELETE
+    private void deleteDish(UUID id) throws Exception {
         mvc.perform(delete("/api/dishes/{id}", id))
                 .andExpect(status().isNoContent());
+    }
 
-        // READ ALL -> empty
-        mvc.perform(get("/api/dishes"))
+    private int listCount() throws Exception {
+        MvcResult res = mvc.perform(get("/api/dishes"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0));
+                .andReturn();
+        Dish[] arr = mapper.readValue(res.getResponse().getContentAsByteArray(), Dish[].class);
+        return arr.length;
     }
 
     @Test
-    void validation_blankName_returns400() throws Exception {
-        String bad = validBody(""); // name blank
+    void createDish_works() throws Exception {
+        Dish d = createDish("Pasta");
+        assertThat(d.getId()).isNotNull();
+        assertThat(d.getName()).isEqualTo("Pasta");
+    }
 
+    @Test
+    void getDishById_works() throws Exception {
+        Dish created = createDish("Soup");
+        Dish got = getDish(created.getId());
+        assertThat(got.getId()).isEqualTo(created.getId());
+        assertThat(got.getName()).isEqualTo("Soup");
+    }
+
+    @Test
+    void updateDish_works() throws Exception {
+        Dish created = createDish("Old");
+        Dish updated = updateDish(created.getId(), "New");
+        assertThat(updated.getId()).isEqualTo(created.getId());
+        assertThat(updated.getName()).isEqualTo("New");
+    }
+
+    @Test
+    void deleteDish_works() throws Exception {
+        Dish created = createDish("Temp");
+        deleteDish(created.getId());
+        assertThat(listCount()).isZero();
+    }
+
+    @Test
+    void listDishes_works() throws Exception {
+        createDish("A");
+        createDish("B");
+        assertThat(listCount()).isGreaterThanOrEqualTo(2);
+    }
+
+    @Test
+    void blankName_returns400() throws Exception {
         mvc.perform(post("/api/dishes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(bad))
+                        .content(body("")))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void validation_negativeCalories_returns400() throws Exception {
+    void negativeCalories_returns400() throws Exception {
         String bad = """
-            {
-              "name": "Bad",
-              "recipeId": "11111111-1111-1111-1111-111111111111",
-              "preparedAt": "2025-01-01T12:00:00",
-              "calories": -1,
-              "protein": 10,
-              "fat": 5,
-              "carbohydrates": 12
-            }
-            """;
-
+        {
+          "name": "Bad",
+          "recipeId": "11111111-1111-1111-1111-111111111111",
+          "preparedAt": "2025-01-01T12:00:00",
+          "calories": -1, "protein": 10, "fat": 5, "carbohydrates": 12
+        }""";
         mvc.perform(post("/api/dishes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(bad))
