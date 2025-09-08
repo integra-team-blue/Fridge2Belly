@@ -1,7 +1,7 @@
-package cloudflight.integra.backend.dish.Service;
+package cloudflight.integra.backend.service;
 
-import cloudflight.integra.backend.dish.Model.Dish;
-import cloudflight.integra.backend.dish.Repository.DishRepository;
+import cloudflight.integra.backend.model.Dish;
+import cloudflight.integra.backend.repository.DishRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

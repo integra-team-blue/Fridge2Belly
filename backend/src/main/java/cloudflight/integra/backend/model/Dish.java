@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.dish.Model;
+package cloudflight.integra.backend.model;
 
 import jakarta.validation.constraints.*;
 import java.time.LocalDateTime;

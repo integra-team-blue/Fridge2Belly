@@ -1,6 +1,6 @@
-package cloudflight.integra.backend.dish.Repository;
+package cloudflight.integra.backend.repository;
 
-import cloudflight.integra.backend.dish.Model.Dish;
+import cloudflight.integra.backend.model.Dish;
 
 import java.util.*;
 
