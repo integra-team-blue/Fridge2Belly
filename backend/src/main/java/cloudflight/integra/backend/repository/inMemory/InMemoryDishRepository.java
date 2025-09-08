@@ -1,6 +1,7 @@
-package cloudflight.integra.backend.dish.Repository;
+package cloudflight.integra.backend.repository.inMemory;
 
-import cloudflight.integra.backend.dish.Model.Dish;
+import cloudflight.integra.backend.repository.DishRepository;
+import cloudflight.integra.backend.model.Dish;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

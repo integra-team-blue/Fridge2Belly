@@ -1,7 +1,7 @@
-package cloudflight.integra.backend.dish.Controller;
+package cloudflight.integra.backend.controller;
 
-import cloudflight.integra.backend.dish.Service.DishService;
-import cloudflight.integra.backend.dish.Model.Dish;
+import cloudflight.integra.backend.service.DishService;
+import cloudflight.integra.backend.model.Dish;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
