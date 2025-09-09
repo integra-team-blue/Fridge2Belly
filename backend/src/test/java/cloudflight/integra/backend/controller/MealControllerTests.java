@@ -67,7 +67,7 @@ public class MealControllerTests {
     // GET /api/meals - success
     @Test
     void getAllMeals_success() throws Exception {
-        // adaugă un meal pentru a te asigura că există cel puțin unul
+        // add a meal to ensure at least one exists
         mockMvc.perform(post("/api/meals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))
@@ -81,7 +81,7 @@ public class MealControllerTests {
     // GET /api/meals/{id} - success
     @Test
     void getMealById_success() throws Exception {
-        // creează meal
+        // create meal
         mockMvc.perform(post("/api/meals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))
@@ -133,7 +133,7 @@ public class MealControllerTests {
     // DELETE /api/meals/{id} - success
     @Test
     void deleteMeal_success() throws Exception {
-        // creează meal
+        // create meal
         mockMvc.perform(post("/api/meals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))

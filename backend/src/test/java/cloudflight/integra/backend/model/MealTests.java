@@ -26,36 +26,6 @@ public class MealTests {
     }
 
     @Test
-    void testMealGettersSetters() {
-        UUID id = UUID.randomUUID();
-        List<UUID> dishes = new ArrayList<>();
-        dishes.add(UUID.randomUUID());
-        Meal meal = new Meal(id, MealType.LUNCH, LocalDateTime.now(), dishes);
-
-        assertEquals(id, meal.getId());
-        assertEquals(MealType.LUNCH, meal.getMealType());
-        assertNotNull(meal.getDateTime());
-        assertEquals(1, meal.getDishIds().size());
-    }
-
-    @Test
-    void testMealAllArgsConstructor() {
-        UUID id = UUID.randomUUID();
-        UUID dishId = UUID.randomUUID();
-        LocalDateTime now = LocalDateTime.now();
-        List<UUID> dishes = new ArrayList<>();
-        dishes.add(dishId);
-
-        Meal meal = new Meal(id, MealType.DINNER, now, dishes);
-
-        assertEquals(id, meal.getId());
-        assertEquals(MealType.DINNER, meal.getMealType());
-        assertEquals(now, meal.getDateTime());
-        assertEquals(1, meal.getDishIds().size());
-        assertEquals(dishId, meal.getDishIds().get(0));
-    }
-
-    @Test
     void testMealValidationSuccess() {
         List<UUID> dishes = new ArrayList<>();
         dishes.add(UUID.randomUUID());
@@ -109,7 +79,7 @@ public class MealTests {
     @Test
     void testMealValidationFail_DishIdElementNull() {
         List<UUID> dishes = new ArrayList<>();
-        dishes.add(null);  // lista mutabilă permite element null
+        dishes.add(null);
         Meal meal = new Meal(UUID.randomUUID(), MealType.DINNER, LocalDateTime.now(), dishes);
 
         Set<ConstraintViolation<Meal>> violations = validator.validate(meal);

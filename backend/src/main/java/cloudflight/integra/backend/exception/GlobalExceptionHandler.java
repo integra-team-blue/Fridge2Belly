@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Meal not found
     @ExceptionHandler(MealNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleMealNotFound(MealNotFoundException ex) {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.NOT_FOUND);
@@ -19,7 +18,6 @@ public class GlobalExceptionHandler {
     // Validation errors from @Valid
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-        // extrage primul mesaj de eroare
         String message = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -29,19 +27,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse(message), HttpStatus.BAD_REQUEST);
     }
 
-    // Erori cauzate de argumente ilegale (ex: IllegalArgumentException)
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
         return new ResponseEntity<>(new ErrorResponse(ex.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
-    // Catch-all pentru erori neașteptate
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-        ex.printStackTrace(); // optional: log pentru debugging
+        ex.printStackTrace(); // optional: logging for debugging
         return new ResponseEntity<>(new ErrorResponse("Internal server error"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // Clasa pentru răspuns JSON
     public record ErrorResponse(String message) {}
 }
