@@ -10,7 +10,7 @@ description = 'backend'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(24)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -29,6 +29,10 @@ dependencies {
 	testCompileOnly 'org.projectlombok:lombok:1.18.34'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	compileOnly 'org.projectlombok:lombok:1.18.34'
+	annotationProcessor 'org.projectlombok:lombok:1.18.34'
+	testCompileOnly 'org.projectlombok:lombok:1.18.34'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.34'
 }
 
 tasks.named('test') {
