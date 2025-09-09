@@ -16,7 +16,6 @@ public class InMemoryMealRepository implements MealRepository {
     private final List<Meal> meals = new ArrayList<>();
 
     public InMemoryMealRepository() {
-        //
         meals.add(new Meal(
                 UUID.fromString("11111111-1111-1111-1111-111111111111"),
                 MealType.LUNCH,

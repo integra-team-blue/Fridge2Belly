@@ -41,7 +41,7 @@ public class MealRepositoryTests {
         List<Meal> allMeals = repository.findAll();
         assertTrue(allMeals.contains(meal1));
         assertTrue(allMeals.contains(meal2));
-        assertTrue(allMeals.size() >= 2); // include si meal-ul initial din constructor
+        assertTrue(allMeals.size() >= 2);
     }
 
     @Test
