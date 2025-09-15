@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.repository.inMemory;
+package cloudflight.integra.backend.repository.memory;
 
 import cloudflight.integra.backend.repository.DishRepository;
 import cloudflight.integra.backend.model.Dish;

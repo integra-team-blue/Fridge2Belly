@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.repository.inMemory;
+package cloudflight.integra.backend.repository.memory;
 
 import cloudflight.integra.backend.exception.UserNotFoundException;
 import cloudflight.integra.backend.model.User;

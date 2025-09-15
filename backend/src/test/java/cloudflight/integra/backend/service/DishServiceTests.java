@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.model.Dish;
-import cloudflight.integra.backend.repository.inMemory.InMemoryDishRepository;
+import cloudflight.integra.backend.repository.memory.InMemoryDishRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.repository;
 
 import cloudflight.integra.backend.model.Dish;
-import cloudflight.integra.backend.repository.inMemory.InMemoryDishRepository;
+import cloudflight.integra.backend.repository.memory.InMemoryDishRepository;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;

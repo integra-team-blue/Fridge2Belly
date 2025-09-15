@@ -39,11 +39,9 @@ class DishModelTests {
         d.setProtein(10);
         d.setFat(5);
         d.setCarbohydrates(12);
-        // id may be null initially (server generates it)
         return d;
     }
 
-    // Happy path
     @Test
     void validDish_hasNoViolations() {
         Dish d = validDish();
@@ -51,7 +49,6 @@ class DishModelTests {
         assertThat(violations).isEmpty();
     }
 
-    // Field-by-field validation
     @Test
     void name_blank_isViolation() {
         Dish d = validDish();
@@ -133,7 +130,6 @@ class DishModelTests {
         assertThat(violations).isEmpty();
     }
 
-    // Basic getters/setters
     @Test
     void getters_setters_roundtrip() {
         Dish d = new Dish();

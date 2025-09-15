@@ -19,32 +19,27 @@ public class DishController {
         this.service = service;
     }
 
-    // CREATE
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Dish create(@Valid @RequestBody Dish body) {
         return service.create(body);
     }
 
-    // READ ALL
     @GetMapping
     public List<Dish> getAll() {
         return service.getAll();
     }
 
-    // READ ONE
     @GetMapping("/{id}")
     public Dish getById(@PathVariable UUID id) {
         return service.getById(id);
     }
 
-    // UPDATE (full replace)
     @PutMapping("/{id}")
     public Dish update(@PathVariable UUID id, @Valid @RequestBody Dish body) {
         return service.update(id, body);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable UUID id) {
