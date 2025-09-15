@@ -68,7 +68,6 @@ public class MealControllerTests {
     // GET /api/meals - success
     @Test
     void getAllMeals_success() throws Exception {
-        // add a meal to ensure at least one exists
         mockMvc.perform(post("/api/meals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))
@@ -82,7 +81,6 @@ public class MealControllerTests {
     // GET /api/meals/{id} - success
     @Test
     void getMealById_success() throws Exception {
-        // create meal
         mockMvc.perform(post("/api/meals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))
@@ -105,7 +103,6 @@ public class MealControllerTests {
     // PUT /api/meals/{id} - success
     @Test
     void updateMeal_success() throws Exception {
-        // creează meal
         mockMvc.perform(post("/api/meals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))
@@ -134,7 +131,6 @@ public class MealControllerTests {
     // DELETE /api/meals/{id} - success
     @Test
     void deleteMeal_success() throws Exception {
-        // create meal
         mockMvc.perform(post("/api/meals")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))

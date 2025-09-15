@@ -77,7 +77,6 @@ public class MealControllerIntegrationTests {
     // GET /api/meals - success
     @Test
     void testGetAllMealsSuccess() {
-        // creează meal pentru a te asigura că există cel puțin unul
         restTemplate.postForEntity(baseUrl, testMeal, Meal.class);
 
         ResponseEntity<Meal[]> response = restTemplate.getForEntity(baseUrl, Meal[].class);
@@ -112,7 +111,6 @@ public class MealControllerIntegrationTests {
     // PUT /api/meals/{id} - success
     @Test
     void testUpdateMealSuccess() {
-        // creează meal
         restTemplate.postForEntity(baseUrl, testMeal, Meal.class);
 
         testMeal.setMealType(MealType.DINNER);
