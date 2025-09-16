@@ -1,6 +1,7 @@
-package cloudflight.integra.backend.repository;
+package cloudflight.integra.backend.repository.memory;
 
 import cloudflight.integra.backend.model.Recipe;
+import cloudflight.integra.backend.repository.RecipeRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;

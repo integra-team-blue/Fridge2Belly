@@ -1,5 +1,5 @@
 import cloudflight.integra.backend.model.Recipe;
-import cloudflight.integra.backend.repository.InMemoryRecipeRepository;
+import cloudflight.integra.backend.repository.memory.InMemoryRecipeRepository;
 import cloudflight.integra.backend.service.RecipeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

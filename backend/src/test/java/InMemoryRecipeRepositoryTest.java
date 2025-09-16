@@ -1,6 +1,6 @@
 
 import cloudflight.integra.backend.model.Recipe;
-import cloudflight.integra.backend.repository.InMemoryRecipeRepository;
+import cloudflight.integra.backend.repository.memory.InMemoryRecipeRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

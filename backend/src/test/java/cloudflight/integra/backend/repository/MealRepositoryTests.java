@@ -3,7 +3,7 @@ package cloudflight.integra.backend.repository;
 import cloudflight.integra.backend.exception.MealNotFoundException;
 import cloudflight.integra.backend.model.Meal;
 import cloudflight.integra.backend.model.MealType;
-import cloudflight.integra.backend.repository.impl.InMemoryMealRepository;
+import cloudflight.integra.backend.repository.memory.InMemoryMealRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

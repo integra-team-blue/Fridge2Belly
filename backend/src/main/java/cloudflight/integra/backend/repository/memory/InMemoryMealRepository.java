@@ -1,4 +1,4 @@
-package cloudflight.integra.backend.repository.impl;
+package cloudflight.integra.backend.repository.memory;
 
 import cloudflight.integra.backend.exception.MealNotFoundException;
 import cloudflight.integra.backend.model.Meal;

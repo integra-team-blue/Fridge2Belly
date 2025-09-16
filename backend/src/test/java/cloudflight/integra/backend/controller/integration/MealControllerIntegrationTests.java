@@ -1,7 +1,6 @@
 package cloudflight.integra.backend.controller.integration;
 
 import cloudflight.integra.backend.BackendApplication;
-import cloudflight.integra.backend.exception.GlobalExceptionHandlerMeal;
 import cloudflight.integra.backend.model.Meal;
 import cloudflight.integra.backend.model.MealType;
 import org.junit.jupiter.api.BeforeEach;

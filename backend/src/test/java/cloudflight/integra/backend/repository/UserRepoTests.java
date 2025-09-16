@@ -2,7 +2,7 @@ package cloudflight.integra.backend.repository;
 
 import cloudflight.integra.backend.exception.UserNotFoundException;
 import cloudflight.integra.backend.model.User;
-import cloudflight.integra.backend.repository.memory.InMemoryRepositoryUser;
+import cloudflight.integra.backend.repository.memory.InMemoryUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,11 +13,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserRepoTests {
 
-    private InMemoryRepositoryUser repository;
+    private InMemoryUserRepository repository;
 
     @BeforeEach
     void setup() {
-        repository = new InMemoryRepositoryUser();
+        repository = new InMemoryUserRepository();
     }
 
     @Test
