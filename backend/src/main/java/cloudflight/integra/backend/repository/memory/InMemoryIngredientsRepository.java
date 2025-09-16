@@ -1,12 +1,13 @@
-package cloudflight.integra.backend.repository;
+package cloudflight.integra.backend.repository.memory;
 
 import cloudflight.integra.backend.model.Ingredients;
+import cloudflight.integra.backend.repository.RepositoryIngredients;
 import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
-public class InMemoryRepositoryIngredients implements RepositoryIngredients {
+public class InMemoryIngredientsRepository implements RepositoryIngredients {
 
     private final Map<UUID, Ingredients> ingredientsStorage = new ConcurrentHashMap<>();
 

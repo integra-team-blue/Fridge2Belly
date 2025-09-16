@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public class InMemoryRepositoryUser implements RepositoryUser {
+public class InMemoryUserRepository implements RepositoryUser {
 
     private final List<User> users = new ArrayList<>();
 
