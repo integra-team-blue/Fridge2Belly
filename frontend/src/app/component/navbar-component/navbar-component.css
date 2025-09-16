@@ -1,0 +1,14 @@
+::ng-deep .p-menubar .p-menubar-root-list {
+  margin-left: 60% !important;
+  font-size: 2rem;
+}
+
+.p-menubar .brand {
+  font-size: 3.5rem;
+  font-weight: bold;
+  color: #ffffff !important;
+  text-decoration: none;
+  margin-left: 4rem;
+}
+
+
