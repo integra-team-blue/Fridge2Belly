@@ -2,7 +2,7 @@ package cloudflight.integra.backend.repository;
 
 import cloudflight.integra.backend.exception.UserNotFoundException;
 import cloudflight.integra.backend.model.User;
-import cloudflight.integra.backend.repository.inMemory.InMemoryRepositoryUser;
+import cloudflight.integra.backend.repository.memory.InMemoryRepositoryUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
