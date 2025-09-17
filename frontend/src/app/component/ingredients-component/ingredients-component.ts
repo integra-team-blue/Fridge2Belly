@@ -19,9 +19,6 @@ export class IngredientsComponent {
   constructor(private ingredientsService: IngredientsService) {}
 
   async ngOnInit() {
-    this.ingredientsService.getIngredients().subscribe(data => {
-      this.ingredients = data;
-    });
     this.ingredients = await firstValueFrom(this.ingredientsService.getIngredients());
   }
 }
