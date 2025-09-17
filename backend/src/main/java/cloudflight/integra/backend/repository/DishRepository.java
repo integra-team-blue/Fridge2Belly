@@ -1,13 +1,8 @@
 package cloudflight.integra.backend.repository;
 
 import cloudflight.integra.backend.model.Dish;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.*;
+import java.util.UUID;
 
-public interface DishRepository {
-    Dish save(Dish dish);
-    Optional<Dish> findById(UUID id);
-    List<Dish> findAll();
-    void deleteById(UUID id);
-    boolean existsById(UUID id);
-}
+public interface DishRepository extends JpaRepository<Dish, UUID> {}

@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.controller;
 
-import cloudflight.integra.backend.model.Recipe;
+import cloudflight.integra.backend.model.dtos.RecipeDto;
 import cloudflight.integra.backend.service.RecipeService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -21,23 +21,23 @@ public class RecipeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Recipe createRecipe(@Valid @RequestBody Recipe recipe) {
-        return service.createRecipe(recipe);
+    public RecipeDto createRecipe(@Valid @RequestBody RecipeDto recipeDto) {
+        return service.createRecipe(recipeDto);
     }
 
     @GetMapping("/{id}")
-    public Recipe getRecipe(@PathVariable UUID id) {
+    public RecipeDto getRecipe(@PathVariable UUID id) {
         return service.getRecipe(id);
     }
 
     @GetMapping
-    public List<Recipe> getAllRecipes() {
+    public List<RecipeDto> getAllRecipes() {
         return service.getAllRecipes();
     }
 
     @PutMapping("/{id}")
-    public Recipe updateRecipe(@PathVariable UUID id, @Valid @RequestBody Recipe recipe) {
-        return service.updateRecipe(id, recipe);
+    public RecipeDto updateRecipe(@PathVariable UUID id, @Valid @RequestBody RecipeDto recipeDto) {
+        return service.updateRecipe(id, recipeDto);
     }
 
     @DeleteMapping("/{id}")

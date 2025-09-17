@@ -1,13 +1,13 @@
 package cloudflight.integra.backend.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = "dishes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -15,27 +15,37 @@ import java.util.UUID;
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Dish {
 
+    @Id
+    @GeneratedValue
     @EqualsAndHashCode.Include
     private UUID id;
 
-    @NotBlank(message = "Name cannot be blank")
+    @Column(nullable = false)
     private String name;
 
-    @NotNull(message = "Recipe ID is required")
-    private UUID recipeId;
-
-    @NotNull(message = "PreparedAt is required")
+    @Column(name = "prepared_at", nullable = false)
     private LocalDateTime preparedAt;
 
-    @PositiveOrZero(message = "Calories must be >= 0")
+    @Column(nullable = false)
     private double calories;
 
-    @PositiveOrZero(message = "Protein must be >= 0")
+    @Column(nullable = false)
     private double protein;
 
-    @PositiveOrZero(message = "Fat must be >= 0")
+    @Column(nullable = false)
     private double fat;
 
-    @PositiveOrZero(message = "Carbohydrates must be >= 0")
+    @Column(nullable = false)
     private double carbohydrates;
+
+    @ManyToMany
+    @JoinTable(
+            name = "dish_ingredients",
+            joinColumns = @JoinColumn(name = "dish_id"),
+            inverseJoinColumns = @JoinColumn(name = "ingredient_id")
+    )
+    private List<Ingredient> ingredients;
+
+    @ManyToMany(mappedBy = "dishes")
+    private List<Recipe> recipes;
 }

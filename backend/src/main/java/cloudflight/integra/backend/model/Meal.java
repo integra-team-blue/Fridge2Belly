@@ -1,30 +1,35 @@
 package cloudflight.integra.backend.model;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
+import jakarta.persistence.*;
+import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Entity
+@Table(name = "meals")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Meal {
 
+    @Id
+    @GeneratedValue
     private UUID id;
 
-    @NotNull(message = "Meal type is required")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "meal_type", nullable = false)
     private MealType mealType;
 
-    @NotNull(message = "Date and time is required")
+    @Column(name = "date_time", nullable = false)
     private LocalDateTime dateTime;
 
-    @NotNull(message = "Dish IDs list must not be null")
-    @NotEmpty(message = "Meal must have at least one dish")
-    private List<@NotNull(message = "Dish ID cannot be null") UUID> dishIds;
-
+    @ManyToMany
+    @JoinTable(
+            name = "meal_dishes",
+            joinColumns = @JoinColumn(name = "meal_id"),
+            inverseJoinColumns = @JoinColumn(name = "dish_id")
+    )
+    private List<Dish> dishes;
 }

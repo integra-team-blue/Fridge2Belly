@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.controller;
 
-import cloudflight.integra.backend.model.Dish;
+import cloudflight.integra.backend.model.dtos.DishDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class DishControllerIntegrationTests {
+class DishDtoControllerIntegrationTests {
 
     @Autowired private MockMvc mvc;
     @Autowired private ObjectMapper mapper;
@@ -27,35 +27,36 @@ class DishControllerIntegrationTests {
         return """
         {
           "name": "%s",
-          "recipeId": "11111111-1111-1111-1111-111111111111",
+          "recipeIds": ["4b4f171c-a736-4cf8-8e12-64dfbf93fe01"],
           "preparedAt": "2025-01-01T12:00:00",
-          "calories": 100, "protein": 10, "fat": 5, "carbohydrates": 12
+          "calories": 100, "protein": 10, "fat": 5, "carbohydrates": 12,
+          "ingredientIds": ["46d2eb0c-6eec-4f96-9056-32e706a5c4bb"]
         }""".formatted(name);
     }
 
-    private Dish createDish(String name) throws Exception {
+    private DishDto createDish(String name) throws Exception {
         MvcResult res = mvc.perform(post("/api/dishes")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body(name)))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readValue(res.getResponse().getContentAsString(), Dish.class);
+        return mapper.readValue(res.getResponse().getContentAsString(), DishDto.class);
     }
 
-    private Dish getDish(UUID id) throws Exception {
+    private DishDto getDish(UUID id) throws Exception {
         MvcResult res = mvc.perform(get("/api/dishes/{id}", id))
                 .andExpect(status().isOk())
                 .andReturn();
-        return mapper.readValue(res.getResponse().getContentAsString(), Dish.class);
+        return mapper.readValue(res.getResponse().getContentAsString(), DishDto.class);
     }
 
-    private Dish updateDish(UUID id, String newName) throws Exception {
+    private DishDto updateDish(UUID id, String newName) throws Exception {
         MvcResult res = mvc.perform(put("/api/dishes/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(body(newName)))
                 .andExpect(status().isOk())
                 .andReturn();
-        return mapper.readValue(res.getResponse().getContentAsString(), Dish.class);
+        return mapper.readValue(res.getResponse().getContentAsString(), DishDto.class);
     }
 
     private void deleteDish(UUID id) throws Exception {
@@ -67,36 +68,36 @@ class DishControllerIntegrationTests {
         MvcResult res = mvc.perform(get("/api/dishes"))
                 .andExpect(status().isOk())
                 .andReturn();
-        Dish[] arr = mapper.readValue(res.getResponse().getContentAsByteArray(), Dish[].class);
+        DishDto[] arr = mapper.readValue(res.getResponse().getContentAsByteArray(), DishDto[].class);
         return arr.length;
     }
 
     @Test
     void createDish_works() throws Exception {
-        Dish d = createDish("Pasta");
+        DishDto d = createDish("Pasta");
         assertThat(d.getId()).isNotNull();
         assertThat(d.getName()).isEqualTo("Pasta");
     }
 
     @Test
     void getDishById_works() throws Exception {
-        Dish created = createDish("Soup");
-        Dish got = getDish(created.getId());
+        DishDto created = createDish("Soup");
+        DishDto got = getDish(created.getId());
         assertThat(got.getId()).isEqualTo(created.getId());
         assertThat(got.getName()).isEqualTo("Soup");
     }
 
     @Test
     void updateDish_works() throws Exception {
-        Dish created = createDish("Old");
-        Dish updated = updateDish(created.getId(), "New");
+        DishDto created = createDish("Old");
+        DishDto updated = updateDish(created.getId(), "New");
         assertThat(updated.getId()).isEqualTo(created.getId());
         assertThat(updated.getName()).isEqualTo("New");
     }
 
     @Test
     void deleteDish_works() throws Exception {
-        Dish created = createDish("Temp");
+        DishDto created = createDish("Temp");
         deleteDish(created.getId());
         assertThat(listCount()).isZero();
     }

@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.service;
 
-import cloudflight.integra.backend.model.Recipe;
-import cloudflight.integra.backend.repository.RecipeRepository;
+import cloudflight.integra.backend.model.dtos.RecipeDto;
+import cloudflight.integra.backend.repository.initial.IRecipeRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,32 +10,32 @@ import java.util.UUID;
 @Service
 public class RecipeService {
 
-    private final RecipeRepository repository;
+    private final IRecipeRepository repository;
 
-    public RecipeService(RecipeRepository repository) {
+    public RecipeService(IRecipeRepository repository) {
         this.repository = repository;
     }
 
-    public Recipe createRecipe(Recipe recipe) {
-        return repository.save(recipe);
+    public RecipeDto createRecipe(RecipeDto recipeDto) {
+        return repository.save(recipeDto);
     }
 
-    public Recipe getRecipe(UUID id) {
+    public RecipeDto getRecipe(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
     }
 
-    public List<Recipe> getAllRecipes() {
+    public List<RecipeDto> getAllRecipes() {
         return repository.findAll();
     }
 
-    public Recipe updateRecipe(UUID id, Recipe updated) {
-        Recipe existing = getRecipe(id);
+    public RecipeDto updateRecipe(UUID id, RecipeDto updated) {
+        RecipeDto existing = getRecipe(id);
         existing.setName(updated.getName());
         existing.setDescription(updated.getDescription());
         existing.setCookingTimeMinutes(updated.getCookingTimeMinutes());
         existing.setInstructions(updated.getInstructions());
-        existing.setIngredientsId(updated.getIngredientsId());
+        existing.setDishIds(updated.getDishIds());
         return repository.save(existing);
     }
 
