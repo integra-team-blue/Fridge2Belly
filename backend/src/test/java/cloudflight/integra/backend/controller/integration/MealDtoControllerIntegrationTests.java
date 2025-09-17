@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -21,7 +24,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = BackendApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MealDtoControllerIntegrationTests {
-
+    @Container
+    @ServiceConnection
+    public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.6")
+            .withDatabaseName("integration-tests-db")
+            .withUsername("it")
+            .withPassword("it");
+    
     @LocalServerPort
     private int port;
 
