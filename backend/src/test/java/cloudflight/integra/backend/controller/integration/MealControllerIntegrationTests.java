@@ -9,10 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,18 +62,20 @@ public class MealControllerIntegrationTests {
 
         HttpEntity<Meal> entity = new HttpEntity<>(testMeal, headers);
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response = restTemplate.postForEntity(
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 baseUrl,
+                HttpMethod.POST,
                 entity,
-                GlobalExceptionHandlerMeal.ErrorResponse.class
+                new ParameterizedTypeReference<>() {}
         );
 
+
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-
         assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().mealType()).isEqualTo("Meal type is required");
-    }
 
+        Map<String, String> fieldErrors = (Map<String, String>) response.getBody().get("fieldErrors");
+        assertThat(fieldErrors.get("mealType")).isEqualTo("Meal type is required");
+    }
 
     // GET /api/meals - success
     @Test
@@ -100,11 +104,11 @@ public class MealControllerIntegrationTests {
     void testGetMealByIdNotFound() {
         UUID randomId = UUID.randomUUID();
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response =
-                restTemplate.getForEntity(baseUrl + "/" + randomId, GlobalExceptionHandlerMeal.ErrorResponse.class);
+        ResponseEntity<Map<String, Object>> response =
+                restTemplate.exchange(baseUrl + "/" + randomId, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().mealType()).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(response.getBody().get("message")).isEqualTo("Meal not found with id: " + randomId);
     }
 
     // PUT /api/meals/{id} - success
@@ -138,15 +142,15 @@ public class MealControllerIntegrationTests {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Meal> entity = new HttpEntity<>(testMeal, headers);
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response = restTemplate.exchange(
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 baseUrl + "/" + randomId,
                 HttpMethod.PUT,
                 entity,
-                GlobalExceptionHandlerMeal.ErrorResponse.class
+                new ParameterizedTypeReference<>() {}
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().mealType()).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(response.getBody().get("message")).isEqualTo("Meal not found with id: " + randomId);
     }
 
     // DELETE /api/meals/{id} - success
@@ -169,14 +173,14 @@ public class MealControllerIntegrationTests {
     void testDeleteMealNotFound() {
         UUID randomId = UUID.randomUUID();
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response = restTemplate.exchange(
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                 baseUrl + "/" + randomId,
                 HttpMethod.DELETE,
                 null,
-                GlobalExceptionHandlerMeal.ErrorResponse.class
+                new ParameterizedTypeReference<>() {}
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().mealType()).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(response.getBody().get("message")).isEqualTo("Meal not found with id: " + randomId);
     }
 }

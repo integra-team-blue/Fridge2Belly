@@ -61,8 +61,7 @@ public class MealControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.mealType").value("Meal type is required"));
-
+                .andExpect(jsonPath("$.fieldErrors.mealType").value("Meal type is required"));
     }
 
     // GET /api/meals - success
@@ -97,7 +96,7 @@ public class MealControllerTests {
         UUID randomId = UUID.randomUUID();
         mockMvc.perform(get("/api/meals/" + randomId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.mealType").value("Meal not found with id: " + randomId));
+                .andExpect(jsonPath("$.message").value("Meal not found with id: " + randomId));
     }
 
     // PUT /api/meals/{id} - success
@@ -125,7 +124,7 @@ public class MealControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testMeal)))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.mealType").value("Meal not found with id: " + randomId));
+                .andExpect(jsonPath("$.message").value("Meal not found with id: " + randomId));
     }
 
     // DELETE /api/meals/{id} - success
@@ -146,6 +145,6 @@ public class MealControllerTests {
         UUID randomId = UUID.randomUUID();
         mockMvc.perform(delete("/api/meals/" + randomId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.mealType").value("Meal not found with id: " + randomId));
+                .andExpect(jsonPath("$.message").value("Meal not found with id: " + randomId));
     }
 }
