@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import {Ingredient, IngredientsService} from '../../services/ingredients-services/ingredients-service';
 import {DatePipe, DecimalPipe} from '@angular/common';
-import {MenuItem} from 'primeng/api';
 import { RouterModule } from '@angular/router';
 import {firstValueFrom} from 'rxjs';
 
