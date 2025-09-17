@@ -4,6 +4,7 @@ import {Ingredient, IngredientsService} from '../../services/ingredients-service
 import {DatePipe, DecimalPipe} from '@angular/common';
 import {MenuItem} from 'primeng/api';
 import { RouterModule } from '@angular/router';
+import {firstValueFrom} from 'rxjs';
 
 @Component({
   selector: 'app-ingredients-component',
@@ -14,21 +15,14 @@ import { RouterModule } from '@angular/router';
 })
 
 export class IngredientsComponent {
-  items: MenuItem[] = [];
   ingredients: Ingredient[] = [];
 
   constructor(private ingredientsService: IngredientsService) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.ingredientsService.getIngredients().subscribe(data => {
       this.ingredients = data;
     });
-
-    this.items = [
-      { label: 'Meals', routerLink: ['/meals'] },
-      { label: 'Dishes', routerLink: ['/dishes'] },
-      { label: 'Recipes', routerLink: ['/recipes'] },
-      { label: 'Ingredients', routerLink: ['/ingredients'] }
-    ];
+    this.ingredients = await firstValueFrom(this.ingredientsService.getIngredients());
   }
 }
