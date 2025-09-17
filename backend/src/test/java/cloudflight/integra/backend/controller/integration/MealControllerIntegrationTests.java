@@ -10,12 +10,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.*;
+import cloudflight.integra.backend.exception.GlobalExceptionHandler;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = BackendApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MealControllerIntegrationTests {
@@ -55,21 +59,15 @@ public class MealControllerIntegrationTests {
     void testCreateMealFailNoMealType() {
         testMeal.setMealType(null);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            restTemplate.postForEntity(baseUrl, testMeal, Map.class);
+        });
 
-        HttpEntity<Meal> entity = new HttpEntity<>(testMeal, headers);
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response = restTemplate.postForEntity(
-                baseUrl,
-                entity,
-                GlobalExceptionHandlerMeal.ErrorResponse.class
-        );
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-
-        assertThat(response.getBody()).isNotNull();
-        assertThat(response.getBody().mealType()).isEqualTo("Meal type is required");
+        String responseBody = exception.getResponseBodyAsString();
+        assertThat(responseBody).contains("Validation failed");
+        assertThat(responseBody).contains("mealType");
     }
 
 
@@ -100,11 +98,15 @@ public class MealControllerIntegrationTests {
     void testGetMealByIdNotFound() {
         UUID randomId = UUID.randomUUID();
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response =
-                restTemplate.getForEntity(baseUrl + "/" + randomId, GlobalExceptionHandlerMeal.ErrorResponse.class);
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            restTemplate.getForEntity(baseUrl + "/" + randomId, Map.class);
+        });
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().mealType()).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        String responseBody = exception.getResponseBodyAsString();
+        assertThat(responseBody).contains("Meal not found with id: " + randomId);
+
     }
 
     // PUT /api/meals/{id} - success
@@ -138,15 +140,19 @@ public class MealControllerIntegrationTests {
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<Meal> entity = new HttpEntity<>(testMeal, headers);
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response = restTemplate.exchange(
-                baseUrl + "/" + randomId,
-                HttpMethod.PUT,
-                entity,
-                GlobalExceptionHandlerMeal.ErrorResponse.class
-        );
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            restTemplate.exchange(
+                    baseUrl + "/" + randomId,
+                    HttpMethod.PUT,
+                    entity,
+                    Map.class
+            );
+        });
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().mealType()).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        String responseBody = exception.getResponseBodyAsString();
+        assertThat(responseBody).contains("Meal not found with id: " + randomId);
     }
 
     // DELETE /api/meals/{id} - success
@@ -169,14 +175,18 @@ public class MealControllerIntegrationTests {
     void testDeleteMealNotFound() {
         UUID randomId = UUID.randomUUID();
 
-        ResponseEntity<GlobalExceptionHandlerMeal.ErrorResponse> response = restTemplate.exchange(
-                baseUrl + "/" + randomId,
-                HttpMethod.DELETE,
-                null,
-                GlobalExceptionHandlerMeal.ErrorResponse.class
-        );
+        HttpClientErrorException exception = assertThrows(HttpClientErrorException.class, () -> {
+            restTemplate.exchange(
+                    baseUrl + "/" + randomId,
+                    HttpMethod.DELETE,
+                    null,
+                    Map.class
+            );
+        });
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().mealType()).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+
+        String responseBody = exception.getResponseBodyAsString();
+        assertThat(responseBody).contains("Meal not found with id: " + randomId);
     }
 }
