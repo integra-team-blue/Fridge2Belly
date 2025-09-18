@@ -1,23 +1,24 @@
 package cloudflight.integra.backend.model;
 
-import java.util.UUID;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.persistence.*;
 import lombok.*;
+import java.util.UUID;
 
+@Entity
+@Table(name = "users")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class User {
+
+    @Id
+    @GeneratedValue
     private UUID id;
 
-    @NotBlank(message = "Username is required")
-    @Size(min = 3, max = 20, message = "Username must be between 3 and 20 characters")
+    @Column(nullable = false, unique = true, length = 20)
     private String username;
 
-    @NotBlank(message = "Email is required")
-    @Email(message = "Email must be valid")
+    @Column(nullable = false, unique = true)
     private String email;
-
 }
