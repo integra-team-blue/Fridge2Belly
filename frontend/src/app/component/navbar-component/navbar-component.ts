@@ -5,12 +5,13 @@ import {RouterLink} from '@angular/router';
 
 @Component({
   selector: 'app-navbar-component',
+  standalone: true,
   templateUrl: './navbar-component.html',
   imports: [
     MenubarModule,
     RouterLink
   ],
-  styleUrl: './navbar-component.css'
+  styleUrls: ['./navbar-component.css']
 })
 export class NavbarComponent {
   items: MenuItem[] = [];
