@@ -11,7 +11,7 @@ import { providePrimeNG } from 'primeng/config';
 
 import LaraLightBlue from '@primeuix/themes/aura';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -29,5 +29,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideAnimations(),
     MessageService,
+    ConfirmationService,
   ],
 };

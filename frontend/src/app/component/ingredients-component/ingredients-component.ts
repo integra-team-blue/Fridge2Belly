@@ -12,7 +12,9 @@ import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
-import { MessageService } from 'primeng/api';
+import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
+import { ContextMenu } from 'primeng/contextmenu';
+import { ConfirmDialog } from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-ingredients-component',
@@ -29,6 +31,8 @@ import { MessageService } from 'primeng/api';
     InputTextModule,
     SelectModule,
     FormsModule,
+    ContextMenu,
+    ConfirmDialog,
   ],
   styleUrls: ['./ingredients-component.css'],
 })
@@ -37,11 +41,21 @@ export class IngredientsComponent {
   showDialog = false;
   selectedIngredient: Ingredient | null = null;
   editDialogVisible = false;
+  menuItems: MenuItem[];
 
   constructor(
     private ingredientsService: IngredientsService,
     private messageService: MessageService,
-  ) {}
+    private confirmationService: ConfirmationService,
+  ) {
+    this.menuItems = [
+      {
+        label: 'Delete',
+        icon: 'pi pi-times',
+        command: () => this.confirmDelete(this.selectedIngredient),
+      },
+    ];
+  }
 
   async ngOnInit() {
     this.ingredients = await firstValueFrom(this.ingredientsService.getIngredients());
@@ -174,5 +188,44 @@ export class IngredientsComponent {
         });
       }
     }
+  }
+
+  async deleteIngredient(ingredient: Ingredient | null) {
+    if (ingredient?.id == null) {
+      return;
+    }
+
+    try {
+      await firstValueFrom(this.ingredientsService.deleteIngredient(ingredient.id));
+
+      this.ingredients = this.ingredients.filter((i) => i.id !== ingredient.id);
+
+      this.selectedIngredient = null;
+      this.ingredientForm.reset();
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'The ingredient was deleted successfully.',
+      });
+    } catch (err) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to delete the ingredient. Please try again.',
+      });
+    }
+  }
+
+  confirmDelete(ingredient: Ingredient | null) {
+    if (ingredient == null) {
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete "${ingredient.name}"?`,
+      accept: () => this.deleteIngredient(ingredient),
+      reject: () => {},
+    });
   }
 }

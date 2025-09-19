@@ -33,4 +33,8 @@ export class IngredientsService {
   updateIngredient(id: number, ingredient: Ingredient): Observable<Ingredient> {
     return this.http.put<Ingredient>(`${this.apiUrl}/${id}`, ingredient);
   }
+
+  deleteIngredient(id: number): Observable<Ingredient> {
+    return this.http.delete<Ingredient>(`${this.apiUrl}/${id}`);
+  }
 }

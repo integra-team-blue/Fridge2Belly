@@ -1,9 +1,13 @@
+<p-confirmDialog header="Confirm" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
 <p-table
   [value]="ingredients"
   [tableStyle]="{ 'min-width': '50rem' }"
   selectionMode="single"
   [(selection)]="selectedIngredient"
   (onRowSelect)="openEditDialog($event.data)"
+  (onContextMenuSelect)="selectedIngredient = $event.data"
+  [contextMenu]="cm"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -18,7 +22,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-ingredient>
-    <tr [pSelectableRow]="ingredient">
+    <tr [pSelectableRow]="ingredient" [pContextMenuRow]="ingredient">
       <td>{{ ingredient.name }}</td>
       <td>{{ ingredient.quantity }}</td>
       <td>{{ ingredient.unit }}</td>
@@ -36,6 +40,8 @@
     </tr>
   </ng-template>
 </p-table>
+
+<p-contextMenu #cm [model]="menuItems"></p-contextMenu>
 
 <div class="center-button">
   <p-button label="Add Ingredient" icon="pi pi-plus" (onClick)="showDialog = true"></p-button>
