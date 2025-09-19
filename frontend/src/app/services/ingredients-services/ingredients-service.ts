@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Ingredient {
+export type Ingredient = {
   id?: number;
   name: string;
   quantity: number;
@@ -12,7 +12,7 @@ export interface Ingredient {
   protein: number;
   fat: number;
   carbohydrates: number;
-}
+};
 
 @Injectable({
   providedIn: 'root',

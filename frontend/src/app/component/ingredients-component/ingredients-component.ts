@@ -102,7 +102,9 @@ export class IngredientsComponent {
   }
 
   openEditDialog(ingredient: Ingredient[] | Ingredient | undefined) {
-    if (!ingredient || Array.isArray(ingredient)) return;
+    if (!ingredient || Array.isArray(ingredient)) {
+      return;
+    }
 
     this.selectedIngredient = ingredient;
 
@@ -110,7 +112,8 @@ export class IngredientsComponent {
       name: ingredient.name,
       quantity: ingredient.quantity,
       unit: ingredient.unit,
-      expirationDate: ingredient.expirationDate ? new Date(ingredient.expirationDate) : new Date(),
+      expirationDate:
+        ingredient.expirationDate != null ? new Date(ingredient.expirationDate) : new Date(),
       calories: ingredient.calories,
       protein: ingredient.protein,
       fat: ingredient.fat,
@@ -151,7 +154,9 @@ export class IngredientsComponent {
         );
 
         const index = this.ingredients.findIndex((i) => i.id === this.selectedIngredient!.id);
-        if (index !== -1) this.ingredients[index] = saved;
+        if (index !== -1) {
+          this.ingredients[index] = saved;
+        }
 
         this.editDialogVisible = false;
         this.selectedIngredient = null;
