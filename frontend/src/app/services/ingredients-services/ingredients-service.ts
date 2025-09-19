@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export type Ingredient = {
-  id: string;
+  id?: number;
   name: string;
   quantity: number;
   unit: string;
@@ -24,5 +24,13 @@ export class IngredientsService {
 
   getIngredients(): Observable<Ingredient[]> {
     return this.http.get<Ingredient[]>(this.apiUrl);
+  }
+
+  addIngredient(ingredient: Ingredient): Observable<Ingredient> {
+    return this.http.post<Ingredient>(this.apiUrl, ingredient);
+  }
+
+  updateIngredient(id: number, ingredient: Ingredient): Observable<Ingredient> {
+    return this.http.put<Ingredient>(`${this.apiUrl}/${id}`, ingredient);
   }
 }
