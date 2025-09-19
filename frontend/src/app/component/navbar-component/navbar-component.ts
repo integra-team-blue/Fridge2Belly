@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import {MenubarModule} from 'primeng/menubar';
-import {MenuItem} from 'primeng/api';
-import {RouterLink} from '@angular/router';
+import { MenubarModule } from 'primeng/menubar';
+import { MenuItem } from 'primeng/api';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-navbar-component',
@@ -20,21 +20,20 @@ export class NavbarComponent {
     this.items = [
       {
         label: 'Meals',
-        routerLink: '/meals'
+        routerLink: '/meals',
       },
       {
         label: 'Dishes',
-        routerLink: '/dishes'
+        routerLink: '/dishes',
       },
       {
         label: 'Recipes',
-        routerLink: '/recipes'
+        routerLink: '/recipes',
       },
       {
         label: 'Ingredients',
-        routerLink: '/ingredients'
-      }
+        routerLink: '/ingredients',
+      },
     ];
   }
-
 }
