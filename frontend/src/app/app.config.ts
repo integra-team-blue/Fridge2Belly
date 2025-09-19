@@ -10,7 +10,7 @@ import { routes } from './app.routes';
 import { providePrimeNG } from 'primeng/config';
 
 import LaraLightBlue from '@primeuix/themes/aura';
-import {provideAnimations} from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
@@ -28,6 +28,6 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideHttpClient(),
     provideAnimations(),
-    MessageService
-  ]
+    MessageService,
+  ],
 };

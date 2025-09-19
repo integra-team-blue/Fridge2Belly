@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {FormControl, ɵFormGroupValue, ɵTypedOrUntyped} from '@angular/forms';
 
 export interface Ingredient {
   id?: number;
@@ -16,9 +15,8 @@ export interface Ingredient {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-
 export class IngredientsService {
   private apiUrl = 'http://localhost:8080/api/ingredients';
 

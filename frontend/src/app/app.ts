@@ -1,7 +1,7 @@
 import { Component, signal } from '@angular/core';
-import {RouterOutlet} from '@angular/router';
-import {NavbarComponent} from './component/navbar-component/navbar-component';
-import {Toast} from 'primeng/toast';
+import { RouterOutlet } from '@angular/router';
+import { NavbarComponent } from './component/navbar-component/navbar-component';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-root',
