@@ -1,0 +1,46 @@
+<p-table [value]="dishes" [tableStyle]="{ 'min-width': '70rem' }">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Name</th>
+      <th>Recipes</th>
+      <th>Ingredients</th>
+      <th>Prepared At</th>
+      <th>Calories</th>
+      <th>Protein</th>
+      <th>Fat</th>
+      <th>Carbohydrates</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-dish>
+    <tr>
+      <td>{{ dish.name }}</td>
+
+      <td>
+        <ul>
+          <li *ngFor="let recipeIds of dish.recipeIds">
+            {{ recipeIds }}
+          </li>
+        </ul>
+      </td>
+
+      <td>
+        <ul>
+          <li *ngFor="let ingredientIds of dish.ingredientIds">
+            {{ ingredientIds }}
+          </li>
+        </ul>
+      </td>
+
+      <td>{{ dish.preparedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+      <td>{{ dish.calories }}</td>
+      <td>{{ dish.protein }}</td>
+      <td>{{ dish.fat }}</td>
+      <td>{{ dish.carbohydrates }}</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<div *ngIf="!dishes?.length" class="placeholder">
+  No dishes available.
+</div>
