@@ -7,8 +7,12 @@ import java.util.UUID;
 
 public interface IMealRepository {
     MealDto save(MealDto mealDto);
+
     MealDto findById(UUID id);
+
     List<MealDto> findAll();
+
     void deleteById(UUID id);
+
     boolean existsById(UUID id);
 }

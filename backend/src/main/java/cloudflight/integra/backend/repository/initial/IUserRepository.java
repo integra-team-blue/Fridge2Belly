@@ -7,8 +7,12 @@ import java.util.UUID;
 
 public interface IUserRepository {
     List<UserDto> getAll();
+
     UserDto getUser(UUID id);
+
     UserDto create(UserDto userDto);
+
     void delete(UUID id);
+
     void update(UserDto userDto);
 }

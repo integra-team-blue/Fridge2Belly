@@ -44,8 +44,8 @@ class RecipeDtoControllerTest {
         recipeDto.setDishIds(List.of(UUID.randomUUID()));
 
         mockMvc.perform(post("/api/recipes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(recipeDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(recipeDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("ControllerTest"));
     }
@@ -61,8 +61,8 @@ class RecipeDtoControllerTest {
         RecipeDto recipeDto = new RecipeDto();
 
         mockMvc.perform(post("/api/recipes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(recipeDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(recipeDto)))
                 .andExpect(status().isBadRequest());
     }
 }

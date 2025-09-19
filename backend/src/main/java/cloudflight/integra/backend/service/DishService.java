@@ -21,7 +21,8 @@ public class DishService {
     public List<DishDto> getAll() { return repo.findAll(); }
 
     public DishDto getById(UUID id) {
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("Dish not found: " + id));
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dish not found: " + id));
     }
 
     public DishDto update(UUID id, DishDto dishDto) {

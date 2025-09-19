@@ -7,9 +7,13 @@ import java.util.List;
 public interface IIngredientsRepository {
 
     List<IngredientDto> getAll();
+
     IngredientDto getIngredient(UUID id);
+
     void create(IngredientDto ingredient);
+
     void update(UUID id, IngredientDto ingredient);
+
     void delete(UUID id);
 
 }

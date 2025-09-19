@@ -29,9 +29,7 @@ public class MealService {
         return mealRepository.save(mealDto);
     }
 
-    public List<MealDto> getAllMeals() {
-        return mealRepository.findAll();
-    }
+    public List<MealDto> getAllMeals() { return mealRepository.findAll(); }
 
     public MealDto getMealById(UUID id) {
         return mealRepository.findById(id);

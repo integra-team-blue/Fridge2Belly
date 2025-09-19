@@ -82,8 +82,8 @@ public class UserDtoControllerTests {
         UserDto userDto = new UserDto(null, "Ana", "ana@email.com");
 
         mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isCreated());
 
         verify(userService, times(1)).createUser(any(UserDto.class));
@@ -94,8 +94,8 @@ public class UserDtoControllerTests {
         UserDto userDto = new UserDto(null, "A", "not-an-email");
 
         mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isBadRequest());
     }
 
@@ -106,8 +106,8 @@ public class UserDtoControllerTests {
         UserDto userDto = new UserDto(null, "AnaUpdated", "anaupdated@email.com");
 
         mockMvc.perform(put("/users/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).updateUser(any(UUID.class), any(UserDto.class));
@@ -119,11 +119,12 @@ public class UserDtoControllerTests {
         UserDto userDto = new UserDto(id, "AnaUpdated", "anaupdated@email.com");
 
         doThrow(new UserNotFoundException("User with id " + id + " not found"))
-                .when(userService).updateUser(any(UUID.class), any(UserDto.class));
+                .when(userService)
+                .updateUser(any(UUID.class), any(UserDto.class));
 
         mockMvc.perform(put("/users/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("User with id " + id + " not found"));
 
@@ -146,7 +147,8 @@ public class UserDtoControllerTests {
         UUID id = UUID.randomUUID();
 
         doThrow(new UserNotFoundException("User with id " + id + " not found"))
-                .when(userService).deleteUser(any(UUID.class));
+                .when(userService)
+                .deleteUser(any(UUID.class));
 
         mockMvc.perform(delete("/users/{id}", id))
                 .andExpect(status().isNotFound())

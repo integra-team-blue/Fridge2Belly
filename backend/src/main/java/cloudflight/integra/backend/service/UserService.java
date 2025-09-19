@@ -24,7 +24,7 @@ public class UserService {
     }
 
     public UserDto createUser(UserDto userDto) {
-        if(userDto.getId() == null)
+        if (userDto.getId() == null)
             userDto.setId(UUID.randomUUID());
         return userRepository.create(userDto);
     }

@@ -46,7 +46,8 @@ public class MealDtoRepositoryTests {
 
     @Test
     void testFindById() {
-        MealDto existingMealDto = repository.findAll().get(0);
+        MealDto existingMealDto = repository.findAll()
+                .get(0);
         MealDto found = repository.findById(existingMealDto.getId());
         assertEquals(existingMealDto, found);
     }
@@ -59,8 +60,10 @@ public class MealDtoRepositoryTests {
 
     @Test
     void testDeleteById() {
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.LUNCH, LocalDateTime.now(),
-                List.of(UUID.randomUUID()));
+        MealDto mealDto = new MealDto(UUID.randomUUID(),
+                                      MealType.LUNCH,
+                                      LocalDateTime.now(),
+                                      List.of(UUID.randomUUID()));
         repository.save(mealDto);
 
         assertTrue(repository.existsById(mealDto.getId()));
@@ -70,8 +73,10 @@ public class MealDtoRepositoryTests {
 
     @Test
     void testExistsById() {
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.DINNER, LocalDateTime.now(),
-                List.of(UUID.randomUUID()));
+        MealDto mealDto = new MealDto(UUID.randomUUID(),
+                                      MealType.DINNER,
+                                      LocalDateTime.now(),
+                                      List.of(UUID.randomUUID()));
         repository.save(mealDto);
 
         assertTrue(repository.existsById(mealDto.getId()));

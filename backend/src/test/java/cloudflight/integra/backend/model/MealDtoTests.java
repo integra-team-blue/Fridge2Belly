@@ -45,7 +45,10 @@ public class MealDtoTests {
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("mealType")));
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .equals("mealType")));
     }
 
     @Test
@@ -56,7 +59,10 @@ public class MealDtoTests {
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("dateTime")));
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .equals("dateTime")));
     }
 
     @Test
@@ -65,7 +71,10 @@ public class MealDtoTests {
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("dishIds")));
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .equals("dishIds")));
     }
 
     @Test
@@ -75,7 +84,10 @@ public class MealDtoTests {
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("dishIds")));
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .equals("dishIds")));
     }
 
     @Test
@@ -86,6 +98,9 @@ public class MealDtoTests {
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().contains("dishIds")));
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .contains("dishIds")));
     }
 }

@@ -43,10 +43,10 @@ public class MealDtoControllerTests {
     @BeforeEach
     void setup() {
         testMealDto = new MealDto(
-                UUID.randomUUID(),
-                MealType.LUNCH,
-                LocalDateTime.now(),
-                Collections.singletonList(UUID.randomUUID())
+                                  UUID.randomUUID(),
+                                  MealType.LUNCH,
+                                  LocalDateTime.now(),
+                                  Collections.singletonList(UUID.randomUUID())
         );
     }
 
@@ -54,10 +54,11 @@ public class MealDtoControllerTests {
     @Test
     void createMeal_success() throws Exception {
         mockMvc.perform(post("/api/meals")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testMealDto.getId().toString()))
+                .andExpect(jsonPath("$.id").value(testMealDto.getId()
+                        .toString()))
                 .andExpect(jsonPath("$.mealType").value("LUNCH"));
     }
 
@@ -67,8 +68,8 @@ public class MealDtoControllerTests {
         testMealDto.setMealType(null);
 
         mockMvc.perform(post("/api/meals")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors.mealType").value("Meal type is required"));
     }
@@ -77,8 +78,8 @@ public class MealDtoControllerTests {
     @Test
     void getAllMeals_success() throws Exception {
         mockMvc.perform(post("/api/meals")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/meals"))
@@ -90,13 +91,14 @@ public class MealDtoControllerTests {
     @Test
     void getMealById_success() throws Exception {
         mockMvc.perform(post("/api/meals")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/meals/" + testMealDto.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testMealDto.getId().toString()));
+                .andExpect(jsonPath("$.id").value(testMealDto.getId()
+                        .toString()));
     }
 
     // GET /api/meals/{id} - not found
@@ -112,15 +114,15 @@ public class MealDtoControllerTests {
     @Test
     void updateMeal_success() throws Exception {
         mockMvc.perform(post("/api/meals")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk());
 
         testMealDto.setMealType(MealType.DINNER);
 
         mockMvc.perform(put("/api/meals/" + testMealDto.getId())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mealType").value("DINNER"));
     }
@@ -130,8 +132,8 @@ public class MealDtoControllerTests {
     void updateMeal_notFound() throws Exception {
         UUID randomId = UUID.randomUUID();
         mockMvc.perform(put("/api/meals/" + randomId)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Meal not found with id: " + randomId));
     }
@@ -140,8 +142,8 @@ public class MealDtoControllerTests {
     @Test
     void deleteMeal_success() throws Exception {
         mockMvc.perform(post("/api/meals")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(testMealDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk());
 
         mockMvc.perform(delete("/api/meals/" + testMealDto.getId()))

@@ -15,8 +15,15 @@ class DishDtoRepositoryTests {
     private final InMemoryDishRepository repo = new InMemoryDishRepository();
 
     private DishDto sample(String name) {
-        return new DishDto(UUID.randomUUID(), name,
-                LocalDateTime.now(), 100, 10, 5, 12, List.of(UUID.randomUUID()), List.of(UUID.randomUUID()));
+        return new DishDto(UUID.randomUUID(),
+                           name,
+                           LocalDateTime.now(),
+                           100,
+                           10,
+                           5,
+                           12,
+                           List.of(UUID.randomUUID()),
+                           List.of(UUID.randomUUID()));
     }
 
     @Test
@@ -24,8 +31,12 @@ class DishDtoRepositoryTests {
         DishDto d = sample("Pasta");
         repo.save(d);
 
-        assertTrue(repo.findById(d.getId()).isPresent());
-        assertEquals("Pasta", repo.findById(d.getId()).get().getName());
+        assertTrue(repo.findById(d.getId())
+                .isPresent());
+        assertEquals("Pasta",
+                     repo.findById(d.getId())
+                             .get()
+                             .getName());
     }
 
     @Test
@@ -43,6 +54,7 @@ class DishDtoRepositoryTests {
         assertTrue(repo.existsById(d.getId()));
         repo.deleteById(d.getId());
         assertFalse(repo.existsById(d.getId()));
-        assertTrue(repo.findAll().isEmpty());
+        assertTrue(repo.findAll()
+                .isEmpty());
     }
 }

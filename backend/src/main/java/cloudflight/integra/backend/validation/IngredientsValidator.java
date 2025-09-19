@@ -19,7 +19,8 @@ public class IngredientsValidator {
     }
 
     private void validateName(String name) {
-        if (name == null || name.trim().isEmpty()) {
+        if (name == null || name.trim()
+                .isEmpty()) {
             throw new IngredientsExeption("Ingredient name is required");
         }
 
@@ -39,7 +40,8 @@ public class IngredientsValidator {
     }
 
     private void validateUnit(String unit) {
-        if (unit == null || unit.trim().isEmpty()) {
+        if (unit == null || unit.trim()
+                .isEmpty()) {
             throw new IngredientsExeption("Unit is required");
         }
 

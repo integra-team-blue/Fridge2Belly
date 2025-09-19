@@ -29,43 +29,48 @@ class DishDtoControllerIntegrationTests {
             .withUsername("it")
             .withPassword("it");
 
-    @Autowired private MockMvc mvc;
-    @Autowired private ObjectMapper mapper;
+    @Autowired
+    private MockMvc mvc;
+    @Autowired
+    private ObjectMapper mapper;
 
     private String body(String name) {
         return """
-        {
-          "name": "%s",
-          "recipeIds": ["4b4f171c-a736-4cf8-8e12-64dfbf93fe01"],
-          "preparedAt": "2025-01-01T12:00:00",
-          "calories": 100, "protein": 10, "fat": 5, "carbohydrates": 12,
-          "ingredientIds": ["46d2eb0c-6eec-4f96-9056-32e706a5c4bb"]
-        }""".formatted(name);
+                {
+                  "name": "%s",
+                  "recipeIds": ["4b4f171c-a736-4cf8-8e12-64dfbf93fe01"],
+                  "preparedAt": "2025-01-01T12:00:00",
+                  "calories": 100, "protein": 10, "fat": 5, "carbohydrates": 12,
+                  "ingredientIds": ["46d2eb0c-6eec-4f96-9056-32e706a5c4bb"]
+                }""".formatted(name);
     }
 
     private DishDto createDish(String name) throws Exception {
         MvcResult res = mvc.perform(post("/api/dishes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body(name)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body(name)))
                 .andExpect(status().isCreated())
                 .andReturn();
-        return mapper.readValue(res.getResponse().getContentAsString(), DishDto.class);
+        return mapper.readValue(res.getResponse()
+                .getContentAsString(), DishDto.class);
     }
 
     private DishDto getDish(UUID id) throws Exception {
         MvcResult res = mvc.perform(get("/api/dishes/{id}", id))
                 .andExpect(status().isOk())
                 .andReturn();
-        return mapper.readValue(res.getResponse().getContentAsString(), DishDto.class);
+        return mapper.readValue(res.getResponse()
+                .getContentAsString(), DishDto.class);
     }
 
     private DishDto updateDish(UUID id, String newName) throws Exception {
         MvcResult res = mvc.perform(put("/api/dishes/{id}", id)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body(newName)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body(newName)))
                 .andExpect(status().isOk())
                 .andReturn();
-        return mapper.readValue(res.getResponse().getContentAsString(), DishDto.class);
+        return mapper.readValue(res.getResponse()
+                .getContentAsString(), DishDto.class);
     }
 
     private void deleteDish(UUID id) throws Exception {
@@ -77,7 +82,8 @@ class DishDtoControllerIntegrationTests {
         MvcResult res = mvc.perform(get("/api/dishes"))
                 .andExpect(status().isOk())
                 .andReturn();
-        DishDto[] arr = mapper.readValue(res.getResponse().getContentAsByteArray(), DishDto[].class);
+        DishDto[] arr = mapper.readValue(res.getResponse()
+                .getContentAsByteArray(), DishDto[].class);
         return arr.length;
     }
 
@@ -121,23 +127,23 @@ class DishDtoControllerIntegrationTests {
     @Test
     void blankName_returns400() throws Exception {
         mvc.perform(post("/api/dishes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(body("")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(body("")))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void negativeCalories_returns400() throws Exception {
         String bad = """
-        {
-          "name": "Bad",
-          "recipeId": "11111111-1111-1111-1111-111111111111",
-          "preparedAt": "2025-01-01T12:00:00",
-          "calories": -1, "protein": 10, "fat": 5, "carbohydrates": 12
-        }""";
+                {
+                  "name": "Bad",
+                  "recipeId": "11111111-1111-1111-1111-111111111111",
+                  "preparedAt": "2025-01-01T12:00:00",
+                  "calories": -1, "protein": 10, "fat": 5, "carbohydrates": 12
+                }""";
         mvc.perform(post("/api/dishes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(bad))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(bad))
                 .andExpect(status().isBadRequest());
     }
 }

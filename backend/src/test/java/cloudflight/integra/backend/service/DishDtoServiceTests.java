@@ -36,13 +36,17 @@ class DishDtoServiceTests {
     void create_setsId_andPersists() {
         DishDto created = service.create(req("Salad"));
         assertNotNull(created.getId());
-        assertEquals(1, service.getAll().size());
+        assertEquals(1,
+                     service.getAll()
+                             .size());
     }
 
     @Test
     void getById_returnsOrThrows() {
         DishDto created = service.create(req("Soup"));
-        assertEquals("Soup", service.getById(created.getId()).getName());
+        assertEquals("Soup",
+                     service.getById(created.getId())
+                             .getName());
 
         UUID missing = UUID.randomUUID();
         assertThrows(RuntimeException.class, () -> service.getById(missing));
@@ -62,6 +66,8 @@ class DishDtoServiceTests {
     void delete_removes() {
         DishDto created = service.create(req("Temp"));
         service.delete(created.getId());
-        assertEquals(0, service.getAll().size());
+        assertEquals(0,
+                     service.getAll()
+                             .size());
     }
 }

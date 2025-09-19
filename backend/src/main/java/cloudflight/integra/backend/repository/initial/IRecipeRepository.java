@@ -5,8 +5,11 @@ import java.util.*;
 
 public interface IRecipeRepository {
     RecipeDto save(RecipeDto recipeDto);
+
     Optional<RecipeDto> findById(UUID id);
+
     List<RecipeDto> findAll();
+
     void deleteById(UUID id);
 
 }

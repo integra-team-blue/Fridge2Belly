@@ -12,9 +12,7 @@ public class InMemoryIngredientsRepository implements IIngredientsRepository {
     private final Map<UUID, IngredientDto> ingredientsStorage = new ConcurrentHashMap<>();
 
     @Override
-    public List<IngredientDto> getAll() {
-        return new ArrayList<>(ingredientsStorage.values());
-    }
+    public List<IngredientDto> getAll() { return new ArrayList<>(ingredientsStorage.values()); }
 
     @Override
     public IngredientDto getIngredient(UUID id) {

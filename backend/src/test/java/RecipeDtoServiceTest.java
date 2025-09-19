@@ -28,7 +28,9 @@ class RecipeDtoServiceTest {
         RecipeDto saved = service.createRecipe(recipeDto);
 
         assertNotNull(saved.getId());
-        assertEquals("ServiceTest", service.getRecipe(saved.getId()).getName());
+        assertEquals("ServiceTest",
+                     service.getRecipe(saved.getId())
+                             .getName());
     }
 
     @Test

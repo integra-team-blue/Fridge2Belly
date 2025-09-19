@@ -52,8 +52,14 @@ public class MealDtoServiceTests {
     @Test
     void testGetAllMeals() {
         List<MealDto> mealDtos = Arrays.asList(
-                new MealDto(UUID.randomUUID(), MealType.LUNCH, LocalDateTime.now(), Arrays.asList(UUID.randomUUID())),
-                new MealDto(UUID.randomUUID(), MealType.DINNER, LocalDateTime.now(), Arrays.asList(UUID.randomUUID()))
+                                               new MealDto(UUID.randomUUID(),
+                                                           MealType.LUNCH,
+                                                           LocalDateTime.now(),
+                                                           Arrays.asList(UUID.randomUUID())),
+                                               new MealDto(UUID.randomUUID(),
+                                                           MealType.DINNER,
+                                                           LocalDateTime.now(),
+                                                           Arrays.asList(UUID.randomUUID()))
         );
         when(mealRepository.findAll()).thenReturn(mealDtos);
 
@@ -65,7 +71,10 @@ public class MealDtoServiceTests {
 
     @Test
     void testGetMealByIdSuccess() {
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.DINNER, LocalDateTime.now(), Arrays.asList(UUID.randomUUID()));
+        MealDto mealDto = new MealDto(UUID.randomUUID(),
+                                      MealType.DINNER,
+                                      LocalDateTime.now(),
+                                      Arrays.asList(UUID.randomUUID()));
         when(mealRepository.findById(mealDto.getId())).thenReturn(mealDto);
 
         MealDto found = mealService.getMealById(mealDto.getId());
@@ -111,7 +120,8 @@ public class MealDtoServiceTests {
     @Test
     void testDeleteMealSuccess() {
         UUID id = UUID.randomUUID();
-        doNothing().when(mealRepository).deleteById(id);
+        doNothing().when(mealRepository)
+                .deleteById(id);
 
         mealService.deleteMeal(id);
 
@@ -121,7 +131,8 @@ public class MealDtoServiceTests {
     @Test
     void testDeleteMealNotFound() {
         UUID id = UUID.randomUUID();
-        doThrow(new MealNotFoundException("Meal not found")).when(mealRepository).deleteById(id);
+        doThrow(new MealNotFoundException("Meal not found")).when(mealRepository)
+                .deleteById(id);
 
         assertThrows(MealNotFoundException.class, () -> mealService.deleteMeal(id));
         verify(mealRepository, times(1)).deleteById(id);

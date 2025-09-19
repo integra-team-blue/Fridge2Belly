@@ -3,14 +3,14 @@ import { TableModule } from 'primeng/table';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import {Recipe, RecipesService} from '../../services/recipes-services/recipes-service';
+import { Recipe, RecipesService } from '../../services/recipes-services/recipes-service';
 
 @Component({
   selector: 'app-recipes-component',
   standalone: true,
   templateUrl: './recipes-component.html',
   imports: [TableModule, RouterModule, CommonModule],
-  styleUrls: ['./recipes-component.css']
+  styleUrls: ['./recipes-component.css'],
 })
 export class RecipesComponent {
   recipes: Recipe[] = [];

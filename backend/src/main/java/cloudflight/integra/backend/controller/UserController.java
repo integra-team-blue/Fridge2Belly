@@ -35,12 +35,14 @@ public class UserController {
     @PostMapping("/users")
     public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto) {
         userService.createUser(userDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userDto);
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

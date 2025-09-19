@@ -22,7 +22,8 @@ class InMemoryRecipeDtoRepositoryTest {
         RecipeDto saved = repository.save(recipeDto);
 
         assertNotNull(saved.getId());
-        assertTrue(repository.findById(saved.getId()).isPresent());
+        assertTrue(repository.findById(saved.getId())
+                .isPresent());
     }
 
     @Test
@@ -36,6 +37,7 @@ class InMemoryRecipeDtoRepositoryTest {
         RecipeDto saved = repository.save(recipeDto);
         repository.deleteById(saved.getId());
 
-        assertTrue(repository.findAll().isEmpty());
+        assertTrue(repository.findAll()
+                .isEmpty());
     }
 }
