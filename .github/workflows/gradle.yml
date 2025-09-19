@@ -37,3 +37,16 @@ jobs:
       run: |
           chmod +x ./gradlew
           ./gradlew clean build --no-daemon
+        
+    - name: Install Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 22
+
+    - name: Install frontend dependencies
+      working-directory: ./frontend
+      run: npm ci
+
+    - name: Run frontend lint
+      working-directory: ./frontend
+      run: npm run lint
