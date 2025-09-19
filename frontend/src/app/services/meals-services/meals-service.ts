@@ -1,0 +1,26 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface Meal {
+  id: string;
+  mealType: string;
+  dateTime: string;
+  dishIds: string[];
+}
+
+export interface Dish {
+  id: string;
+  name: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class MealsService {
+  private apiUrl = 'http://localhost:8080/api/meals';
+
+  constructor(private http: HttpClient) {}
+
+  getMeals(): Observable<Meal[]> {
+    return this.http.get<Meal[]>('http://localhost:8080/api/meals');
+  }
+}

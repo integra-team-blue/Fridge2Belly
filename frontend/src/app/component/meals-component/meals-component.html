@@ -1,0 +1,44 @@
+<p-table [value]="meals" [tableStyle]="{ 'min-width': '50rem' }">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Meal Type</th>
+      <th>Prepared At</th>
+      <th>Dishes</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-meal>
+    <tr>
+      <td>{{ meal.mealType }}</td>
+      <td>{{ meal.dateTime | date:'yyyy-MM-dd HH:mm' }}</td>
+      <td>
+        <ng-container *ngIf="meal.dishIds?.length > 0; else noDishes">
+          <div *ngFor="let id of meal.dishIds; let i = index" class="dish-row">
+            <p-select
+              [options]="dishes"
+              [(ngModel)]="meal.dishIds[i]"
+              optionLabel="name"
+              optionValue="id"
+              placeholder="Select dish"
+              appendTo="body"
+              [style]="{ width: '14rem' }"
+              [panelStyle]="{ maxHeight: '260px' }">
+            </p-select>
+          </div>
+        </ng-container>
+
+        <ng-template #noDishes>
+          <span style="font-style: italic; color: gray;">No dishes</span>
+        </ng-template>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="3" style="text-align:center; font-style:italic;">
+        No meals available.
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
