@@ -24,9 +24,7 @@ public class MealController {
     }
 
     @GetMapping
-    public List<MealDto> getAllMeals() {
-        return mealService.getAllMeals();
-    }
+    public List<MealDto> getAllMeals() { return mealService.getAllMeals(); }
 
     @GetMapping("/{id}")
     public MealDto getMealById(@PathVariable UUID id) {

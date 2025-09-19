@@ -31,9 +31,7 @@ public class RecipeController {
     }
 
     @GetMapping
-    public List<RecipeDto> getAllRecipes() {
-        return service.getAllRecipes();
-    }
+    public List<RecipeDto> getAllRecipes() { return service.getAllRecipes(); }
 
     @PutMapping("/{id}")
     public RecipeDto updateRecipe(@PathVariable UUID id, @Valid @RequestBody RecipeDto recipeDto) {

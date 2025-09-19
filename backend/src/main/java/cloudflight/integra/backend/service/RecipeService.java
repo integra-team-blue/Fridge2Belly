@@ -25,9 +25,7 @@ public class RecipeService {
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
     }
 
-    public List<RecipeDto> getAllRecipes() {
-        return repository.findAll();
-    }
+    public List<RecipeDto> getAllRecipes() { return repository.findAll(); }
 
     public RecipeDto updateRecipe(UUID id, RecipeDto updated) {
         RecipeDto existing = getRecipe(id);

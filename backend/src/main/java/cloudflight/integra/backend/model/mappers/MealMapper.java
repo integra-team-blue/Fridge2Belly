@@ -20,11 +20,10 @@ public class MealMapper {
         if (meal == null) {
             return null;
         }
-        List<UUID> dishIds = meal.getDishes() != null
-                ? meal.getDishes().stream()
+        List<UUID> dishIds = meal.getDishes() != null ? meal.getDishes()
+                .stream()
                 .map(Dish::getId)
-                .collect(Collectors.toList())
-                : List.of();
+                .collect(Collectors.toList()) : List.of();
 
         return MealDto.builder()
                 .id(meal.getId())
@@ -38,12 +37,11 @@ public class MealMapper {
         if (dto == null) {
             return null;
         }
-        List<Dish> dishes = dto.getDishIds() != null
-                ? dto.getDishIds().stream()
+        List<Dish> dishes = dto.getDishIds() != null ? dto.getDishIds()
+                .stream()
                 .map(id -> dishRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("Dish not found: " + id)))
-                .collect(Collectors.toList())
-                : List.of();
+                .collect(Collectors.toList()) : List.of();
 
         return Meal.builder()
                 .id(dto.getId())

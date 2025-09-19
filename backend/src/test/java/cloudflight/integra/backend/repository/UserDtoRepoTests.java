@@ -58,7 +58,9 @@ public class UserDtoRepoTests {
 
         repository.delete(id);
 
-        assertEquals(0, repository.getAll().size());
+        assertEquals(0,
+                     repository.getAll()
+                             .size());
     }
 
     @Test

@@ -21,9 +21,7 @@ public class IngredientsService {
         this.validator = validator;
     }
 
-    public List<IngredientDto> getAllIngredients() {
-        return repository.getAll();
-    }
+    public List<IngredientDto> getAllIngredients() { return repository.getAll(); }
 
     public IngredientDto getIngredientById(UUID id) {
         validateId(id);

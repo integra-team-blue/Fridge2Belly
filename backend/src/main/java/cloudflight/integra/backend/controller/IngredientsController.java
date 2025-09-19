@@ -46,8 +46,8 @@ public class IngredientsController {
     //Update an existing ingredient
     @PutMapping("/{id}")
     public ResponseEntity<IngredientDto> updateIngredient(
-            @PathVariable UUID id,
-            @Valid @RequestBody IngredientDto ingredient) {
+                                                          @PathVariable UUID id,
+                                                          @Valid @RequestBody IngredientDto ingredient) {
         IngredientDto updatedIngredient = ingredientsService.updateIngredient(id, ingredient);
         return ResponseEntity.ok(updatedIngredient);
     }
@@ -56,7 +56,8 @@ public class IngredientsController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteIngredient(@PathVariable UUID id) {
         ingredientsService.deleteIngredient(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 }
 

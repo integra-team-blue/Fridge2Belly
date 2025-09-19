@@ -26,9 +26,7 @@ public class DishController {
     }
 
     @GetMapping
-    public List<DishDto> getAll() {
-        return service.getAll();
-    }
+    public List<DishDto> getAll() { return service.getAll(); }
 
     @GetMapping("/{id}")
     public DishDto getById(@PathVariable UUID id) {

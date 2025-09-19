@@ -29,8 +29,8 @@ public class UserDtoServiceTests {
     @Test
     void testFindAll() {
         List<UserDto> userDtos = Arrays.asList(
-                new UserDto(UUID.randomUUID(), "Ana", "ana@email.com"),
-                new UserDto(UUID.randomUUID(), "Ion", "ion@email.com")
+                                               new UserDto(UUID.randomUUID(), "Ana", "ana@email.com"),
+                                               new UserDto(UUID.randomUUID(), "Ion", "ion@email.com")
         );
 
         when(userRepository.getAll()).thenReturn(userDtos);
@@ -95,7 +95,8 @@ public class UserDtoServiceTests {
     void testDeleteUserNotFound() {
         UUID id = UUID.randomUUID();
         doThrow(new UserNotFoundException("User with id " + id + " not found"))
-                .when(userRepository).delete(id);
+                .when(userRepository)
+                .delete(id);
 
         assertThrows(UserNotFoundException.class, () -> userService.deleteUser(id));
         verify(userRepository, times(1)).delete(id);
@@ -116,7 +117,8 @@ public class UserDtoServiceTests {
         UUID id = UUID.randomUUID();
         UserDto userDto = new UserDto(id, "AnaUpdated", "anaupdated@email.com");
         doThrow(new UserNotFoundException("User with id " + userDto.getId() + " not found"))
-                .when(userRepository).update(userDto);
+                .when(userRepository)
+                .update(userDto);
 
         assertThrows(UserNotFoundException.class, () -> userService.updateUser(id, userDto));
         verify(userRepository, times(1)).update(userDto);

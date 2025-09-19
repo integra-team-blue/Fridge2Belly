@@ -58,7 +58,8 @@ class DishDtoModelTests {
         d.setName("  ");
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
         assertThat(violations).anySatisfy(v -> {
-            assertThat(v.getPropertyPath().toString()).isEqualTo("name");
+            assertThat(v.getPropertyPath()
+                    .toString()).isEqualTo("name");
         });
     }
 
@@ -67,8 +68,8 @@ class DishDtoModelTests {
         DishDto d = validDish();
         d.setRecipeIds(null);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
-        assertThat(violations).anySatisfy(v ->
-                assertThat(v.getPropertyPath().toString()).isEqualTo("recipeIds")
+        assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
+                .toString()).isEqualTo("recipeIds")
         );
     }
 
@@ -77,8 +78,8 @@ class DishDtoModelTests {
         DishDto d = validDish();
         d.setPreparedAt(null);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
-        assertThat(violations).anySatisfy(v ->
-                assertThat(v.getPropertyPath().toString()).isEqualTo("preparedAt")
+        assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
+                .toString()).isEqualTo("preparedAt")
         );
     }
 
@@ -87,8 +88,8 @@ class DishDtoModelTests {
         DishDto d = validDish();
         d.setCalories(-1);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
-        assertThat(violations).anySatisfy(v ->
-                assertThat(v.getPropertyPath().toString()).isEqualTo("calories")
+        assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
+                .toString()).isEqualTo("calories")
         );
     }
 
@@ -97,8 +98,8 @@ class DishDtoModelTests {
         DishDto d = validDish();
         d.setProtein(-0.1);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
-        assertThat(violations).anySatisfy(v ->
-                assertThat(v.getPropertyPath().toString()).isEqualTo("protein")
+        assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
+                .toString()).isEqualTo("protein")
         );
     }
 
@@ -107,8 +108,8 @@ class DishDtoModelTests {
         DishDto d = validDish();
         d.setFat(-5);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
-        assertThat(violations).anySatisfy(v ->
-                assertThat(v.getPropertyPath().toString()).isEqualTo("fat")
+        assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
+                .toString()).isEqualTo("fat")
         );
     }
 
@@ -117,8 +118,8 @@ class DishDtoModelTests {
         DishDto d = validDish();
         d.setCarbohydrates(-3);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
-        assertThat(violations).anySatisfy(v ->
-                assertThat(v.getPropertyPath().toString()).isEqualTo("carbohydrates")
+        assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
+                .toString()).isEqualTo("carbohydrates")
         );
     }
 

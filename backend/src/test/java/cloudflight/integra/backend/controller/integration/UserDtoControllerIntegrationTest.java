@@ -23,9 +23,9 @@ class UserDtoControllerIntegrationTest {
     @Container
     @ServiceConnection
     public static PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:14.6")
-        .withDatabaseName("integration-tests-db")
-        .withUsername("it")
-        .withPassword("it");
+            .withDatabaseName("integration-tests-db")
+            .withUsername("it")
+            .withPassword("it");
 
     @LocalServerPort
     private int port;
@@ -69,7 +69,8 @@ class UserDtoControllerIntegrationTest {
         ResponseEntity<UserDto> response = restTemplate.getForEntity(baseUrl + "/" + saved.getId(), UserDto.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(Objects.requireNonNull(response.getBody()).getUsername()).isEqualTo("Ana");
+        assertThat(Objects.requireNonNull(response.getBody())
+                .getUsername()).isEqualTo("Ana");
 
         userService.deleteUser(saved.getId());
     }
@@ -124,11 +125,14 @@ class UserDtoControllerIntegrationTest {
         HttpEntity<UserDto> entity = new HttpEntity<>(updated, headers);
 
         ResponseEntity<Void> putResponse = restTemplate.exchange(baseUrl + "/" + saved.getId(),
-                HttpMethod.PUT, entity, Void.class);
+                                                                 HttpMethod.PUT,
+                                                                 entity,
+                                                                 Void.class);
         assertThat(putResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<UserDto> getResponse = restTemplate.getForEntity(baseUrl + "/" + saved.getId(), UserDto.class);
-        assertThat(Objects.requireNonNull(getResponse.getBody()).getUsername()).isEqualTo("AnaUpdated");
+        assertThat(Objects.requireNonNull(getResponse.getBody())
+                .getUsername()).isEqualTo("AnaUpdated");
 
         userService.deleteUser(saved.getId());
 
@@ -144,7 +148,9 @@ class UserDtoControllerIntegrationTest {
         HttpEntity<UserDto> entity = new HttpEntity<>(updated, headers);
 
         ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/" + id,
-                HttpMethod.PUT, entity, String.class);
+                                                                HttpMethod.PUT,
+                                                                entity,
+                                                                String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).contains("User with id " + id + " not found");
     }
@@ -155,7 +161,9 @@ class UserDtoControllerIntegrationTest {
         UserDto saved = userService.createUser(new UserDto(null, "Ana", "ana@email.com"));
 
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(baseUrl + "/" + saved.getId(),
-                HttpMethod.DELETE, null, Void.class);
+                                                                    HttpMethod.DELETE,
+                                                                    null,
+                                                                    Void.class);
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
         ResponseEntity<String> getResponse = restTemplate.getForEntity(baseUrl + "/" + saved.getId(), String.class);
@@ -168,7 +176,9 @@ class UserDtoControllerIntegrationTest {
         UUID id = UUID.randomUUID();
 
         ResponseEntity<String> deleteResponse = restTemplate.exchange(baseUrl + "/" + id,
-                HttpMethod.DELETE, null, String.class);
+                                                                      HttpMethod.DELETE,
+                                                                      null,
+                                                                      String.class);
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(deleteResponse.getBody()).contains("User with id " + id + " not found");
     }

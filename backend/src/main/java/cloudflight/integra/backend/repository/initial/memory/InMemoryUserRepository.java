@@ -15,13 +15,13 @@ public class InMemoryUserRepository implements IUserRepository {
     private final List<UserDto> userDtos = new ArrayList<>();
 
     @Override
-    public List<UserDto> getAll() {
-        return new ArrayList<>(userDtos);
-    }
+    public List<UserDto> getAll() { return new ArrayList<>(userDtos); }
 
     @Override
     public UserDto getUser(UUID id) {
-        return userDtos.stream().filter(user -> user.getId().equals(id))
+        return userDtos.stream()
+                .filter(user -> user.getId()
+                        .equals(id))
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
     }
@@ -34,7 +34,8 @@ public class InMemoryUserRepository implements IUserRepository {
 
     @Override
     public void delete(UUID id) {
-        boolean removed = userDtos.removeIf(u -> u.getId().equals(id));
+        boolean removed = userDtos.removeIf(u -> u.getId()
+                .equals(id));
         if (!removed) {
             throw new UserNotFoundException("User with id " + id + " not found");
         }
@@ -43,7 +44,8 @@ public class InMemoryUserRepository implements IUserRepository {
     @Override
     public void update(UserDto userDto) {
         userDtos.stream()
-                .filter(u -> u.getId().equals(userDto.getId()))
+                .filter(u -> u.getId()
+                        .equals(userDto.getId()))
                 .findFirst()
                 .map(u -> {
                     u.setUsername(userDto.getUsername());

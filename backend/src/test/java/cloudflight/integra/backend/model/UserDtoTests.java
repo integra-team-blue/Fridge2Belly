@@ -59,7 +59,10 @@ public class UserDtoTests {
 
         Set<ConstraintViolation<UserDto>> violations = validator.validate(userDto);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("username")));
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .equals("username")));
     }
 
     @Test
@@ -68,7 +71,10 @@ public class UserDtoTests {
 
         Set<ConstraintViolation<UserDto>> violations = validator.validate(userDto);
         assertFalse(violations.isEmpty());
-        assertTrue(violations.stream().anyMatch(v -> v.getPropertyPath().toString().equals("email")));
+        assertTrue(violations.stream()
+                .anyMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .equals("email")));
     }
 
 }

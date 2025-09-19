@@ -30,7 +30,7 @@ public class MealDtoControllerIntegrationTests {
             .withDatabaseName("integration-tests-db")
             .withUsername("it")
             .withPassword("it");
-    
+
     @LocalServerPort
     private int port;
 
@@ -44,10 +44,10 @@ public class MealDtoControllerIntegrationTests {
     void setup() {
         baseUrl = "http://localhost:" + port + "/api/meals";
         testMealDto = new MealDto(
-                UUID.randomUUID(),
-                MealType.LUNCH,
-                LocalDateTime.now(),
-                Collections.singletonList(UUID.randomUUID())
+                                  UUID.randomUUID(),
+                                  MealType.LUNCH,
+                                  LocalDateTime.now(),
+                                  Collections.singletonList(UUID.randomUUID())
         );
     }
 
@@ -57,8 +57,10 @@ public class MealDtoControllerIntegrationTests {
         ResponseEntity<MealDto> response = restTemplate.postForEntity(baseUrl, testMealDto, MealDto.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getId()).isEqualTo(testMealDto.getId());
-        assertThat(response.getBody().getMealType()).isEqualTo(MealType.LUNCH);
+        assertThat(response.getBody()
+                .getId()).isEqualTo(testMealDto.getId());
+        assertThat(response.getBody()
+                .getMealType()).isEqualTo(MealType.LUNCH);
     }
 
     // POST /api/meals - fail, no MealType
@@ -72,17 +74,18 @@ public class MealDtoControllerIntegrationTests {
         HttpEntity<MealDto> entity = new HttpEntity<>(testMealDto, headers);
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                baseUrl,
-                HttpMethod.POST,
-                entity,
-                new ParameterizedTypeReference<>() {}
+                                                                             baseUrl,
+                                                                             HttpMethod.POST,
+                                                                             entity,
+                                                                             new ParameterizedTypeReference<>() {}
         );
 
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody()).isNotNull();
 
-        Map<String, String> fieldErrors = (Map<String, String>) response.getBody().get("fieldErrors");
+        Map<String, String> fieldErrors = (Map<String, String>) response.getBody()
+                .get("fieldErrors");
         assertThat(fieldErrors.get("mealType")).isEqualTo("Meal type is required");
     }
 
@@ -102,10 +105,12 @@ public class MealDtoControllerIntegrationTests {
     void testGetMealByIdSuccess() {
         restTemplate.postForEntity(baseUrl, testMealDto, MealDto.class);
 
-        ResponseEntity<MealDto> response = restTemplate.getForEntity(baseUrl + "/" + testMealDto.getId(), MealDto.class);
+        ResponseEntity<MealDto> response = restTemplate.getForEntity(baseUrl + "/" + testMealDto.getId(),
+                                                                     MealDto.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getId()).isEqualTo(testMealDto.getId());
+        assertThat(response.getBody()
+                .getId()).isEqualTo(testMealDto.getId());
     }
 
     // GET /api/meals/{id} - not found
@@ -113,11 +118,14 @@ public class MealDtoControllerIntegrationTests {
     void testGetMealByIdNotFound() {
         UUID randomId = UUID.randomUUID();
 
-        ResponseEntity<Map<String, Object>> response =
-                restTemplate.exchange(baseUrl + "/" + randomId, HttpMethod.GET, null, new ParameterizedTypeReference<>() {});
+        ResponseEntity<Map<String, Object>> response = restTemplate.exchange(baseUrl + "/" + randomId,
+                                                                             HttpMethod.GET,
+                                                                             null,
+                                                                             new ParameterizedTypeReference<>() {});
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().get("message")).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(response.getBody()
+                .get("message")).isEqualTo("Meal not found with id: " + randomId);
     }
 
     // PUT /api/meals/{id} - success
@@ -132,14 +140,15 @@ public class MealDtoControllerIntegrationTests {
         HttpEntity<MealDto> entity = new HttpEntity<>(testMealDto, headers);
 
         ResponseEntity<MealDto> response = restTemplate.exchange(
-                baseUrl + "/" + testMealDto.getId(),
-                HttpMethod.PUT,
-                entity,
-                MealDto.class
+                                                                 baseUrl + "/" + testMealDto.getId(),
+                                                                 HttpMethod.PUT,
+                                                                 entity,
+                                                                 MealDto.class
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody().getMealType()).isEqualTo(MealType.DINNER);
+        assertThat(response.getBody()
+                .getMealType()).isEqualTo(MealType.DINNER);
     }
 
     // PUT /api/meals/{id} - not found
@@ -152,14 +161,15 @@ public class MealDtoControllerIntegrationTests {
         HttpEntity<MealDto> entity = new HttpEntity<>(testMealDto, headers);
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                baseUrl + "/" + randomId,
-                HttpMethod.PUT,
-                entity,
-                new ParameterizedTypeReference<>() {}
+                                                                             baseUrl + "/" + randomId,
+                                                                             HttpMethod.PUT,
+                                                                             entity,
+                                                                             new ParameterizedTypeReference<>() {}
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().get("message")).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(response.getBody()
+                .get("message")).isEqualTo("Meal not found with id: " + randomId);
     }
 
     // DELETE /api/meals/{id} - success
@@ -168,10 +178,10 @@ public class MealDtoControllerIntegrationTests {
         restTemplate.postForEntity(baseUrl, testMealDto, MealDto.class);
 
         ResponseEntity<Void> response = restTemplate.exchange(
-                baseUrl + "/" + testMealDto.getId(),
-                HttpMethod.DELETE,
-                null,
-                Void.class
+                                                              baseUrl + "/" + testMealDto.getId(),
+                                                              HttpMethod.DELETE,
+                                                              null,
+                                                              Void.class
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -183,13 +193,14 @@ public class MealDtoControllerIntegrationTests {
         UUID randomId = UUID.randomUUID();
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                baseUrl + "/" + randomId,
-                HttpMethod.DELETE,
-                null,
-                new ParameterizedTypeReference<>() {}
+                                                                             baseUrl + "/" + randomId,
+                                                                             HttpMethod.DELETE,
+                                                                             null,
+                                                                             new ParameterizedTypeReference<>() {}
         );
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody().get("message")).isEqualTo("Meal not found with id: " + randomId);
+        assertThat(response.getBody()
+                .get("message")).isEqualTo("Meal not found with id: " + randomId);
     }
 }

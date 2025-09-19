@@ -32,9 +32,7 @@ public class Recipe {
 
     @ManyToMany
     @JoinTable(
-            name = "recipe_dishes",
-            joinColumns = @JoinColumn(name = "recipe_id"),
-            inverseJoinColumns = @JoinColumn(name = "dish_id")
+            name = "recipe_dishes", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "dish_id")
     )
     private List<Dish> dishes;
 }

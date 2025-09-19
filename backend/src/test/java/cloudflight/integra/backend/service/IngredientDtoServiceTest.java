@@ -42,7 +42,8 @@ class IngredientDtoServiceTest {
         testIngredient.setName("Test Tomato");
         testIngredient.setQuantity(2.5);
         testIngredient.setUnit("kg");
-        testIngredient.setExpirationDate(LocalDate.now().plusDays(7));
+        testIngredient.setExpirationDate(LocalDate.now()
+                .plusDays(7));
         testIngredient.setCalories(18.0);
         testIngredient.setProtein(0.9);
         testIngredient.setFat(0.2);
@@ -50,16 +51,15 @@ class IngredientDtoServiceTest {
     }
 
 
-
     @Test
     void getAllIngredients_ShouldReturnEmptyList_WhenNoIngredients() {
-        
+
         when(repository.getAll()).thenReturn(Collections.emptyList());
 
-        
+
         List<IngredientDto> result = ingredientsService.getAllIngredients();
 
-        
+
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(repository).getAll();
@@ -67,30 +67,29 @@ class IngredientDtoServiceTest {
 
     @Test
     void getAllIngredients_ShouldReturnAllIngredients_WhenIngredientsExist() {
-        
+
         List<IngredientDto> expectedIngredients = Arrays.asList(testIngredient);
         when(repository.getAll()).thenReturn(expectedIngredients);
 
-        
+
         List<IngredientDto> result = ingredientsService.getAllIngredients();
 
-        
+
         assertEquals(expectedIngredients, result);
         assertEquals(1, result.size());
         verify(repository).getAll();
     }
 
 
-
     @Test
     void getIngredientById_ShouldReturnIngredient_WhenIngredientExists() {
-       
+
         when(repository.getIngredient(testId)).thenReturn(testIngredient);
 
-        
+
         IngredientDto result = ingredientsService.getIngredientById(testId);
 
-        
+
         assertEquals(testIngredient, result);
         assertEquals(testId, result.getId());
         assertEquals("Test Tomato", result.getName());
@@ -99,12 +98,12 @@ class IngredientDtoServiceTest {
 
     @Test
     void getIngredientById_ShouldThrowException_WhenIngredientNotFound() {
-        
+
         when(repository.getIngredient(testId)).thenReturn(null);
 
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.getIngredientById(testId));
+                                                     () -> ingredientsService.getIngredientById(testId));
 
         assertEquals("Ingredient not found with id: " + testId, exception.getMessage());
         verify(repository).getIngredient(testId);
@@ -112,20 +111,21 @@ class IngredientDtoServiceTest {
 
     @Test
     void getIngredientById_ShouldThrowException_WhenIdIsNull() {
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.getIngredientById(null));
+                                                     () -> ingredientsService.getIngredientById(null));
 
         assertEquals("ID cannot be null", exception.getMessage());
         verify(repository, never()).getIngredient(any());
     }
 
 
-
     @Test
     void createIngredient_ShouldReturnCreatedIngredient_WhenValidIngredient() {
-        doNothing().when(validator).validateIngredient(testIngredient);
-        doNothing().when(repository).create(testIngredient);
+        doNothing().when(validator)
+                .validateIngredient(testIngredient);
+        doNothing().when(repository)
+                .create(testIngredient);
         UUID originalId = testIngredient.getId();
 
         IngredientDto result = ingredientsService.createIngredient(testIngredient);
@@ -138,13 +138,14 @@ class IngredientDtoServiceTest {
 
     @Test
     void createIngredient_ShouldThrowException_WhenValidationFails() {
-        
-        doThrow(new IngredientsExeption("Name is required"))
-                .when(validator).validateIngredient(testIngredient);
 
-        
+        doThrow(new IngredientsExeption("Name is required"))
+                .when(validator)
+                .validateIngredient(testIngredient);
+
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.createIngredient(testIngredient));
+                                                     () -> ingredientsService.createIngredient(testIngredient));
 
         assertEquals("Name is required", exception.getMessage());
         verify(validator).validateIngredient(testIngredient);
@@ -152,18 +153,19 @@ class IngredientDtoServiceTest {
     }
 
 
-
     @Test
     void updateIngredient_ShouldReturnUpdatedIngredient_WhenIngredientExists() {
-        
-        when(repository.getIngredient(testId)).thenReturn(testIngredient);
-        doNothing().when(validator).validateIngredient(testIngredient);
-        doNothing().when(repository).update(testId, testIngredient);
 
-        
+        when(repository.getIngredient(testId)).thenReturn(testIngredient);
+        doNothing().when(validator)
+                .validateIngredient(testIngredient);
+        doNothing().when(repository)
+                .update(testId, testIngredient);
+
+
         IngredientDto result = ingredientsService.updateIngredient(testId, testIngredient);
 
-        
+
         assertEquals(testIngredient, result);
         verify(repository).getIngredient(testId);
         verify(validator).validateIngredient(testIngredient);
@@ -172,12 +174,12 @@ class IngredientDtoServiceTest {
 
     @Test
     void updateIngredient_ShouldThrowException_WhenIngredientNotFound() {
-        
+
         when(repository.getIngredient(testId)).thenReturn(null);
 
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.updateIngredient(testId, testIngredient));
+                                                     () -> ingredientsService.updateIngredient(testId, testIngredient));
 
         assertEquals("Ingredient not found with id: " + testId, exception.getMessage());
         verify(repository).getIngredient(testId);
@@ -187,9 +189,9 @@ class IngredientDtoServiceTest {
 
     @Test
     void updateIngredient_ShouldThrowException_WhenIdIsNull() {
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.updateIngredient(null, testIngredient));
+                                                     () -> ingredientsService.updateIngredient(null, testIngredient));
 
         assertEquals("ID cannot be null", exception.getMessage());
         verify(repository, never()).getIngredient(any());
@@ -199,14 +201,15 @@ class IngredientDtoServiceTest {
 
     @Test
     void updateIngredient_ShouldThrowException_WhenValidationFails() {
-        
+
         when(repository.getIngredient(testId)).thenReturn(testIngredient);
         doThrow(new IngredientsExeption("Quantity must be positive"))
-                .when(validator).validateIngredient(testIngredient);
+                .when(validator)
+                .validateIngredient(testIngredient);
 
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.updateIngredient(testId, testIngredient));
+                                                     () -> ingredientsService.updateIngredient(testId, testIngredient));
 
         assertEquals("Quantity must be positive", exception.getMessage());
         verify(repository).getIngredient(testId);
@@ -215,29 +218,29 @@ class IngredientDtoServiceTest {
     }
 
 
-
     @Test
     void deleteIngredient_ShouldDeleteSuccessfully_WhenIngredientExists() {
-        
-        when(repository.getIngredient(testId)).thenReturn(testIngredient);
-        doNothing().when(repository).delete(testId);
 
-        
+        when(repository.getIngredient(testId)).thenReturn(testIngredient);
+        doNothing().when(repository)
+                .delete(testId);
+
+
         assertDoesNotThrow(() -> ingredientsService.deleteIngredient(testId));
 
-        
+
         verify(repository).getIngredient(testId);
         verify(repository).delete(testId);
     }
 
     @Test
     void deleteIngredient_ShouldThrowException_WhenIngredientNotFound() {
-        
+
         when(repository.getIngredient(testId)).thenReturn(null);
 
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.deleteIngredient(testId));
+                                                     () -> ingredientsService.deleteIngredient(testId));
 
         assertEquals("Ingredient not found with id: " + testId, exception.getMessage());
         verify(repository).getIngredient(testId);
@@ -246,9 +249,9 @@ class IngredientDtoServiceTest {
 
     @Test
     void deleteIngredient_ShouldThrowException_WhenIdIsNull() {
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientsService.deleteIngredient(null));
+                                                     () -> ingredientsService.deleteIngredient(null));
 
         assertEquals("ID cannot be null", exception.getMessage());
         verify(repository, never()).getIngredient(any());

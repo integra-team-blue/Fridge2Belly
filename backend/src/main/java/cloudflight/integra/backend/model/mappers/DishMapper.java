@@ -18,21 +18,19 @@ import java.util.stream.Collectors;
 public class DishMapper {
     private final IngredientRepository ingredientRepository;
     private final RecipeRepository recipeRepository;
-    
+
     public Dish toEntity(DishDto dto) {
-        List<Recipe> recipes = dto.getRecipeIds() != null
-                ? dto.getRecipeIds().stream()
+        List<Recipe> recipes = dto.getRecipeIds() != null ? dto.getRecipeIds()
+                .stream()
                 .map(id -> recipeRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("Recipe not found: " + id)))
-                .collect(Collectors.toList())
-                : List.of();
+                .collect(Collectors.toList()) : List.of();
 
-        List<Ingredient> ingredients = dto.getIngredientIds() != null
-                ? dto.getIngredientIds().stream()
+        List<Ingredient> ingredients = dto.getIngredientIds() != null ? dto.getIngredientIds()
+                .stream()
                 .map(id -> ingredientRepository.findById(id)
                         .orElseThrow(() -> new IllegalArgumentException("Ingredient not found: " + id)))
-                .collect(Collectors.toList())
-                : List.of();
+                .collect(Collectors.toList()) : List.of();
 
         return Dish.builder()
                 .id(dto.getId())
@@ -46,20 +44,18 @@ public class DishMapper {
                 .ingredients(ingredients)
                 .build();
     }
-    
-    public DishDto toDto(Dish dish) {
-        List<UUID> recipeIds = dish.getRecipes() != null
-                ? dish.getRecipes().stream()
-                .map(Recipe::getId)
-                .collect(Collectors.toList())
-                : List.of();
 
-        List<UUID> ingredientIds = dish.getIngredients() != null
-                ? dish.getIngredients().stream()
+    public DishDto toDto(Dish dish) {
+        List<UUID> recipeIds = dish.getRecipes() != null ? dish.getRecipes()
+                .stream()
+                .map(Recipe::getId)
+                .collect(Collectors.toList()) : List.of();
+
+        List<UUID> ingredientIds = dish.getIngredients() != null ? dish.getIngredients()
+                .stream()
                 .map(Ingredient::getId)
-                .collect(Collectors.toList())
-                : List.of();
-        
+                .collect(Collectors.toList()) : List.of();
+
         return DishDto.builder()
                 .id(dish.getId())
                 .name(dish.getName())
