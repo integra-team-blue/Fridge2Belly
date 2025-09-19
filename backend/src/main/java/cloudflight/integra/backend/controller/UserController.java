@@ -28,8 +28,8 @@ public class UserController {
     }
 
     @PutMapping("/users/{id}")
-    public void updateUser(@PathVariable UUID id, @Valid @RequestBody UserDto userDto) {
-        userService.updateUser(id, userDto);
+    public ResponseEntity<UserDto> updateUser(@PathVariable UUID id, @Valid @RequestBody UserDto userDto) {
+        return ResponseEntity.ok(userService.updateUser(id, userDto));
     }
 
     @PostMapping("/users")

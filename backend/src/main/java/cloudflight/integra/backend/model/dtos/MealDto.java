@@ -27,7 +27,6 @@ public class MealDto {
     private LocalDateTime dateTime;
 
     @NotNull(message = "Dish IDs list must not be null")
-    @NotEmpty(message = "Meal must have at least one dish")
     private List<@NotNull(message = "Dish ID cannot be null") UUID> dishIds;
 
 }

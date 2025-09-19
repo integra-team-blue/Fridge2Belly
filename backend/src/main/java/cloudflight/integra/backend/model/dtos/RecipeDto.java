@@ -31,6 +31,5 @@ public class RecipeDto {
     private String instructions;
 
     @NotNull(message = "Dish ids cannot be null")
-    @NotEmpty(message = "Dish ids cannot be empty")
     private List<@NotNull(message = "Dish ID cannot be null") UUID> dishIds;
 }

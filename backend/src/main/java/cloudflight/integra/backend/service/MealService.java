@@ -1,49 +1,62 @@
 package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.exception.MealNotFoundException;
+import cloudflight.integra.backend.model.Meal;
 import cloudflight.integra.backend.model.dtos.MealDto;
-import cloudflight.integra.backend.repository.initial.IMealRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import cloudflight.integra.backend.model.mappers.MealMapper;
+import cloudflight.integra.backend.repository.MealRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MealService {
 
-    private final IMealRepository mealRepository;
+    private final MealRepository repository;
+    private final MealMapper mapper;
 
-    @Autowired
-    public MealService(IMealRepository mealRepository) {
-        this.mealRepository = mealRepository;
+    public MealService(MealRepository repository, MealMapper mapper) {
+        this.repository = repository;
+        this.mapper = mapper;
     }
 
+    @Transactional
     public MealDto createMeal(MealDto mealDto) {
-        if (mealDto.getMealType() == null) {
-            throw new IllegalArgumentException("MealType is required.");
-        }
-        if (mealDto.getId() == null) {
-            mealDto.setId(UUID.randomUUID());
-        }
-        return mealRepository.save(mealDto);
+        return mapper.toDto(repository.save(mapper.toEntity(mealDto)));
     }
 
-    public List<MealDto> getAllMeals() { return mealRepository.findAll(); }
+    @Transactional
+    public List<MealDto> getAllMeals() {
+        return repository.findAll().stream().map(mapper::toDto).collect(Collectors.toList());
+    }
 
+    @Transactional
     public MealDto getMealById(UUID id) {
-        return mealRepository.findById(id);
+        return mapper.toDto(repository.getReferenceById(id));
     }
 
+    @Transactional
     public MealDto updateMeal(UUID id, MealDto updatedMealDto) {
-        if (!mealRepository.existsById(id)) {
-            throw new MealNotFoundException("Meal not found with id: " + id);
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Meal not found with id: " + id);
         }
-        updatedMealDto.setId(id);
-        return mealRepository.save(updatedMealDto);
+        
+        Meal meal = mapper.toEntity(updatedMealDto);
+        meal.setId(id);
+
+        return mapper.toDto(repository.save(meal));
     }
 
+    @Transactional
     public void deleteMeal(UUID id) {
-        mealRepository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new EntityNotFoundException("Meal not found with id: " + id);
+        }
+        
+        repository.deleteById(id);
     }
 }

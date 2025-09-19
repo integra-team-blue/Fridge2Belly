@@ -39,10 +39,8 @@ public class DishDto {
     private double carbohydrates;
 
     @NotNull(message = "Recipe ids cannot be null")
-    @NotEmpty(message = "Recipe list must not be empty")
     private List<@NotNull(message = "Recipe ID cannot be null") UUID> recipeIds;
 
     @NotNull(message = "Ingredient ids cannot be null")
-    @NotEmpty(message = "Ingredients list must not be empty")
     private List<@NotNull(message = "Ingredient ID cannot be null") UUID> ingredientIds;
 }
