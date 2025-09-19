@@ -102,7 +102,7 @@ export class IngredientsComponent {
   }
 
   openEditDialog(ingredient: Ingredient[] | Ingredient | undefined) {
-    if (!ingredient || Array.isArray(ingredient)) {
+    if (ingredient == null || Array.isArray(ingredient)) {
       return;
     }
 
