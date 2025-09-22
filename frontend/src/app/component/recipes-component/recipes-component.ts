@@ -4,17 +4,15 @@ import { RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import {Dialog, DialogModule} from 'primeng/dialog';
-import {Button, ButtonModule} from 'primeng/button';
-//import { InputTextModule } from 'primeng/inputtext';
-//import { InputTextareaModule } from 'primeng/inputtextarea/inputtextarea';
-import {MultiSelect, MultiSelectModule} from 'primeng/multiselect';
+import {Dialog} from 'primeng/dialog';
+import {Button} from 'primeng/button';
+import {MultiSelect} from 'primeng/multiselect';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ContextMenu } from 'primeng/contextmenu';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 
 import { Recipe, RecipesService } from '../../services/recipes-services/recipes-service';
-import { Dish, DishesService } from '../../services/dishes-services/dishes-service';
+import { Dish, DishesService } from '../../services/dishes-services/dishes-services';
 import {InputText} from 'primeng/inputtext';
 import {Textarea} from 'primeng/textarea';
 
@@ -33,22 +31,11 @@ export class RecipesComponent {
   showDialog = false;
   editDialogVisible = false;
 
-  menuItems: MenuItem[];
-
   constructor(
     private recipesService: RecipesService,
     private dishesService: DishesService,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
-  ) {
-    this.menuItems = [
-      {
-        label: 'Delete',
-        icon: 'pi pi-trash',
-        command: () => this.confirmDelete(this.selectedRecipe),
-      },
-    ];
-  }
+  ) {}
 
   async ngOnInit() {
     this.recipes = await firstValueFrom(this.recipesService.getRecipes());
@@ -95,7 +82,6 @@ export class RecipesComponent {
       return;
     }
 
-    // Construim obiectul pentru backend
     const recipeToSave = {
       name: this.recipeForm.value.name,
       description: this.recipeForm.value.description,
@@ -111,7 +97,6 @@ export class RecipesComponent {
       this.recipes.push(saved);
       this.showDialog = false;
 
-      // Reset formular
       this.recipeForm.reset({
         name: '',
         description: '',
@@ -134,7 +119,6 @@ export class RecipesComponent {
       });
     }
   }
-
 
   openEditDialog(recipe: Recipe[] | Recipe | undefined) {
     if (!recipe || Array.isArray(recipe)) return;
@@ -166,27 +150,5 @@ export class RecipesComponent {
       console.error(error);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Update failed.' });
     }
-  }
-
-  async deleteRecipe(recipe: Recipe | null) {
-    if (!recipe) return;
-
-    try {
-      await firstValueFrom(this.recipesService.deleteRecipe(recipe.id));
-      this.recipes = this.recipes.filter((r) => r.id !== recipe.id);
-      this.selectedRecipe = null;
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Recipe deleted.' });
-    } catch {
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Delete failed.' });
-    }
-  }
-
-  confirmDelete(recipe: Recipe | null) {
-    if (!recipe) return;
-
-    this.confirmationService.confirm({
-      message: `Delete recipe "${recipe.name}"?`,
-      accept: () => this.deleteRecipe(recipe),
-    });
   }
 }

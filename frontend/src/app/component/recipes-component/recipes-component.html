@@ -6,7 +6,6 @@
   [(selection)] = "selectedRecipe"
   (onRowSelect) = "openEditDialog($event.data)"
   (onContextMenuSelect)="selectedRecipe = $event.data"
-  [contextMenu]="cm"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -40,8 +39,6 @@
     </tr>
   </ng-template>
 </p-table>
-
-<p-contextMenu #cm [model]="menuItems"></p-contextMenu>
 
 <div class="center-button">
   <p-button label="Add Recipe" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
@@ -98,7 +95,7 @@
     <div class="form-row"><label>Description</label><textarea pInputTextarea formControlName="description"></textarea></div>
     <div class="form-row"><label>Cooking Time (min)</label><input pInputText type="number" formControlName="cookingTimeMinutes" /></div>
     <div class="form-row">
-      <label>Dished</label>
+      <label>Dishes</label>
       <p-multiSelect
         [options]="dishes"
         optionLabel="name"
