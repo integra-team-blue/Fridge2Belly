@@ -8,11 +8,7 @@ import { DatePipe, NgForOf } from '@angular/common';
   selector: 'app-meals',
   templateUrl: './meals-component.html',
   styleUrls: ['./meals-component.css'],
-  imports: [
-    TableModule,
-    DatePipe,
-    NgForOf
-  ]
+  imports: [TableModule, DatePipe, NgForOf],
 })
 export class MealsComponent implements OnInit {
   meals: Meal[] = [];

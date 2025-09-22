@@ -2,16 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-export interface Meal {
+export type Meal = {
   id: string;
   mealType: string;
   dateTime: string;
   dishIds: string[];
-}
-
-export interface Dish {
-  id: string;
-  name: string;
 }
 
 @Injectable({ providedIn: 'root' })
