@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
-public class    UserController {
+public class UserController {
 
     @Autowired
     private UserService userService;
