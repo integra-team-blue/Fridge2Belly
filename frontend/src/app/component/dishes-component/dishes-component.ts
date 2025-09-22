@@ -8,7 +8,7 @@ import { DatePipe, NgForOf, NgIf } from '@angular/common';
   selector: 'app-dishes',
   templateUrl: './dishes-component.html',
   styleUrls: ['./dishes-component.css'],
-  imports: [ TableModule, DatePipe, NgIf, NgForOf, ],
+  imports: [TableModule, DatePipe, NgIf, NgForOf ],
   standalone: true,
 })
 export class DishesComponent implements OnInit {
