@@ -81,8 +81,7 @@ module.exports = [
       "@typescript-eslint/switch-exhaustiveness-check": "error",
       "no-implicit-coercion": "error",
 
-      // Prettier
-      "prettier/prettier": "error",
+      "prettier/prettier": ["error", { endOfLine: "auto" }],
     },
   },
   {
