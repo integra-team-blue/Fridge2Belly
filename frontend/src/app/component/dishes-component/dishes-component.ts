@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { DishesService, Dish } from '../../services/dishes-services/dishes-services';
+import { firstValueFrom } from 'rxjs';
+import { Dish, DishesService } from '../../services/dishes-services/dishes-services';
 import {TableModule} from 'primeng/table';
-import {DatePipe, NgForOf} from '@angular/common';
-import {firstValueFrom} from 'rxjs';
+import {DatePipe, NgForOf, NgIf} from '@angular/common';
 
 @Component({
   selector: 'app-dishes',
@@ -10,6 +10,7 @@ import {firstValueFrom} from 'rxjs';
   imports: [
     TableModule,
     DatePipe,
+    NgIf,
     NgForOf
   ],
   styleUrls: ['./dishes-component.css']
@@ -21,6 +22,6 @@ export class DishesComponent implements OnInit {
 
   async ngOnInit() {
     this.dishes = await firstValueFrom(this.dishesService.getDishes());
-    console.log(this.dishes);
+    console.log('Dishes loaded:', this.dishes);
   }
 }
