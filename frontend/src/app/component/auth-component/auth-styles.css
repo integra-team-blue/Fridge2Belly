@@ -1,0 +1,47 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: calc(100vh - 100px);
+  padding: 1rem;
+}
+
+.auth-card {
+  background: var(--surface-card, #1e1e1e);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-card h1 {
+  margin-bottom: 0.5rem;
+  text-align: center;
+}
+
+.auth-card p {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.field small {
+  color: #f87171;
+  font-size: 0.8rem;
+}
+
+button[pbutton] {
+  width: 100%;
+}
+
+.switch-link {
+  text-align: center;
+  margin-top: 1rem;
+}
