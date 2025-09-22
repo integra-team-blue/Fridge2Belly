@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.service;
 
-import cloudflight.integra.backend.model.User;
-import cloudflight.integra.backend.repository.RepositoryUser;
+import cloudflight.integra.backend.model.dtos.UserDto;
+import cloudflight.integra.backend.repository.initial.IUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,32 +9,32 @@ import java.util.UUID;
 
 @Service
 public class UserService {
-    private final RepositoryUser repositoryUser;
+    private final IUserRepository userRepository;
 
-    public UserService(RepositoryUser repositoryUser) {
-        this.repositoryUser = repositoryUser;
+    public UserService(IUserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public List<User> findAll() {
-        return repositoryUser.getAll();
+    public List<UserDto> findAll() {
+        return userRepository.getAll();
     }
 
-    public User findUser(UUID id) {
-        return repositoryUser.getUser(id);
+    public UserDto findUser(UUID id) {
+        return userRepository.getUser(id);
     }
 
-    public User createUser(User user) {
-        if(user.getId() == null)
-            user.setId(UUID.randomUUID());
-        return repositoryUser.create(user);
+    public UserDto createUser(UserDto userDto) {
+        if (userDto.getId() == null)
+            userDto.setId(UUID.randomUUID());
+        return userRepository.create(userDto);
     }
 
     public void deleteUser(UUID id) {
-        repositoryUser.delete(id);
+        userRepository.delete(id);
     }
 
-    public void updateUser(UUID id, User user) {
-        user.setId(id);
-        repositoryUser.update(user);
+    public void updateUser(UUID id, UserDto userDto) {
+        userDto.setId(id);
+        userRepository.update(userDto);
     }
 }

@@ -1,8 +1,8 @@
 package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.exception.MealNotFoundException;
-import cloudflight.integra.backend.model.Meal;
-import cloudflight.integra.backend.repository.MealRepository;
+import cloudflight.integra.backend.model.dtos.MealDto;
+import cloudflight.integra.backend.repository.initial.IMealRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,37 +12,35 @@ import java.util.UUID;
 @Service
 public class MealService {
 
-    private final MealRepository mealRepository;
+    private final IMealRepository mealRepository;
 
     @Autowired
-    public MealService(MealRepository mealRepository) {
+    public MealService(IMealRepository mealRepository) {
         this.mealRepository = mealRepository;
     }
 
-    public Meal createMeal(Meal meal) {
-        if (meal.getMealType() == null) {
+    public MealDto createMeal(MealDto mealDto) {
+        if (mealDto.getMealType() == null) {
             throw new IllegalArgumentException("MealType is required.");
         }
-        if (meal.getId() == null) {
-            meal.setId(UUID.randomUUID());
+        if (mealDto.getId() == null) {
+            mealDto.setId(UUID.randomUUID());
         }
-        return mealRepository.save(meal);
+        return mealRepository.save(mealDto);
     }
 
-    public List<Meal> getAllMeals() {
-        return mealRepository.findAll();
-    }
+    public List<MealDto> getAllMeals() { return mealRepository.findAll(); }
 
-    public Meal getMealById(UUID id) {
+    public MealDto getMealById(UUID id) {
         return mealRepository.findById(id);
     }
 
-    public Meal updateMeal(UUID id, Meal updatedMeal) {
+    public MealDto updateMeal(UUID id, MealDto updatedMealDto) {
         if (!mealRepository.existsById(id)) {
             throw new MealNotFoundException("Meal not found with id: " + id);
         }
-        updatedMeal.setId(id);
-        return mealRepository.save(updatedMeal);
+        updatedMealDto.setId(id);
+        return mealRepository.save(updatedMealDto);
     }
 
     public void deleteMeal(UUID id) {

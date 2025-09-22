@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.service;
 
-import cloudflight.integra.backend.model.Dish;
-import cloudflight.integra.backend.repository.DishRepository;
+import cloudflight.integra.backend.model.dtos.DishDto;
+import cloudflight.integra.backend.repository.initial.IDishRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,25 +9,26 @@ import java.util.UUID;
 
 @Service
 public class DishService {
-    private final DishRepository repo;
+    private final IDishRepository repo;
 
-    public DishService(DishRepository repo) { this.repo = repo; }
+    public DishService(IDishRepository repo) { this.repo = repo; }
 
-    public Dish create(Dish dish) {
-        dish.setId(UUID.randomUUID());
-        return repo.save(dish);
+    public DishDto create(DishDto dishDto) {
+        dishDto.setId(UUID.randomUUID());
+        return repo.save(dishDto);
     }
 
-    public List<Dish> getAll() { return repo.findAll(); }
+    public List<DishDto> getAll() { return repo.findAll(); }
 
-    public Dish getById(UUID id) {
-        return repo.findById(id).orElseThrow(() -> new RuntimeException("Dish not found: " + id));
+    public DishDto getById(UUID id) {
+        return repo.findById(id)
+                .orElseThrow(() -> new RuntimeException("Dish not found: " + id));
     }
 
-    public Dish update(UUID id, Dish dish) {
+    public DishDto update(UUID id, DishDto dishDto) {
         if (!repo.existsById(id)) throw new RuntimeException("Dish not found: " + id);
-        dish.setId(id);
-        return repo.save(dish);
+        dishDto.setId(id);
+        return repo.save(dishDto);
     }
 
     public void delete(UUID id) {

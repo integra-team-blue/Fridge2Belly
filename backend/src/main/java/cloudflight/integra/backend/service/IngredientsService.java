@@ -1,8 +1,8 @@
 package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.exception.IngredientsExeption;
-import cloudflight.integra.backend.model.Ingredients;
-import cloudflight.integra.backend.repository.RepositoryIngredients;
+import cloudflight.integra.backend.model.dtos.IngredientDto;
+import cloudflight.integra.backend.repository.initial.IIngredientsRepository;
 import cloudflight.integra.backend.validation.IngredientsValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,23 +12,21 @@ import java.util.UUID;
 @Service
 public class IngredientsService {
 
-    private final RepositoryIngredients repository;
+    private final IIngredientsRepository repository;
     private final IngredientsValidator validator;
 
     @Autowired
-    public IngredientsService(RepositoryIngredients repository, IngredientsValidator validator) {
+    public IngredientsService(IIngredientsRepository repository, IngredientsValidator validator) {
         this.repository = repository;
         this.validator = validator;
     }
 
-    public List<Ingredients> getAllIngredients() {
-        return repository.getAll();
-    }
+    public List<IngredientDto> getAllIngredients() { return repository.getAll(); }
 
-    public Ingredients getIngredientById(UUID id) {
+    public IngredientDto getIngredientById(UUID id) {
         validateId(id);
 
-        Ingredients ingredient = repository.getIngredient(id);
+        IngredientDto ingredient = repository.getIngredient(id);
         if (ingredient == null) {
             throw new IngredientsExeption("Ingredient not found with id: " + id);
         }
@@ -36,7 +34,7 @@ public class IngredientsService {
         return ingredient;
     }
 
-    public Ingredients createIngredient(Ingredients ingredient) {
+    public IngredientDto createIngredient(IngredientDto ingredient) {
         validator.validateIngredient(ingredient);
 
         if (ingredient.getId() == null) {
@@ -47,7 +45,7 @@ public class IngredientsService {
         return ingredient;
     }
 
-    public Ingredients updateIngredient(UUID id, Ingredients ingredient) {
+    public IngredientDto updateIngredient(UUID id, IngredientDto ingredient) {
         validateId(id);
 
         if (!ingredientExists(id)) {

@@ -1,13 +1,13 @@
 package cloudflight.integra.backend.validation;
 
 import cloudflight.integra.backend.exception.IngredientsExeption;
-import cloudflight.integra.backend.model.Ingredients;
+import cloudflight.integra.backend.model.dtos.IngredientDto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class IngredientsValidator {
 
-    public void validateIngredient(Ingredients ingredient) {
+    public void validateIngredient(IngredientDto ingredient) {
         if (ingredient == null) {
             throw new IngredientsExeption("Ingredient cannot be null");
         }
@@ -19,7 +19,8 @@ public class IngredientsValidator {
     }
 
     private void validateName(String name) {
-        if (name == null || name.trim().isEmpty()) {
+        if (name == null || name.trim()
+                .isEmpty()) {
             throw new IngredientsExeption("Ingredient name is required");
         }
 
@@ -39,7 +40,8 @@ public class IngredientsValidator {
     }
 
     private void validateUnit(String unit) {
-        if (unit == null || unit.trim().isEmpty()) {
+        if (unit == null || unit.trim()
+                .isEmpty()) {
             throw new IngredientsExeption("Unit is required");
         }
 
@@ -58,7 +60,7 @@ public class IngredientsValidator {
         }
     }
 
-    private void validateNutritionalValues(Ingredients ingredient) {
+    private void validateNutritionalValues(IngredientDto ingredient) {
         if (ingredient.getCalories() != null && ingredient.getCalories() < 0) {
             throw new IngredientsExeption("Calories cannot be negative");
         }

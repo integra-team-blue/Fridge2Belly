@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.controller;
 
-import cloudflight.integra.backend.model.Meal;
+import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.service.MealService;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
@@ -20,23 +20,21 @@ public class MealController {
     }
 
     @PostMapping
-    public Meal createMeal(@Valid @RequestBody Meal meal) {
-        return mealService.createMeal(meal);
+    public MealDto createMeal(@Valid @RequestBody MealDto mealDto) {
+        return mealService.createMeal(mealDto);
     }
 
     @GetMapping
-    public List<Meal> getAllMeals() {
-        return mealService.getAllMeals();
-    }
+    public List<MealDto> getAllMeals() { return mealService.getAllMeals(); }
 
     @GetMapping("/{id}")
-    public Meal getMealById(@PathVariable UUID id) {
+    public MealDto getMealById(@PathVariable UUID id) {
         return mealService.getMealById(id);
     }
 
     @PutMapping("/{id}")
-    public Meal updateMeal(@PathVariable UUID id, @Valid @RequestBody Meal meal) {
-        return mealService.updateMeal(id, meal);
+    public MealDto updateMeal(@PathVariable UUID id, @Valid @RequestBody MealDto mealDto) {
+        return mealService.updateMeal(id, mealDto);
     }
 
     @DeleteMapping("/{id}")

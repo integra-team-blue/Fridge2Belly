@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.controller;
 
-import cloudflight.integra.backend.model.User;
+import cloudflight.integra.backend.model.dtos.UserDto;
 import cloudflight.integra.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,29 +18,31 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/users")
-    public List<User> findAll() {
+    public List<UserDto> findAll() {
         return userService.findAll();
     }
 
     @GetMapping("/users/{id}")
-    public User findUser(@PathVariable UUID id) {
+    public UserDto findUser(@PathVariable UUID id) {
         return userService.findUser(id);
     }
 
     @PutMapping("/users/{id}")
-    public void updateUser(@PathVariable UUID id, @Valid @RequestBody User user) {
-        userService.updateUser(id, user);
+    public void updateUser(@PathVariable UUID id, @Valid @RequestBody UserDto userDto) {
+        userService.updateUser(id, userDto);
     }
 
     @PostMapping("/users")
-    public ResponseEntity<User> addUser(@Valid @RequestBody User user) {
-        userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(user);
+    public ResponseEntity<UserDto> addUser(@Valid @RequestBody UserDto userDto) {
+        userService.createUser(userDto);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userDto);
     }
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .build();
     }
 }

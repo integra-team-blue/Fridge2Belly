@@ -1,0 +1,33 @@
+<p-table [value]="recipes" [tableStyle]="{ 'min-width': '60rem' }">
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Cooking Time (min)</th>
+      <th>Instructions</th>
+      <th>Ingredients IDs</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-recipe>
+    <tr>
+      <td>{{ recipe.name }}</td>
+      <td>{{ recipe.description }}</td>
+      <td>{{ recipe.cookingTimeMinutes }}</td>
+      <td>{{ recipe.instructions }}</td>
+      <td>
+        <ul>
+          <li *ngFor="let ingredientId of recipe.ingredientsId">
+            {{ ingredientId }}
+          </li>
+        </ul>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="5" style="text-align: center; font-style: italic">No recipes found.</td>
+    </tr>
+  </ng-template>
+</p-table>
