@@ -21,6 +21,6 @@ export class MealsService {
   constructor(private http: HttpClient) {}
 
   getMeals(): Observable<Meal[]> {
-    return this.http.get<Meal[]>('http://localhost:8080/api/meals');
+    return this.http.get<Meal[]>(this.apiUrl);
   }
 }

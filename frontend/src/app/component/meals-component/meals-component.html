@@ -12,24 +12,9 @@
       <td>{{ meal.mealType }}</td>
       <td>{{ meal.dateTime | date:'yyyy-MM-dd HH:mm' }}</td>
       <td>
-        <ng-container *ngIf="meal.dishIds?.length > 0; else noDishes">
-          <div *ngFor="let id of meal.dishIds; let i = index" class="dish-row">
-            <p-select
-              [options]="dishes"
-              [(ngModel)]="meal.dishIds[i]"
-              optionLabel="name"
-              optionValue="id"
-              placeholder="Select dish"
-              appendTo="body"
-              [style]="{ width: '14rem' }"
-              [panelStyle]="{ maxHeight: '260px' }">
-            </p-select>
-          </div>
-        </ng-container>
-
-        <ng-template #noDishes>
-          <span style="font-style: italic; color: gray;">No dishes</span>
-        </ng-template>
+        <ul>
+          <li *ngFor="let id of meal.dishIds">{{ id }}</li>
+        </ul>
       </td>
     </tr>
   </ng-template>
