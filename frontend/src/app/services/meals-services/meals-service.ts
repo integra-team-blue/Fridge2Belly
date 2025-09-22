@@ -7,7 +7,7 @@ export type Meal = {
   mealType: string;
   dateTime: string;
   dishIds: string[];
-}
+};
 
 @Injectable({ providedIn: 'root' })
 export class MealsService {
