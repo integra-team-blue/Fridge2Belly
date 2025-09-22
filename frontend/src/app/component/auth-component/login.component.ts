@@ -8,6 +8,7 @@ import { LoadingService } from '../../services/auth-services/loading.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   standalone: true,
@@ -28,11 +29,22 @@ import { ButtonModule } from 'primeng/button';
 
           <div class="field">
             <label>Password</label>
-            <p-password formControlName="password" [feedback]="false" [toggleMask]="true"></p-password>
-            <small *ngIf="password.touched && password.hasError('required')">Password is required.</small>
+            <p-password
+              formControlName="password"
+              [feedback]="false"
+              [toggleMask]="true"
+            ></p-password>
+            <small *ngIf="password.touched && password.hasError('required')"
+              >Password is required.</small
+            >
           </div>
 
-          <button pButton type="submit" [disabled]="loading.active() || form.invalid" [label]="loading.active() ? 'Signing in…' : 'Sign in'"></button>
+          <button
+            pButton
+            type="submit"
+            [disabled]="loading.active() || form.invalid"
+            [label]="loading.active() ? 'Signing in…' : 'Sign in'"
+          ></button>
         </form>
 
         <p class="switch-link">
@@ -42,7 +54,7 @@ import { ButtonModule } from 'primeng/button';
       </section>
     </div>
   `,
-  styleUrls: ['./auth-styles.css']
+  styleUrls: ['./auth-styles.css'],
 })
 export class LoginComponent {
   private fb = inject(FormBuilder);
@@ -53,19 +65,43 @@ export class LoginComponent {
 
   form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required]]
+    password: ['', [Validators.required]],
   });
 
-  get email() { return this.form.get('email')!; }
-  get password() { return this.form.get('password')!; }
+  get email() {
+    return this.form.get('email')!;
+  }
+  get password() {
+    return this.form.get('password')!;
+  }
+
+  private buildErrorMessage(e: HttpErrorResponse, fallback: string): string {
+    const body = e?.error as unknown;
+    if (typeof body === 'object' && body !== null) {
+      const msg = (body as { message?: unknown }).message;
+      if (typeof msg === 'string') {
+        return msg;
+      }
+    }
+    return typeof e?.message === 'string' && e.message.length ? e.message : fallback;
+  }
 
   submit() {
-    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     this.loading.show();
     this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => { this.toast.push('Logged in successfully', 'success'); this.router.navigateByUrl('/dishes'); },
-      error: () => this.toast.push('Login failed', 'error'),
-      complete: () => this.loading.hide()
+      next: () => {
+        this.toast.push('Logged in successfully', 'success');
+        this.router.navigateByUrl('/dishes');
+      },
+      error: (e: HttpErrorResponse) => {
+        const msg = this.buildErrorMessage(e, 'Login failed');
+        this.toast.push(msg, 'error');
+      },
+      complete: () => this.loading.hide(),
     });
   }
 }

@@ -19,5 +19,5 @@ export const routes: Routes = [
   { path: 'recipes', canActivate: [authGuard], component: RecipesComponent },
   { path: 'ingredients', canActivate: [authGuard], component: IngredientsComponent },
   { path: 'meals', canActivate: [authGuard], component: MealsComponent },
-  { path: '**', redirectTo: 'login' }
+  { path: '**', redirectTo: 'login' },
 ];

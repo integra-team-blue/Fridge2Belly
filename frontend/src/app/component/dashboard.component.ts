@@ -7,6 +7,6 @@ import { Component } from '@angular/core';
       <h1>Dashboard</h1>
       <p>You are logged in.</p>
     </section>
-  `
+  `,
 })
 export class DashboardComponent {}
