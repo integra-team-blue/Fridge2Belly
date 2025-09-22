@@ -1,0 +1,44 @@
+.form-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.form-row label {
+  flex: 0 0 180px;
+  font-weight: 500;
+  margin-top: 0.4rem;
+}
+
+.form-row input,
+.form-row textarea,
+.form-row p-multiSelect {
+  flex: 1;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.form-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.form-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.center-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+}

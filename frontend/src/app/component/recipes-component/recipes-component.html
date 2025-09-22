@@ -1,24 +1,33 @@
-<p-table [value]="recipes" [tableStyle]="{ 'min-width': '60rem' }">
+<p-confirmDialog header="Confirm" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<p-table
+  [value]="recipes"
+  selectionMode="single"
+  [(selection)] = "selectedRecipe"
+  (onRowSelect) = "openEditDialog($event.data)"
+  (onContextMenuSelect)="selectedRecipe = $event.data"
+  [contextMenu]="cm"
+>
   <ng-template pTemplate="header">
     <tr>
       <th>Name</th>
       <th>Description</th>
       <th>Cooking Time (min)</th>
       <th>Instructions</th>
-      <th>Ingredients IDs</th>
+      <th>Dishes IDs</th>
     </tr>
   </ng-template>
 
   <ng-template pTemplate="body" let-recipe>
-    <tr>
+    <tr [pSelectableRow]="recipe" [pContextMenuRow]="recipe">
       <td>{{ recipe.name }}</td>
       <td>{{ recipe.description }}</td>
       <td>{{ recipe.cookingTimeMinutes }}</td>
       <td>{{ recipe.instructions }}</td>
       <td>
         <ul>
-          <li *ngFor="let ingredientId of recipe.ingredientsId">
-            {{ ingredientId }}
+          <li *ngFor="let dish of recipe.dishes">
+            {{ dish.name }}
           </li>
         </ul>
       </td>
@@ -31,3 +40,83 @@
     </tr>
   </ng-template>
 </p-table>
+
+<p-contextMenu #cm [model]="menuItems"></p-contextMenu>
+
+<div class="center-button">
+  <p-button label="Add Recipe" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
+</div>
+
+<p-dialog
+  header="Add Recipe"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [style]="{ width: '700px', height: '550px', maxHeight: '90vh' }"
+  [baseZIndex]="10000"
+  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
+>
+  <form [formGroup]="recipeForm" class="form-container">
+    <div class="form-content">
+      <div class="form-row"><label>Name</label><input pInputText formControlName="name" /></div>
+      <div class="form-row"><label>Description</label><textarea pInputTextarea formControlName="description"></textarea></div>
+      <div class="form-row"><label>Cooking Time (min)</label><input pInputText type="number" formControlName="cookingTimeMinutes" /></div>
+      <div class="form-row">
+        <label>Dishes</label>
+        <p-multiSelect
+          [options]="dishes"
+          optionLabel="name"
+          optionValue="id"
+          formControlName="dishIds"
+          display="chip"
+          [style]="{ width: '100%' }"
+          [panelStyle]="{ width: '500px', maxHeight: '400px' }"
+          [scrollHeight]="'300px'"
+        ></p-multiSelect>
+      </div>
+      <div class="form-row"><label>Instructions</label><textarea pInputTextarea formControlName="instructions"></textarea></div>
+    </div>
+  </form>
+
+    <ng-template pTemplate="footer">
+      <div class="form-buttons">
+        <p-button label="Save" (click)="addRecipe()"></p-button>
+        <p-button label="Cancel" class="p-button-secondary" (click)="showDialog = false"></p-button>
+      </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Edit Recipe"
+  [(visible)]="editDialogVisible"
+  [modal]="true"
+  [style]="{ width: '800px', maxHeight: '90vh' }"
+  [baseZIndex]="10000"
+  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
+>
+  <form [formGroup]="editForm">
+    <div class="form-row"><label>Name</label><input pInputText formControlName="name" /></div>
+    <div class="form-row"><label>Description</label><textarea pInputTextarea formControlName="description"></textarea></div>
+    <div class="form-row"><label>Cooking Time (min)</label><input pInputText type="number" formControlName="cookingTimeMinutes" /></div>
+    <div class="form-row">
+      <label>Dished</label>
+      <p-multiSelect
+        [options]="dishes"
+        optionLabel="name"
+        optionValue="id"
+        formControlName="dishIds"
+        display="chip"
+        [style]="{ width: '100%' }"
+        [panelStyle]="{ width: '500px', maxHeight: '400px' }"
+        [scrollHeight]="'300px'"
+      ></p-multiSelect>
+    </div>
+    <div class="form-row"><label>Instructions</label><textarea pInputTextarea formControlName="instructions"></textarea></div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="form-buttons">
+      <p-button label="Save" (click)="editRecipe()"></p-button>
+      <p-button label="Cancel" class="p-button-secondary" (click)="showDialog = false"></p-button>
+    </div>
+  </ng-template>
+</p-dialog>
