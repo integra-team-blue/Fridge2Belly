@@ -1,7 +1,8 @@
 package cloudflight.integra.backend.service;
 
-import cloudflight.integra.backend.model.dtos.UserDto;
+import cloudflight.integra.backend.exception.UserNotFoundException;
 import cloudflight.integra.backend.model.User;
+import cloudflight.integra.backend.model.dtos.UserDto;
 import cloudflight.integra.backend.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,35 +21,37 @@ public class UserService {
     public List<UserDto> findAll() {
         return userRepository.findAll()
                 .stream()
-                .map(user -> new UserDto(user.getId(), user.getUsername(), user.getEmail()))
+                .map(u -> new UserDto(u.getId(), u.getUsername(), u.getEmail()))
                 .toList();
     }
 
     public UserDto findUser(UUID id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return new UserDto(user.getId(), user.getUsername(), user.getEmail());
+        User u = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
+        return new UserDto(u.getId(), u.getUsername(), u.getEmail());
     }
 
-    public UserDto createUser(UserDto userDto) {
-        if (userDto.getId() == null) {
-            userDto.setId(UUID.randomUUID());
-        }
-        User user = new User(userDto.getId(), userDto.getUsername(), userDto.getEmail());
-        user = userRepository.save(user);
-        return new UserDto(user.getId(), user.getUsername(), user.getEmail());
+    public UserDto createUser(UserDto dto) {
+        UUID id = Optional.ofNullable(dto.getId())
+                .orElse(UUID.randomUUID());
+        User u = new User(id, dto.getUsername(), dto.getEmail());
+        u = userRepository.save(u);
+        return new UserDto(u.getId(), u.getUsername(), u.getEmail());
     }
 
     public void deleteUser(UUID id) {
+        if (!userRepository.existsById(id)) {
+            throw new UserNotFoundException("User with id " + id + " not found");
+        }
         userRepository.deleteById(id);
     }
 
-    public void updateUser(UUID id, UserDto userDto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        user.setUsername(userDto.getUsername());
-        user.setEmail(userDto.getEmail());
-        userRepository.save(user);
+    public void updateUser(UUID id, UserDto dto) {
+        User existing = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
+        existing.setUsername(dto.getUsername());
+        existing.setEmail(dto.getEmail());
+        userRepository.save(existing);
     }
 
     public boolean existsByUsername(String username) {
@@ -61,6 +64,6 @@ public class UserService {
 
     public Optional<UserDto> findByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email)
-                .map(user -> new UserDto(user.getId(), user.getUsername(), user.getEmail()));
+                .map(u -> new UserDto(u.getId(), u.getUsername(), u.getEmail()));
     }
 }

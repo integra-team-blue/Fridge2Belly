@@ -104,6 +104,8 @@ public class UserDtoServiceTests {
     void testDeleteUser() {
         UUID id = UUID.randomUUID();
 
+        when(userRepository.existsById(id)).thenReturn(true);
+
         userService.deleteUser(id);
 
         verify(userRepository, times(1)).deleteById(id);
