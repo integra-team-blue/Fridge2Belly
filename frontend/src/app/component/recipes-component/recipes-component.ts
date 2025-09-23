@@ -4,23 +4,35 @@ import { RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import {Dialog} from 'primeng/dialog';
-import {Button} from 'primeng/button';
-import {MultiSelect} from 'primeng/multiselect';
+import { Dialog } from 'primeng/dialog';
+import { Button } from 'primeng/button';
+import { MultiSelect } from 'primeng/multiselect';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ContextMenu } from 'primeng/contextmenu';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 
 import { Recipe, RecipesService } from '../../services/recipes-services/recipes-service';
 import { Dish, DishesService } from '../../services/dishes-services/dishes-services';
-import {InputText} from 'primeng/inputtext';
-import {Textarea} from 'primeng/textarea';
+import { InputText } from 'primeng/inputtext';
+import { Textarea } from 'primeng/textarea';
 
 @Component({
   selector: 'app-recipes-component',
   standalone: true,
   templateUrl: './recipes-component.html',
-  imports: [TableModule, RouterModule, CommonModule, ConfirmDialog, ContextMenu, Button, Dialog, ReactiveFormsModule, MultiSelect, InputText, Textarea],
+  imports: [
+    TableModule,
+    RouterModule,
+    CommonModule,
+    ConfirmDialog,
+    ContextMenu,
+    Button,
+    Dialog,
+    ReactiveFormsModule,
+    MultiSelect,
+    InputText,
+    Textarea,
+  ],
   styleUrls: ['./recipes-component.css'],
 })
 export class RecipesComponent {
@@ -119,7 +131,9 @@ export class RecipesComponent {
   }
 
   openEditDialog(recipe: Recipe[] | Recipe | undefined) {
-    if (!recipe || Array.isArray(recipe)) return;
+    if (!recipe || Array.isArray(recipe)) {
+      return;
+    }
 
     const r: Recipe = recipe;
     this.selectedRecipe = r;
@@ -129,20 +143,32 @@ export class RecipesComponent {
 
   async editRecipe() {
     if (!this.editForm.valid || !this.selectedRecipe) {
-      this.messageService.add({ severity: 'warn', summary: 'Invalid', detail: 'Please fill all required fields.' });
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Invalid',
+        detail: 'Please fill all required fields.',
+      });
       return;
     }
 
     const updated = this.editForm.getRawValue();
 
     try {
-      const saved = await firstValueFrom(this.recipesService.updateRecipe(this.selectedRecipe.id, updated));
+      const saved = await firstValueFrom(
+        this.recipesService.updateRecipe(this.selectedRecipe.id, updated),
+      );
       const idx = this.recipes.findIndex((r) => r.id === this.selectedRecipe!.id);
-      if (idx !== -1) this.recipes[idx] = saved;
+      if (idx !== -1) {
+        this.recipes[idx] = saved;
+      }
 
       this.editDialogVisible = false;
       this.selectedRecipe = null;
-      this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Recipe updated.' });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Recipe updated.',
+      });
     } catch (error) {
       console.error(error);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Update failed.' });

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import {FormControl, ɵFormGroupRawValue, ɵTypedOrUntyped} from '@angular/forms';
+import { FormControl, ɵFormGroupRawValue, ɵTypedOrUntyped } from '@angular/forms';
 
 export type Recipe = {
   id: string;
@@ -27,24 +27,31 @@ export class RecipesService {
     cookingTimeMinutes: number | undefined;
     name: string | undefined;
     description: string | undefined;
-    dishIds: string[] | undefined
+    dishIds: string[] | undefined;
   }): Observable<Recipe> {
     return this.http.post<Recipe>(this.apiUrl, recipe);
   }
 
-  updateRecipe(id: string, recipe: ɵTypedOrUntyped<{
-    instructions: FormControl<string>;
-    cookingTimeMinutes: FormControl<number>;
-    name: FormControl<string>;
-    description: FormControl<string>;
-    dishIds: FormControl<string[]>
-  }, ɵFormGroupRawValue<{
-    instructions: FormControl<string>;
-    cookingTimeMinutes: FormControl<number>;
-    name: FormControl<string>;
-    description: FormControl<string>;
-    dishIds: FormControl<string[]>
-  }>, any>): Observable<Recipe> {
+  updateRecipe(
+    id: string,
+    recipe: ɵTypedOrUntyped<
+      {
+        instructions: FormControl<string>;
+        cookingTimeMinutes: FormControl<number>;
+        name: FormControl<string>;
+        description: FormControl<string>;
+        dishIds: FormControl<string[]>;
+      },
+      ɵFormGroupRawValue<{
+        instructions: FormControl<string>;
+        cookingTimeMinutes: FormControl<number>;
+        name: FormControl<string>;
+        description: FormControl<string>;
+        dishIds: FormControl<string[]>;
+      }>,
+      any
+    >,
+  ): Observable<Recipe> {
     return this.http.put<Recipe>(`${this.apiUrl}/${id}`, recipe);
   }
 
