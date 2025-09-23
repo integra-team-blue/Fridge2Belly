@@ -134,7 +134,6 @@ export class RecipesComponent {
     }
 
     const updated = this.editForm.getRawValue();
-    console.log('Updating recipe:', updated);
 
     try {
       const saved = await firstValueFrom(this.recipesService.updateRecipe(this.selectedRecipe.id, updated));
