@@ -85,7 +85,7 @@ export class RecipesComponent {
   }
 
   async addRecipe() {
-    if (!this.recipeForm.valid) {
+    if (! this.recipeForm.valid) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Invalid',
@@ -131,7 +131,7 @@ export class RecipesComponent {
   }
 
   openEditDialog(recipe: Recipe[] | Recipe | undefined) {
-    if (!recipe || Array.isArray(recipe)) {
+    if (! recipe || Array.isArray(recipe)) {
       return;
     }
 
@@ -142,7 +142,7 @@ export class RecipesComponent {
   }
 
   async editRecipe() {
-    if (!this.editForm.valid || !this.selectedRecipe) {
+    if (! this.editForm.valid || ! this.selectedRecipe) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Invalid',
@@ -157,7 +157,7 @@ export class RecipesComponent {
       const saved = await firstValueFrom(
         this.recipesService.updateRecipe(this.selectedRecipe.id, updated),
       );
-      const idx = this.recipes.findIndex((r) => r.id === this.selectedRecipe!.id);
+      const idx = this.recipes.findIndex((r) => r.id === this.selectedRecipe !.id);
       if (idx !== -1) {
         this.recipes[idx] = saved;
       }
