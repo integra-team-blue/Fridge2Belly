@@ -1,16 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { firstValueFrom, map } from 'rxjs';
 
-type AuthResponse = {
-  token: string;
-  user: any;
-};
 export type UserDto = {
   id?: string;
   username: string;
   email: string;
+};
+
+export type AuthResponse = {
+  token: string;
+  user: UserDto;
 };
 
 @Injectable({ providedIn: 'root' })
@@ -18,39 +18,42 @@ export class AuthService {
   private http = inject(HttpClient);
   private api = 'http://localhost:8080';
 
-  login(body: { email: string; password: string }) {
-    return new Promise<AuthResponse>((resolve) =>
-      setTimeout(() => resolve({ token: 'temp-token', user: { email: body.email } }), 400),
-    ) as any;
+  async getUsers(): Promise<UserDto[]> {
+    return await firstValueFrom(this.http.get<UserDto[]>(`${this.api}/users`));
   }
 
-  signup(body: { username: string; email: string }) {
-    return this.http.post<UserDto>(`${this.api}/users`, body).pipe(
-      map((user) => ({ token: 'temp-token', user }) as AuthResponse),
-      tap((res) => localStorage.setItem('token', res.token)),
+  async login(body: { email: string; password: string }): Promise<AuthResponse> {
+    const response = await firstValueFrom(
+      this.http.post<AuthResponse>(`${this.api}/auth/login`, { email: body.email }),
     );
+    localStorage.setItem('token', response.token);
+    return response;
   }
 
-  getUsers(): Observable<UserDto[]> {
-    return this.http.get<UserDto[]>(`${this.api}/users`);
+  async signup(body: { username: string; email: string }): Promise<AuthResponse> {
+    const user = await firstValueFrom(this.http.post<UserDto>(`${this.api}/users`, body));
+    const response: AuthResponse = { token: 'temp-token', user };
+    localStorage.setItem('token', response.token);
+    return response;
   }
 
-  isUsernameTaken(username: string): Observable<boolean> {
-    return this.getUsers().pipe(
-      map((list) => list.some((u) => u.username.toLowerCase() === username.toLowerCase())),
-    );
+  isUsernameTaken(username: string) {
+    return this.http
+      .get<{ taken: boolean }>(`${this.api}/users/check-username`, { params: { username } })
+      .pipe(map((r) => Boolean(r.taken)));
   }
 
-  isEmailTaken(email: string): Observable<boolean> {
-    return this.getUsers().pipe(
-      map((list) => list.some((u) => u.email.toLowerCase() === email.toLowerCase())),
-    );
+  isEmailTaken(email: string) {
+    return this.http
+      .get<{ taken: boolean }>(`${this.api}/users/check-email`, { params: { email } })
+      .pipe(map((r) => Boolean(r.taken)));
   }
 
   logout() {
     localStorage.removeItem('token');
   }
+
   isAuthenticated() {
-    return Boolean(localStorage.getItem('token'));
+    return localStorage.getItem('token') !== null;
   }
 }

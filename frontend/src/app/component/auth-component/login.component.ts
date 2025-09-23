@@ -8,7 +8,7 @@ import { LoadingService } from '../../services/auth-services/loading.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
-import { HttpErrorResponse } from '@angular/common/http';
+import { buildErrorMessage } from '../../utils/error-utils';
 
 @Component({
   standalone: true,
@@ -57,13 +57,13 @@ import { HttpErrorResponse } from '@angular/common/http';
   styleUrls: ['./auth-styles.css'],
 })
 export class LoginComponent {
-  private fb = inject(FormBuilder);
+  private formBuilder = inject(FormBuilder);
   private auth = inject(AuthService);
   private toast = inject(ToastService);
   loading = inject(LoadingService);
   private router = inject(Router);
 
-  form = this.fb.nonNullable.group({
+  form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
@@ -75,33 +75,21 @@ export class LoginComponent {
     return this.form.get('password')!;
   }
 
-  private buildErrorMessage(e: HttpErrorResponse, fallback: string): string {
-    const body = e?.error as unknown;
-    if (typeof body === 'object' && body !== null) {
-      const msg = (body as { message?: unknown }).message;
-      if (typeof msg === 'string') {
-        return msg;
-      }
-    }
-    return typeof e?.message === 'string' && e.message.length ? e.message : fallback;
-  }
-
-  submit() {
+  async submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
     this.loading.show();
-    this.auth.login(this.form.getRawValue()).subscribe({
-      next: () => {
-        this.toast.push('Logged in successfully', 'success');
-        this.router.navigateByUrl('/dishes');
-      },
-      error: (e: HttpErrorResponse) => {
-        const msg = this.buildErrorMessage(e, 'Login failed');
-        this.toast.push(msg, 'error');
-      },
-      complete: () => this.loading.hide(),
-    });
+    try {
+      await this.auth.login(this.form.getRawValue());
+      const msg = 'Logged in successfully';
+      this.toast.push(msg, 'success');
+      this.router.navigateByUrl('/dishes');
+    } catch (err) {
+      this.toast.push(buildErrorMessage(err, 'Login failed'), 'error');
+    } finally {
+      this.loading.hide();
+    }
   }
 }

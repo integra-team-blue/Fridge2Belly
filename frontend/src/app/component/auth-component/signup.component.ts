@@ -9,7 +9,6 @@ import {
 } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { NgIf } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, of, switchMap, timer } from 'rxjs';
 import { AuthService } from '../../services/auth-services/auth.service';
 import { ToastService } from '../../services/auth-services/toast.service';
@@ -17,6 +16,7 @@ import { LoadingService } from '../../services/auth-services/loading.service';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
+import { buildErrorMessage } from '../../utils/error-utils';
 
 const strong = (v: string) => v.length >= 8 && /[A-Z]/.test(v) && /[a-z]/.test(v) && /\d/.test(v);
 
@@ -103,13 +103,13 @@ const strong = (v: string) => v.length >= 8 && /[A-Z]/.test(v) && /[a-z]/.test(v
   styleUrls: ['./auth-styles.css'],
 })
 export class SignupComponent {
-  private fb = inject(FormBuilder);
+  private formBuilder = inject(FormBuilder);
   private auth = inject(AuthService);
   private toast = inject(ToastService);
   loading = inject(LoadingService);
   private router = inject(Router);
 
-  form = this.fb.nonNullable.group({
+  form = this.formBuilder.nonNullable.group({
     email: ['', [Validators.required, Validators.email], [this.emailTakenValidator()]],
     username: ['', [Validators.required, Validators.minLength(3)], [this.usernameTakenValidator()]],
     password: [
@@ -163,18 +163,7 @@ export class SignupComponent {
     };
   }
 
-  private buildErrorMessage(e: HttpErrorResponse, fallback: string): string {
-    const body = e?.error as unknown;
-    if (typeof body === 'object' && body !== null) {
-      const msg = (body as { message?: unknown }).message;
-      if (typeof msg === 'string') {
-        return msg;
-      }
-    }
-    return typeof e?.message === 'string' && e.message.length ? e.message : fallback;
-  }
-
-  submit() {
+  async submit() {
     const v = this.form.getRawValue();
     if (v.password !== v.confirmPassword) {
       this.confirmPassword.setErrors({ mismatch: true });
@@ -183,18 +172,15 @@ export class SignupComponent {
       this.form.markAllAsTouched();
       return;
     }
-    const payload = { username: v.username, email: v.email };
     this.loading.show();
-    this.auth.signup(payload).subscribe({
-      next: () => {
-        this.toast.push('Account created. Welcome!', 'success');
-        this.router.navigateByUrl('/dishes');
-      },
-      error: (e: HttpErrorResponse) => {
-        const msg = this.buildErrorMessage(e, 'Signup failed');
-        this.toast.push(msg, 'error');
-      },
-      complete: () => this.loading.hide(),
-    });
+    try {
+      await this.auth.signup({ username: v.username, email: v.email });
+      this.toast.push('Account created. Welcome!', 'success');
+      this.router.navigateByUrl('/dishes');
+    } catch (err) {
+      this.toast.push(buildErrorMessage(err, 'Signup failed'), 'error');
+    } finally {
+      this.loading.hide();
+    }
   }
 }
