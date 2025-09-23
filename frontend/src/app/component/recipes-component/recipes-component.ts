@@ -85,7 +85,7 @@ export class RecipesComponent {
   }
 
   async addRecipe() {
-    if (!this.recipeForm.valid) {
+    if (this.recipeForm.valid === false) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Invalid',
@@ -131,7 +131,7 @@ export class RecipesComponent {
   }
 
   openEditDialog(recipe: Recipe[] | Recipe | undefined) {
-    if (!recipe || Array.isArray(recipe)) {
+    if (recipe == null || Array.isArray(recipe)) {
       return;
     }
 
@@ -142,7 +142,7 @@ export class RecipesComponent {
   }
 
   async editRecipe() {
-    if (!this.editForm.valid ||! this.selectedRecipe) {
+    if (this.editForm.valid === false || this.selectedRecipe == null) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Invalid',
