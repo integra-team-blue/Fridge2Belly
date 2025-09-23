@@ -90,8 +90,6 @@ export class RecipesComponent {
       dishIds: this.recipeForm.value.dishIds,
     };
 
-    console.log('Adding recipe:', recipeToSave);
-
     try {
       const saved = await firstValueFrom(this.recipesService.addRecipe(recipeToSave));
       this.recipes.push(saved);
