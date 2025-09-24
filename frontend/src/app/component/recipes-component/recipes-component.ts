@@ -43,11 +43,22 @@ export class RecipesComponent {
   showDialog = false;
   editDialogVisible = false;
 
+  menuItems: MenuItem[] = [];
+
   constructor(
     private recipesService: RecipesService,
     private dishesService: DishesService,
     private messageService: MessageService,
-  ) {}
+    private confirmationService: ConfirmationService,
+  ) {
+    this.menuItems = [
+      {
+        label: 'Delete',
+        icon: 'pi pi-times',
+        command: () => this.confirmDelete(this.selectedRecipe),
+      },
+    ];
+  }
 
   async ngOnInit() {
     this.recipes = await firstValueFrom(this.recipesService.getRecipes());
@@ -173,5 +184,41 @@ export class RecipesComponent {
       console.error(error);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Update failed.' });
     }
+  }
+
+  async deleteRecipe(recipe: Recipe | null) {
+    if (recipe?.id == null) {
+      return;
+    }
+
+    try {
+      await firstValueFrom(this.recipesService.deleteRecipe(recipe.id));
+      this.recipes = this.recipes.filter((r) => r.id !== recipe.id);
+      this.selectedRecipe = null;
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'The recipe was deleted successfully.',
+      });
+    } catch (err) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to delete the recipe. Please try again.',
+      });
+    }
+  }
+
+  confirmDelete(recipe: Recipe | null) {
+    if (recipe == null) {
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete "${recipe.name}"?`,
+      accept: () => this.deleteRecipe(recipe),
+      reject: () => {},
+    });
   }
 }
