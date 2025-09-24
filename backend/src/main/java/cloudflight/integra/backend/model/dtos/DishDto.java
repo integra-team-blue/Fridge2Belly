@@ -1,7 +1,6 @@
 package cloudflight.integra.backend.model.dtos;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.*;
@@ -38,11 +37,10 @@ public class DishDto {
     @PositiveOrZero(message = "Carbohydrates must be >= 0")
     private double carbohydrates;
 
+
     @NotNull(message = "Recipe ids cannot be null")
-    @NotEmpty(message = "Recipe list must not be empty")
     private List<@NotNull(message = "Recipe ID cannot be null") UUID> recipeIds;
 
     @NotNull(message = "Ingredient ids cannot be null")
-    @NotEmpty(message = "Ingredients list must not be empty")
     private List<@NotNull(message = "Ingredient ID cannot be null") UUID> ingredientIds;
 }
