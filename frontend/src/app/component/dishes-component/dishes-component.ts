@@ -31,8 +31,8 @@ import { ToastService } from '../../services/toast.service';
     InputText,
     Select,
     DatePicker,
-    InputNumber
-  ]
+    InputNumber,
+  ],
 })
 export class DishesComponent implements OnInit {
   dishes: Dish[] = [];
@@ -53,16 +53,30 @@ export class DishesComponent implements OnInit {
     calories: [0, Validators.required],
     protein: [0, Validators.required],
     fat: [0, Validators.required],
-    carbohydrates: [0, Validators.required]
+    carbohydrates: [0, Validators.required],
   });
 
-  get name() { return this.form.get('name')!; }
-  get recipeId() { return this.form.get('recipeId')!; }
-  get preparedAt() { return this.form.get('preparedAt')!; }
-  get calories() { return this.form.get('calories')!; }
-  get protein() { return this.form.get('protein')!; }
-  get fat() { return this.form.get('fat')!; }
-  get carbohydrates() { return this.form.get('carbohydrates')!; }
+  get name() {
+    return this.form.get('name')!;
+  }
+  get recipeId() {
+    return this.form.get('recipeId')!;
+  }
+  get preparedAt() {
+    return this.form.get('preparedAt')!;
+  }
+  get calories() {
+    return this.form.get('calories')!;
+  }
+  get protein() {
+    return this.form.get('protein')!;
+  }
+  get fat() {
+    return this.form.get('fat')!;
+  }
+  get carbohydrates() {
+    return this.form.get('carbohydrates')!;
+  }
   editId = () => this._editId();
 
   async ngOnInit() {
@@ -74,7 +88,7 @@ export class DishesComponent implements OnInit {
     try {
       const [d, r] = await Promise.all([
         firstValueFrom(this.dishesService.getDishes()),
-        firstValueFrom(this.dishesService.getRecipes())
+        firstValueFrom(this.dishesService.getRecipes()),
       ]);
       this.dishes = d;
       this.recipes = r;
@@ -94,14 +108,16 @@ export class DishesComponent implements OnInit {
       calories: 0,
       protein: 0,
       fat: 0,
-      carbohydrates: 0
+      carbohydrates: 0,
     });
     this.dialogVisible = true;
   }
 
   onRowSelect(event: { data?: Dish | Dish[] }) {
     const dish = Array.isArray(event?.data) ? event.data[0] : event?.data;
-    if (dish == null) return;
+    if (dish == null) {
+      return;
+    }
     this._editId.set(dish.id);
     this.form.patchValue({
       name: dish.name,
@@ -110,7 +126,7 @@ export class DishesComponent implements OnInit {
       calories: dish.calories,
       protein: dish.protein,
       fat: dish.fat,
-      carbohydrates: dish.carbohydrates
+      carbohydrates: dish.carbohydrates,
     });
     this.dialogVisible = true;
   }
@@ -132,7 +148,7 @@ export class DishesComponent implements OnInit {
         fat: Number(v.fat),
         carbohydrates: Number(v.carbohydrates),
         recipeIds,
-        ingredientIds: [] as string[]
+        ingredientIds: [] as string[],
       };
       const id = this._editId();
       const hasId = id !== null && id !== '';
@@ -158,7 +174,10 @@ export class DishesComponent implements OnInit {
   }
 
   private toLocalDateTimeString(value: unknown): string {
-    const d = value instanceof Date ? value : new Date(typeof value === 'string' && value ? value : Date.now());
+    const d =
+      value instanceof Date
+        ? value
+        : new Date(typeof value === 'string' && value ? value : Date.now());
     const pad = (n: number) => n.toString().padStart(2, '0');
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   }
