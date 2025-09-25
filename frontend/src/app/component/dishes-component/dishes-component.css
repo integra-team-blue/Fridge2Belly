@@ -8,12 +8,12 @@
 .full-width-table {
   width: 100%;
   max-width: 1400px;
-  margin-bottom: 1.5rem; /* spațiu liber sub tabel */
+  margin-bottom: 1.5rem;
 }
 
 .button-container {
   display: flex;
-  justify-content: center; /* buton centrat sub tabel */
+  justify-content: center;
   margin-bottom: 1rem;
 }
 
