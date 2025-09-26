@@ -1,3 +1,5 @@
+<p-confirmDialog></p-confirmDialog>
+
 <div class="dishes-container">
   <p-table
     [value]="dishes"
@@ -5,7 +7,7 @@
     dataKey="id"
     selectionMode="single"
     (onRowSelect)="onRowSelect($event)"
-    [loading]="loading.active()"
+    [loading]="loadingService.active()"
   >
     <ng-template pTemplate="header">
       <tr>
@@ -21,7 +23,7 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-dish>
-      <tr [pSelectableRow]="dish">
+      <tr [pSelectableRow]="dish" (contextmenu)="onRightClick($event, dish)">
         <td>{{ dish.name }}</td>
         <td>{{ dish.preparedAt | date: 'yyyy-MM-dd HH:mm' }}</td>
         <td>{{ dish.calories }}</td>
@@ -122,7 +124,7 @@
 
       <div class="actions">
         <p-button type="button" label="Cancel" styleClass="p-button-text" (onClick)="cancel()"></p-button>
-        <p-button type="submit" [disabled]="form.invalid || loading.active()" [label]="editId() ? 'Save' : 'Create'"></p-button>
+        <p-button type="submit" [disabled]="form.invalid || loadingService.active()" [label]="editId() ? 'Save' : 'Create'"></p-button>
       </div>
     </form>
   </p-dialog>

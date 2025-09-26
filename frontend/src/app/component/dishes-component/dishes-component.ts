@@ -2,16 +2,21 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 import { NgForOf, NgIf, DatePipe } from '@angular/common';
-
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
-
-import { DishesService, Dish, RecipeOption } from '../../services/dishes-services/dishes-services';
+import {
+  DishesService,
+  Dish,
+  RecipeOption,
+  CreateDishPayload,
+} from '../../services/dishes-services/dishes-services';
 import { LoadingService } from '../../services/loading.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -27,6 +32,7 @@ import { ToastService } from '../../services/toast.service';
     DatePipe,
     TableModule,
     DialogModule,
+    ConfirmDialog,
     Button,
     InputText,
     Select,
@@ -41,9 +47,9 @@ export class DishesComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private dishesService = inject(DishesService);
-  public loading = inject(LoadingService);
-  private toast = inject(ToastService);
-
+  public loadingService = inject(LoadingService);
+  private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmationService);
   private _editId = signal<string | null>(null);
 
   form: FormGroup = this.fb.group({
@@ -84,7 +90,7 @@ export class DishesComponent implements OnInit {
   }
 
   async loadData() {
-    this.loading.show();
+    this.loadingService.show();
     try {
       const [d, r] = await Promise.all([
         firstValueFrom(this.dishesService.getDishes()),
@@ -92,10 +98,8 @@ export class DishesComponent implements OnInit {
       ]);
       this.dishes = d;
       this.recipes = r;
-    } catch {
-      this.toast.push('Failed to load dishes or recipes', 'error');
     } finally {
-      this.loading.hide();
+      this.loadingService.hide();
     }
   }
 
@@ -131,16 +135,42 @@ export class DishesComponent implements OnInit {
     this.dialogVisible = true;
   }
 
+  onRightClick(event: MouseEvent, dish: Dish) {
+    event.preventDefault();
+    this.confirmService.confirm({
+      header: 'Delete dish',
+      message: `Are you sure you want to delete "${dish.name}"?`,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Delete',
+      rejectLabel: 'Cancel',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => this.deleteDish(dish.id),
+    });
+  }
+
+  private async deleteDish(id: string) {
+    this.loadingService.show();
+    try {
+      await firstValueFrom(this.dishesService.deleteDish(id));
+      this.dishes = this.dishes.filter((d) => d.id !== id);
+      this.toastService.push('Dish deleted', 'success');
+    } finally {
+      this.loadingService.hide();
+    }
+  }
+
   async submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-    this.loading.show();
+
+    this.loadingService.show();
     try {
       const v = this.form.getRawValue();
       const recipeIds = typeof v.recipeId === 'string' && v.recipeId.length > 0 ? [v.recipeId] : [];
-      const payload = {
+
+      const payload: CreateDishPayload = {
         name: String(v.name),
         preparedAt: this.toLocalDateTimeString(v.preparedAt),
         calories: Number(v.calories),
@@ -148,23 +178,22 @@ export class DishesComponent implements OnInit {
         fat: Number(v.fat),
         carbohydrates: Number(v.carbohydrates),
         recipeIds,
-        ingredientIds: [] as string[],
+        ingredientIds: [],
       };
+
       const id = this._editId();
-      const hasId = id !== null && id !== '';
-      if (hasId) {
+      if (id != null && id !== '') {
         await firstValueFrom(this.dishesService.updateDish(id, payload));
-        this.toast.push('Dish updated', 'success');
+        this.toastService.push('Dish updated', 'success');
       } else {
         await firstValueFrom(this.dishesService.createDish(payload));
-        this.toast.push('Dish created', 'success');
+        this.toastService.push('Dish created', 'success');
       }
+
       this.dialogVisible = false;
       await this.loadData();
-    } catch {
-      this.toast.push('Save failed', 'error');
     } finally {
-      this.loading.hide();
+      this.loadingService.hide();
     }
   }
 
@@ -179,6 +208,8 @@ export class DishesComponent implements OnInit {
         ? value
         : new Date(typeof value === 'string' && value ? value : Date.now());
     const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
+      d.getMinutes(),
+    )}:${pad(d.getSeconds())}`;
   }
 }
