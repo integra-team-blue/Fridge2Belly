@@ -1,3 +1,5 @@
+<p-confirmDialog></p-confirmDialog>
+
 <div class="dishes-container">
   <p-table
     [value]="dishes"
@@ -21,7 +23,7 @@
     </ng-template>
 
     <ng-template pTemplate="body" let-dish>
-      <tr [pSelectableRow]="dish">
+      <tr [pSelectableRow]="dish" (contextmenu)="onRightClick($event, dish)">
         <td>{{ dish.name }}</td>
         <td>{{ dish.preparedAt | date: 'yyyy-MM-dd HH:mm' }}</td>
         <td>{{ dish.calories }}</td>

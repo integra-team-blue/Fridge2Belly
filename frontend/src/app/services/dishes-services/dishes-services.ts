@@ -49,4 +49,8 @@ export class DishesService {
   updateDish(id: string, body: CreateDishPayload): Observable<Dish> {
     return this.http.put<Dish>(`${this.dishesUrl}/${id}`, body);
   }
+
+  deleteDish(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.dishesUrl}/${id}`);
+  }
 }
