@@ -1,31 +1,73 @@
+import cloudflight.integra.backend.model.Recipe;
 import cloudflight.integra.backend.model.dtos.RecipeDto;
-import cloudflight.integra.backend.repository.initial.memory.InMemoryRecipeRepository;
+import cloudflight.integra.backend.model.mappers.RecipeMapper;
+import cloudflight.integra.backend.repository.RecipeRepository;
 import cloudflight.integra.backend.service.RecipeService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class RecipeDtoServiceTest {
 
+    @Mock
+    private RecipeRepository recipeRepository;
+
+    @Mock
+    private RecipeMapper recipeMapper;
+
+    @InjectMocks
     private RecipeService service;
+
+    private RecipeDto testRecipeDto;
+    private Recipe testRecipe;
+    private UUID testId;
 
     @BeforeEach
     void setup() {
-        service = new RecipeService(new InMemoryRecipeRepository());
+        testId = UUID.randomUUID();
+        testRecipeDto = createTestRecipeDto("ServiceTest");
+        testRecipe = createTestRecipe("ServiceTest");
+    }
+
+    private RecipeDto createTestRecipeDto(String name) {
+        RecipeDto recipeDto = new RecipeDto();
+        recipeDto.setId(testId);
+        recipeDto.setName(name);
+        recipeDto.setCookingTimeMinutes(10);
+        recipeDto.setInstructions("Test");
+        recipeDto.setDishIds(List.of());
+        return recipeDto;
+    }
+
+    private Recipe createTestRecipe(String name) {
+        return Recipe.builder()
+                .id(testId)
+                .name(name)
+                .cookingTimeMinutes(10)
+                .instructions("Test")
+                .build();
     }
 
     @Test
     void testCreateAndGetRecipe() {
-        RecipeDto recipeDto = new RecipeDto();
-        recipeDto.setName("ServiceTest");
-        recipeDto.setCookingTimeMinutes(10);
-        recipeDto.setInstructions("Test");
-        recipeDto.setDishIds(List.of());
+        when(recipeMapper.toEntity(any(RecipeDto.class))).thenReturn(testRecipe);
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(testRecipe);
+        when(recipeMapper.toDto(any(Recipe.class))).thenReturn(testRecipeDto);
+        when(recipeRepository.findById(testId)).thenReturn(Optional.of(testRecipe));
 
-        RecipeDto saved = service.createRecipe(recipeDto);
+        RecipeDto saved = service.createRecipe(testRecipeDto);
 
         assertNotNull(saved.getId());
         assertEquals("ServiceTest",
@@ -35,20 +77,22 @@ class RecipeDtoServiceTest {
 
     @Test
     void testUpdateRecipe() {
-        RecipeDto recipeDto = new RecipeDto();
-        recipeDto.setName("Old");
-        recipeDto.setCookingTimeMinutes(5);
-        recipeDto.setInstructions("Old");
-        recipeDto.setDishIds(List.of());
+        RecipeDto oldDto = createTestRecipeDto("Old");
+        oldDto.setCookingTimeMinutes(5);
+        oldDto.setInstructions("Old");
 
-        RecipeDto saved = service.createRecipe(recipeDto);
-        RecipeDto update = new RecipeDto();
-        update.setName("New");
-        update.setCookingTimeMinutes(15);
-        update.setInstructions("New");
-        update.setDishIds(List.of());
+        RecipeDto newDto = createTestRecipeDto("New");
+        newDto.setCookingTimeMinutes(15);
+        newDto.setInstructions("New");
 
-        RecipeDto updated = service.updateRecipe(saved.getId(), update);
+        Recipe existingRecipe = createTestRecipe("Old");
+        Recipe updatedRecipe = createTestRecipe("New");
+
+        when(recipeRepository.findById(testId)).thenReturn(Optional.of(existingRecipe));
+        when(recipeRepository.save(any(Recipe.class))).thenReturn(updatedRecipe);
+        when(recipeMapper.toDto(updatedRecipe)).thenReturn(newDto);
+
+        RecipeDto updated = service.updateRecipe(testId, newDto);
 
         assertEquals("New", updated.getName());
         assertEquals(15, updated.getCookingTimeMinutes());

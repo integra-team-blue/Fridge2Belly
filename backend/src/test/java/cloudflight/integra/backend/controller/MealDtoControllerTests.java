@@ -1,8 +1,15 @@
 package cloudflight.integra.backend.controller;
 
 import cloudflight.integra.backend.BackendApplication;
+import cloudflight.integra.backend.model.Dish;
+import cloudflight.integra.backend.model.Ingredient;
+import cloudflight.integra.backend.model.Recipe;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.model.MealType;
+import cloudflight.integra.backend.repository.DishRepository;
+import cloudflight.integra.backend.repository.IngredientRepository;
+import cloudflight.integra.backend.repository.MealRepository;
+import cloudflight.integra.backend.repository.RecipeRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,11 +19,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,27 +49,82 @@ public class MealDtoControllerTests {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private DishRepository dishRepository;
+
+    @Autowired
+    private RecipeRepository recipeRepository;
+
+    @Autowired
+    private IngredientRepository ingredientRepository;
+
+    @Autowired
+    private MealRepository mealRepository;
+
     private MealDto testMealDto;
+    private UUID realDishId;
 
     @BeforeEach
     void setup() {
-        testMealDto = new MealDto(
-                                  UUID.randomUUID(),
-                                  MealType.LUNCH,
-                                  LocalDateTime.now(),
-                                  Collections.singletonList(UUID.randomUUID())
-        );
+        mealRepository.deleteAll();
+        dishRepository.deleteAll();
+        recipeRepository.deleteAll();
+        ingredientRepository.deleteAll();
+        realDishId = createTestDish();
+
+        // SOLUȚIA 1: Folosește builder pattern în loc de constructor
+        testMealDto = MealDto.builder()
+                .id(UUID.randomUUID())
+                .mealType(MealType.LUNCH)
+                .dateTime(LocalDateTime.now())
+                .dishIds(Collections.singletonList(realDishId))
+                .build();
+    }
+
+    private UUID createTestDish() {
+        Ingredient ingredient = Ingredient.builder()
+                .name("Test Ingredient")
+                .quantity(100.0)
+                .unit("grams")
+                .calories(50.0)
+                .protein(5.0)
+                .fat(2.0)
+                .carbohydrates(8.0)
+                .expirationDate(LocalDate.now().plusDays(7))
+                .build();
+        ingredient = ingredientRepository.save(ingredient);
+
+        Recipe recipe = Recipe.builder()
+                .name("Test Recipe")
+                .cookingTimeMinutes(30)
+                .instructions("Test instructions")
+                .dishes(new ArrayList<>())
+                .build();
+        recipe = recipeRepository.save(recipe);
+
+        Dish dish = Dish.builder()
+                .name("Test Dish")
+                .calories(100)
+                .protein(10)
+                .fat(5)
+                .carbohydrates(12)
+                .preparedAt(LocalDateTime.now())
+                .ingredients(List.of(ingredient))
+                .recipes(List.of(recipe))
+                .build();
+        dish = dishRepository.save(dish);
+
+        return dish.getId();
     }
 
     // POST /api/meals - success
     @Test
     void createMeal_success() throws Exception {
         mockMvc.perform(post("/api/meals")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testMealDto.getId()
-                        .toString()))
+                .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.mealType").value("LUNCH"));
     }
 
@@ -68,8 +134,8 @@ public class MealDtoControllerTests {
         testMealDto.setMealType(null);
 
         mockMvc.perform(post("/api/meals")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors.mealType").value("Meal type is required"));
     }
@@ -78,8 +144,8 @@ public class MealDtoControllerTests {
     @Test
     void getAllMeals_success() throws Exception {
         mockMvc.perform(post("/api/meals")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/meals"))
@@ -90,15 +156,19 @@ public class MealDtoControllerTests {
     // GET /api/meals/{id} - success
     @Test
     void getMealById_success() throws Exception {
-        mockMvc.perform(post("/api/meals")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
-                .andExpect(status().isOk());
-
-        mockMvc.perform(get("/api/meals/" + testMealDto.getId()))
+        // SOLUȚIA 2: Obține response-ul și parsează ID-ul creat
+        MvcResult result = mockMvc.perform(post("/api/meals")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(testMealDto.getId()
-                        .toString()));
+                .andReturn();
+
+        String responseContent = result.getResponse().getContentAsString();
+        MealDto createdMeal = objectMapper.readValue(responseContent, MealDto.class);
+
+        mockMvc.perform(get("/api/meals/" + createdMeal.getId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(createdMeal.getId().toString()));
     }
 
     // GET /api/meals/{id} - not found
@@ -113,16 +183,22 @@ public class MealDtoControllerTests {
     // PUT /api/meals/{id} - success
     @Test
     void updateMeal_success() throws Exception {
-        mockMvc.perform(post("/api/meals")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
-                .andExpect(status().isOk());
+        // Creează meal-ul și obține ID-ul
+        MvcResult result = mockMvc.perform(post("/api/meals")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectMapper.writeValueAsString(testMealDto)))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        testMealDto.setMealType(MealType.DINNER);
+        String responseContent = result.getResponse().getContentAsString();
+        MealDto createdMeal = objectMapper.readValue(responseContent, MealDto.class);
 
-        mockMvc.perform(put("/api/meals/" + testMealDto.getId())
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+        // Actualizează meal-ul
+        createdMeal.setMealType(MealType.DINNER);
+
+        mockMvc.perform(put("/api/meals/" + createdMeal.getId())
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(createdMeal)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mealType").value("DINNER"));
     }
@@ -132,8 +208,8 @@ public class MealDtoControllerTests {
     void updateMeal_notFound() throws Exception {
         UUID randomId = UUID.randomUUID();
         mockMvc.perform(put("/api/meals/" + randomId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(testMealDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Meal not found with id: " + randomId));
     }
@@ -141,12 +217,17 @@ public class MealDtoControllerTests {
     // DELETE /api/meals/{id} - success
     @Test
     void deleteMeal_success() throws Exception {
-        mockMvc.perform(post("/api/meals")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
-                .andExpect(status().isOk());
+        // Creează meal-ul și obține ID-ul
+        MvcResult result = mockMvc.perform(post("/api/meals")
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectMapper.writeValueAsString(testMealDto)))
+                .andExpect(status().isOk())
+                .andReturn();
 
-        mockMvc.perform(delete("/api/meals/" + testMealDto.getId()))
+        String responseContent = result.getResponse().getContentAsString();
+        MealDto createdMeal = objectMapper.readValue(responseContent, MealDto.class);
+
+        mockMvc.perform(delete("/api/meals/" + createdMeal.getId()))
                 .andExpect(status().isOk());
     }
 

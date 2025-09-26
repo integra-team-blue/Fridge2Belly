@@ -43,4 +43,7 @@ public class DishDto {
 
     @NotNull(message = "Ingredient ids cannot be null")
     private List<@NotNull(message = "Ingredient ID cannot be null") UUID> ingredientIds;
+
+    private List<RecipeDto> recipes;
+    private List<IngredientDto> ingredients;
 }

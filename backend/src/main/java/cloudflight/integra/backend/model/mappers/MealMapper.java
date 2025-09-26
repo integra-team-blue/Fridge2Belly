@@ -2,6 +2,7 @@ package cloudflight.integra.backend.model.mappers;
 
 import cloudflight.integra.backend.model.Meal;
 import cloudflight.integra.backend.model.Dish;
+import cloudflight.integra.backend.model.dtos.DishDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.repository.DishRepository;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +16,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MealMapper {
     private final DishRepository dishRepository;
+    private final DishMapper dishMapper;
 
     public MealDto toDto(Meal meal) {
         if (meal == null) {
             return null;
         }
+
         List<UUID> dishIds = meal.getDishes() != null ? meal.getDishes()
                 .stream()
                 .map(Dish::getId)
+                .collect(Collectors.toList()) : List.of();
+
+        List<DishDto> dishes = meal.getDishes() != null ? meal.getDishes()
+                .stream()
+                .map(dishMapper::toDto)
                 .collect(Collectors.toList()) : List.of();
 
         return MealDto.builder()
@@ -30,6 +38,7 @@ public class MealMapper {
                 .mealType(meal.getMealType())
                 .dateTime(meal.getDateTime())
                 .dishIds(dishIds)
+                .dishes(dishes)
                 .build();
     }
 
@@ -51,3 +60,4 @@ public class MealMapper {
                 .build();
     }
 }
+

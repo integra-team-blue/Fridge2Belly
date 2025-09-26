@@ -1,0 +1,12 @@
+<div class="container">
+  <h2>Generate Sample Data</h2>
+
+  <button
+    (click)="generateSampleData()"
+    [disabled]="isLoading"
+    class="generate-btn">
+    {{ isLoading ? 'Generating...' : 'Generate Sample Data' }}
+  </button>
+</div>
+
+<p-toast></p-toast>

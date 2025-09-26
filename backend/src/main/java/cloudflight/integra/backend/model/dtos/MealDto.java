@@ -30,4 +30,6 @@ public class MealDto {
     @NotEmpty(message = "Meal must have at least one dish")
     private List<@NotNull(message = "Dish ID cannot be null") UUID> dishIds;
 
+    private List<DishDto> dishes;
+
 }

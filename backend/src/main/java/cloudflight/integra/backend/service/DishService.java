@@ -1,38 +1,62 @@
 package cloudflight.integra.backend.service;
 
+import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.dtos.DishDto;
-import cloudflight.integra.backend.repository.initial.IDishRepository;
+import cloudflight.integra.backend.model.mappers.DishMapper;
+import cloudflight.integra.backend.repository.DishRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DishService {
-    private final IDishRepository repo;
+    private final DishRepository dishRepository;
+    private final DishMapper dishMapper;
 
-    public DishService(IDishRepository repo) { this.repo = repo; }
+    public DishService(DishRepository dishRepository, DishMapper dishMapper) {
+        this.dishRepository = dishRepository;
+        this.dishMapper = dishMapper;
+    }
 
     public DishDto create(DishDto dishDto) {
-        dishDto.setId(UUID.randomUUID());
-        return repo.save(dishDto);
+        Dish dish = dishMapper.toEntity(dishDto);
+        Dish savedDish = dishRepository.save(dish);
+        return dishMapper.toDto(savedDish);
     }
 
-    public List<DishDto> getAll() { return repo.findAll(); }
+    @Transactional
+    public List<DishDto> getAll() {
+        return dishRepository.findAll().stream()
+                .map(dishMapper::toDto)
+                .collect(Collectors.toList());
+    }
 
+    @Transactional
     public DishDto getById(UUID id) {
-        return repo.findById(id)
+        Dish dish = dishRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Dish not found: " + id));
+        return dishMapper.toDto(dish);
     }
 
+    @Transactional
     public DishDto update(UUID id, DishDto dishDto) {
-        if (!repo.existsById(id)) throw new RuntimeException("Dish not found: " + id);
+        if (!dishRepository.existsById(id)) {
+            throw new RuntimeException("Dish not found: " + id);
+        }
         dishDto.setId(id);
-        return repo.save(dishDto);
+        Dish dish = dishMapper.toEntity(dishDto);
+        Dish savedDish = dishRepository.save(dish);
+        return dishMapper.toDto(savedDish);
     }
 
     public void delete(UUID id) {
-        if (!repo.existsById(id)) throw new RuntimeException("Dish not found: " + id);
-        repo.deleteById(id);
+        if (!dishRepository.existsById(id)) {
+            throw new RuntimeException("Dish not found: " + id);
+        }
+        dishRepository.deleteById(id);
     }
 }
+

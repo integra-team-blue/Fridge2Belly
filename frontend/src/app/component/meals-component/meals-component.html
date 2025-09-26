@@ -12,9 +12,9 @@
       <td>{{ meal.mealType }}</td>
       <td>{{ meal.dateTime | date:'yyyy-MM-dd HH:mm' }}</td>
       <td>
-        <ul>
-          <li *ngFor="let id of meal.dishIds">{{ id }}</li>
-        </ul>
+        <span *ngFor="let dish of meal.dishes; let last = last">
+              {{ dish.name }}<span *ngif="!last">, </span>
+        </span>
       </td>
     </tr>
   </ng-template>

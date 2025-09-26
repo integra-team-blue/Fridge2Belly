@@ -53,6 +53,8 @@ dependencies {
 	testImplementation "org.springframework.boot:spring-boot-test-autoconfigure"
 	testImplementation "org.springframework.boot:spring-boot-testcontainers"
 	testImplementation "org.testcontainers:postgresql:1.19.8"
+
+    testImplementation 'com.h2database:h2'
 }
 
 tasks.named('test') {

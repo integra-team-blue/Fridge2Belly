@@ -1,66 +1,81 @@
 package cloudflight.integra.backend.service;
 
+import cloudflight.integra.backend.exception.UserNotFoundException;
 import cloudflight.integra.backend.model.User;
 import cloudflight.integra.backend.model.dtos.UserDto;
+import cloudflight.integra.backend.model.mappers.UserMapper;
 import cloudflight.integra.backend.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 public class UserDtoServiceTests {
 
+    @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private UserMapper userMapper;
+
+    @InjectMocks
     private UserService userService;
+
+    private UserDto testUserDto;
+    private User testUser;
+    private UUID testId;
 
     @BeforeEach
     void setup() {
-        userRepository = mock(UserRepository.class);
-        userService = new UserService(userRepository);
+        testId = UUID.randomUUID();
+        testUserDto = new UserDto(testId, "Ana", "ana@email.com");
+        testUser = User.builder()
+                .id(testId)
+                .username("Ana")
+                .email("ana@email.com")
+                .build();
     }
 
     @Test
     void testFindAll() {
-        List<User> entities = List.of(
-                                      new User(UUID.randomUUID(), "Ana", "ana@email.com"),
-                                      new User(UUID.randomUUID(), "Ion", "ion@email.com"));
-        when(userRepository.findAll()).thenReturn(entities);
+        List<User> users = Arrays.asList(testUser);
+        List<UserDto> expectedDtos = Arrays.asList(testUserDto);
+
+        when(userRepository.findAll()).thenReturn(users);
+        when(userMapper.toDto(testUser)).thenReturn(testUserDto);
 
         List<UserDto> result = userService.findAll();
 
-        assertEquals(2, result.size());
-        assertEquals(entities.get(0)
-                .getId(),
-                     result.get(0)
-                             .getId());
-        assertEquals(entities.get(0)
-                .getUsername(),
-                     result.get(0)
-                             .getUsername());
-        assertEquals(entities.get(0)
-                .getEmail(),
-                     result.get(0)
-                             .getEmail());
-        verify(userRepository, times(1)).findAll();
+        assertEquals(1, result.size());
+        assertEquals("Ana", result.get(0).getUsername());
+        verify(userRepository).findAll();
+        verify(userMapper).toDto(testUser);
     }
 
     @Test
     void testFindUser() {
-        UUID id = UUID.randomUUID();
-        User entity = new User(id, "Ana", "ana@email.com");
-        when(userRepository.findById(id)).thenReturn(Optional.of(entity));
+        when(userRepository.findById(testId)).thenReturn(Optional.of(testUser));
+        when(userMapper.toDto(testUser)).thenReturn(testUserDto);
 
-        UserDto result = userService.findUser(id);
+        UserDto result = userService.findUser(testId);
 
-        assertEquals(id, result.getId());
+        assertEquals(testUserDto.getId(), result.getId());
         assertEquals("Ana", result.getUsername());
-        assertEquals("ana@email.com", result.getEmail());
-        verify(userRepository, times(1)).findById(id);
+        verify(userRepository).findById(testId);
+        verify(userMapper).toDto(testUser);
     }
 
     @Test
@@ -68,73 +83,145 @@ public class UserDtoServiceTests {
         UUID id = UUID.randomUUID();
         when(userRepository.findById(id)).thenReturn(Optional.empty());
 
-        assertThrows(RuntimeException.class, () -> userService.findUser(id));
-        verify(userRepository, times(1)).findById(id);
+        assertThrows(UserNotFoundException.class, () -> userService.findUser(id));
+        verify(userRepository).findById(id);
+        verify(userMapper, never()).toDto(any());
     }
 
     @Test
     void testCreateUser() {
-        UUID id = UUID.randomUUID();
-        UserDto dto = new UserDto(id, "Ana", "ana@email.com");
-        User saved = new User(id, "Ana", "ana@email.com");
-        when(userRepository.save(any(User.class))).thenReturn(saved);
+        UserDto inputDto = new UserDto(testId, "Ana", "ana@email.com");
+        UserDto expectedResult = new UserDto(testId, "Ana", "ana@email.com");
 
-        UserDto result = userService.createUser(dto);
+        when(userMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
+        when(userRepository.save(testUser)).thenReturn(testUser);
+        when(userMapper.toDto(testUser)).thenReturn(expectedResult);
 
-        assertEquals(id, result.getId());
+        UserDto result = userService.createUser(inputDto);
+
+        assertEquals(expectedResult.getId(), result.getId());
         assertEquals("Ana", result.getUsername());
-        assertEquals("ana@email.com", result.getEmail());
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userMapper).toEntity(any(UserDto.class));
+        verify(userRepository).save(testUser);
+        verify(userMapper).toDto(testUser);
     }
 
     @Test
-    void testCreateUserIdNull() {
-        UserDto dto = new UserDto(null, "Ana", "ana@email.com");
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+    void testCreateUserIDNull() {
+        UserDto inputDto = new UserDto(null, "Ana", "ana@email.com");
+        UserDto expectedResult = new UserDto(testId, "Ana", "ana@email.com");
 
-        UserDto result = userService.createUser(dto);
+        when(userMapper.toEntity(any(UserDto.class))).thenReturn(testUser);
+        when(userRepository.save(testUser)).thenReturn(testUser);
+        when(userMapper.toDto(testUser)).thenReturn(expectedResult);
 
-        assertNotNull(result.getId());
+        UserDto result = userService.createUser(inputDto);
+
+        assertEquals(expectedResult.getId(), result.getId());
         assertEquals("Ana", result.getUsername());
-        assertEquals("ana@email.com", result.getEmail());
-        verify(userRepository, times(1)).save(any(User.class));
+        verify(userMapper).toEntity(any(UserDto.class));
+        verify(userRepository).save(testUser);
+        verify(userMapper).toDto(testUser);
     }
 
     @Test
     void testDeleteUser() {
         UUID id = UUID.randomUUID();
-
         when(userRepository.existsById(id)).thenReturn(true);
+        doNothing().when(userRepository).deleteById(id);
 
         userService.deleteUser(id);
 
-        verify(userRepository, times(1)).deleteById(id);
+        verify(userRepository).existsById(id);
+        verify(userRepository).deleteById(id);
+    }
+
+    @Test
+    void testDeleteUserNotFound() {
+        UUID id = UUID.randomUUID();
+        when(userRepository.existsById(id)).thenReturn(false);
+
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUser(id));
+        verify(userRepository).existsById(id);
+        verify(userRepository, never()).deleteById(id);
     }
 
     @Test
     void testUpdateUser() {
         UUID id = UUID.randomUUID();
-        User existing = new User(id, "Ana", "ana@email.com");
-        when(userRepository.findById(id)).thenReturn(Optional.of(existing));
-        when(userRepository.save(any(User.class))).thenAnswer(inv -> inv.getArgument(0));
+        UserDto inputDto = new UserDto(null, "AnaUpdated", "anaupdated@email.com");
 
-        UserDto dto = new UserDto(id, "AnaUpdated", "anaupdated@email.com");
+        User existingUser = User.builder()
+                .id(id)
+                .username("Ana")
+                .email("ana@email.com")
+                .build();
 
-        userService.updateUser(id, dto);
 
-        verify(userRepository, times(1)).findById(id);
-        verify(userRepository, times(1)).save(any(User.class));
-        assertEquals("AnaUpdated", existing.getUsername());
-        assertEquals("anaupdated@email.com", existing.getEmail());
+        when(userRepository.findById(id)).thenReturn(Optional.of(existingUser));
+        when(userRepository.save(any(User.class))).thenReturn(existingUser);
+        userService.updateUser(id, inputDto);
+        verify(userRepository).findById(id);
+        verify(userRepository).save(existingUser);
+        verifyNoInteractions(userMapper);
     }
 
     @Test
     void testUpdateUserNotFound() {
         UUID id = UUID.randomUUID();
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        UserDto userDto = new UserDto(id, "AnaUpdated", "anaupdated@email.com");
 
-        assertThrows(RuntimeException.class, () -> userService.updateUser(id, new UserDto(id, "X", "x@x.com")));
-        verify(userRepository, times(1)).findById(id);
-        verify(userRepository, never()).save(any(User.class));
+        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(id, userDto));
+        verify(userRepository).findById(id);
+        verify(userRepository, never()).save(any());
+        verifyNoInteractions(userMapper);
+    }
+
+    @Test
+    void testExistsByUsername() {
+        String username = "ana";
+        when(userRepository.existsByUsernameIgnoreCase(username)).thenReturn(true);
+
+        boolean result = userService.existsByUsername(username);
+
+        assertEquals(true, result);
+        verify(userRepository).existsByUsernameIgnoreCase(username);
+    }
+
+    @Test
+    void testExistsByEmail() {
+        String email = "ana@email.com";
+        when(userRepository.existsByEmailIgnoreCase(email)).thenReturn(true);
+
+        boolean result = userService.existsByEmail(email);
+
+        assertEquals(true, result);
+        verify(userRepository).existsByEmailIgnoreCase(email);
+    }
+
+    @Test
+    void testFindByEmail() {
+        String email = "ana@email.com";
+        when(userRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.of(testUser));
+
+        Optional<UserDto> result = userService.findByEmail(email);
+
+        assertEquals(true, result.isPresent());
+        assertEquals(testUser.getId(), result.get().getId());
+        assertEquals(testUser.getUsername(), result.get().getUsername());
+        assertEquals(testUser.getEmail(), result.get().getEmail());
+        verify(userRepository).findByEmailIgnoreCase(email);
+    }
+
+    @Test
+    void testFindByEmailNotFound() {
+        String email = "notfound@email.com";
+        when(userRepository.findByEmailIgnoreCase(email)).thenReturn(Optional.empty());
+
+        Optional<UserDto> result = userService.findByEmail(email);
+
+        assertEquals(false, result.isPresent());
+        verify(userRepository).findByEmailIgnoreCase(email);
     }
 }

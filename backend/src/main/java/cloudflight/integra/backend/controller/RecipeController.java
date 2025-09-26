@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/recipes")
+@CrossOrigin(origins = "http://localhost:4200")
 public class RecipeController {
 
     private final RecipeService service;

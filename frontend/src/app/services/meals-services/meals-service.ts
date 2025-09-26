@@ -1,12 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {Dish} from '../dishes-services/dishes-services';
 
 export type Meal = {
   id: string;
   mealType: string;
   dateTime: string;
   dishIds: string[];
+  dishes: Dish[];
 };
 
 @Injectable({ providedIn: 'root' })

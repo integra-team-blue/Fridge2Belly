@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.controller;
 
 import cloudflight.integra.backend.model.dtos.IngredientDto;
-import cloudflight.integra.backend.service.IngredientsService;
+import cloudflight.integra.backend.service.IngredientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class IngredientDtoControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private IngredientsService ingredientsService;
+    private IngredientService ingredientsService;
 
     private ObjectMapper objectMapper;
     private IngredientDto testIngredient;
@@ -44,7 +44,7 @@ class IngredientDtoControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
 
         mockMvc = MockMvcBuilders
-                .standaloneSetup(new IngredientsController(ingredientsService))
+                .standaloneSetup(new IngredientController(ingredientsService))
                 .build();
 
         testId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
@@ -123,8 +123,8 @@ class IngredientDtoControllerTest {
     @Test
     void createIngredient_ShouldReturn415_WhenWrongContentType() throws Exception {
         mockMvc.perform(post("/api/ingredients")
-                .contentType(MediaType.TEXT_PLAIN)
-                .content("plain text"))
+                        .contentType(MediaType.TEXT_PLAIN)
+                        .content("plain text"))
                 .andExpect(status().isUnsupportedMediaType());
 
         verify(ingredientsService, never()).createIngredient(any());
@@ -133,8 +133,8 @@ class IngredientDtoControllerTest {
     @Test
     void createIngredient_ShouldReturn400_WhenEmptyBody() throws Exception {
         mockMvc.perform(post("/api/ingredients")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(""))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(""))
                 .andExpect(status().isBadRequest());
 
         verify(ingredientsService, never()).createIngredient(any());
@@ -151,16 +151,16 @@ class IngredientDtoControllerTest {
                 .thenReturn(updatedIngredient);
 
         String requestBody = """
-                {
-                    "name": "Updated Tomato",
-                    "quantity": 3.0,
-                    "unit": "kg"
-                }
-                """;
+            {
+                "name": "Updated Tomato",
+                "quantity": 3.0,
+                "unit": "kg"
+            }
+            """;
 
         mockMvc.perform(put("/api/ingredients/{id}", testId)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name", is("Updated Tomato")))
@@ -173,16 +173,16 @@ class IngredientDtoControllerTest {
     @Test
     void updateIngredient_ShouldReturn400_WhenInvalidUUID() throws Exception {
         String requestBody = """
-                {
-                    "name": "Test",
-                    "quantity": 1.0,
-                    "unit": "kg"
-                }
-                """;
+            {
+                "name": "Test",
+                "quantity": 1.0,
+                "unit": "kg"
+            }
+            """;
 
         mockMvc.perform(put("/api/ingredients/{id}", "invalid-uuid")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
                 .andExpect(status().isBadRequest());
 
         verify(ingredientsService, never()).updateIngredient(any(), any());
@@ -191,8 +191,7 @@ class IngredientDtoControllerTest {
 
     @Test
     void deleteIngredient_ShouldReturn204_WhenIngredientExists() throws Exception {
-        doNothing().when(ingredientsService)
-                .deleteIngredient(testId);
+        doNothing().when(ingredientsService).deleteIngredient(testId);
 
         mockMvc.perform(delete("/api/ingredients/{id}", testId))
                 .andExpect(status().isNoContent());
@@ -211,3 +210,4 @@ class IngredientDtoControllerTest {
 
 
 }
+

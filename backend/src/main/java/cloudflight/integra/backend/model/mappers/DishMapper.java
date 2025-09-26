@@ -4,6 +4,8 @@ import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Ingredient;
 import cloudflight.integra.backend.model.Recipe;
 import cloudflight.integra.backend.model.dtos.DishDto;
+import cloudflight.integra.backend.model.dtos.IngredientDto;
+import cloudflight.integra.backend.model.dtos.RecipeDto;
 import cloudflight.integra.backend.repository.IngredientRepository;
 import cloudflight.integra.backend.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.stream.Collectors;
 public class DishMapper {
     private final IngredientRepository ingredientRepository;
     private final RecipeRepository recipeRepository;
+    private final IngredientMapper ingredientMapper;
 
     public Dish toEntity(DishDto dto) {
         List<Recipe> recipes = dto.getRecipeIds() != null ? dto.getRecipeIds()
@@ -56,6 +59,23 @@ public class DishMapper {
                 .map(Ingredient::getId)
                 .collect(Collectors.toList()) : List.of();
 
+        List<RecipeDto> recipes = dish.getRecipes() != null ? dish.getRecipes()
+                .stream()
+                .map(recipe -> RecipeDto.builder()
+                        .id(recipe.getId())
+                        .name(recipe.getName())
+                        .description(recipe.getDescription())
+                        .cookingTimeMinutes(recipe.getCookingTimeMinutes())
+                        .instructions(recipe.getInstructions())
+                        .dishIds(List.of())
+                        .build())
+                .collect(Collectors.toList()) : List.of();
+
+        List<IngredientDto> ingredients = dish.getIngredients() != null ? dish.getIngredients()
+                .stream()
+                .map(ingredientMapper::toDto)
+                .collect(Collectors.toList()) : List.of();
+
         return DishDto.builder()
                 .id(dish.getId())
                 .name(dish.getName())
@@ -66,6 +86,8 @@ public class DishMapper {
                 .carbohydrates(dish.getCarbohydrates())
                 .recipeIds(recipeIds)
                 .ingredientIds(ingredientIds)
+                .recipes(recipes)
+                .ingredients(ingredients)
                 .build();
     }
 }

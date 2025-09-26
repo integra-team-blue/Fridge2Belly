@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import {Recipe} from '../recipes-services/recipes-service';
+import {Ingredient} from '../ingredients-services/ingredients-service';
 
 export type Dish = {
   id: string;
@@ -12,6 +14,8 @@ export type Dish = {
   carbohydrates: number;
   recipeIds: string[];
   ingredientIds: string[];
+  recipes: Recipe[];
+  ingredients: Ingredient[];
 };
 
 export type RecipeOption = { id: string; name: string };

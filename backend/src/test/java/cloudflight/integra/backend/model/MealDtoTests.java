@@ -31,7 +31,13 @@ public class MealDtoTests {
     void testMealValidationSuccess() {
         List<UUID> dishes = new ArrayList<>();
         dishes.add(UUID.randomUUID());
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.BREAKFAST, LocalDateTime.now(), dishes);
+
+        MealDto mealDto = MealDto.builder()
+                .id(UUID.randomUUID())
+                .mealType(MealType.BREAKFAST)
+                .dateTime(LocalDateTime.now())
+                .dishIds(dishes)
+                .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertEquals(0, violations.size());
@@ -41,66 +47,95 @@ public class MealDtoTests {
     void testMealValidationFail_MealTypeNull() {
         List<UUID> dishes = new ArrayList<>();
         dishes.add(UUID.randomUUID());
-        MealDto mealDto = new MealDto(UUID.randomUUID(), null, LocalDateTime.now(), dishes);
+
+        MealDto mealDto = MealDto.builder()
+                .id(UUID.randomUUID())
+                .mealType(null)
+                .dateTime(LocalDateTime.now())
+                .dishIds(dishes)
+                .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath()
-                        .toString()
-                        .equals("mealType")));
+                           .anyMatch(v -> v.getPropertyPath()
+                                   .toString()
+                                   .equals("mealType")));
     }
 
     @Test
     void testMealValidationFail_DateTimeNull() {
         List<UUID> dishes = new ArrayList<>();
         dishes.add(UUID.randomUUID());
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.LUNCH, null, dishes);
+
+        MealDto mealDto = MealDto.builder()
+                .id(UUID.randomUUID())
+                .mealType(MealType.LUNCH)
+                .dateTime(null)
+                .dishIds(dishes)
+                .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath()
-                        .toString()
-                        .equals("dateTime")));
+                           .anyMatch(v -> v.getPropertyPath()
+                                   .toString()
+                                   .equals("dateTime")));
     }
 
     @Test
     void testMealValidationFail_DishIdsNull() {
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.DINNER, LocalDateTime.now(), null);
+        MealDto mealDto = MealDto.builder()
+                .id(UUID.randomUUID())
+                .mealType(MealType.DINNER)
+                .dateTime(LocalDateTime.now())
+                .dishIds(null)
+                .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath()
-                        .toString()
-                        .equals("dishIds")));
+                           .anyMatch(v -> v.getPropertyPath()
+                                   .toString()
+                                   .equals("dishIds")));
     }
 
     @Test
     void testMealValidationFail_DishIdsEmpty() {
         List<UUID> dishes = new ArrayList<>();
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.DINNER, LocalDateTime.now(), dishes);
+
+        MealDto mealDto = MealDto.builder()
+                .id(UUID.randomUUID())
+                .mealType(MealType.DINNER)
+                .dateTime(LocalDateTime.now())
+                .dishIds(dishes)
+                .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath()
-                        .toString()
-                        .equals("dishIds")));
+                           .anyMatch(v -> v.getPropertyPath()
+                                   .toString()
+                                   .equals("dishIds")));
     }
 
     @Test
     void testMealValidationFail_DishIdElementNull() {
         List<UUID> dishes = new ArrayList<>();
         dishes.add(null);
-        MealDto mealDto = new MealDto(UUID.randomUUID(), MealType.DINNER, LocalDateTime.now(), dishes);
+
+        MealDto mealDto = MealDto.builder()
+                .id(UUID.randomUUID())
+                .mealType(MealType.DINNER)
+                .dateTime(LocalDateTime.now())
+                .dishIds(dishes)
+                .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
         assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
-                .anyMatch(v -> v.getPropertyPath()
-                        .toString()
-                        .contains("dishIds")));
+                           .anyMatch(v -> v.getPropertyPath()
+                                   .toString()
+                                   .contains("dishIds")));
     }
 }
