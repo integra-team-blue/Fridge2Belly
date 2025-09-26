@@ -47,9 +47,9 @@ export class DishesComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private dishesService = inject(DishesService);
-  public loading = inject(LoadingService);
-  private toast = inject(ToastService);
-  private confirm = inject(ConfirmationService);
+  public loadingService = inject(LoadingService);
+  private toastService = inject(ToastService);
+  private confirmService = inject(ConfirmationService);
   private _editId = signal<string | null>(null);
 
   form: FormGroup = this.fb.group({
@@ -90,7 +90,7 @@ export class DishesComponent implements OnInit {
   }
 
   async loadData() {
-    this.loading.show();
+    this.loadingService.show();
     try {
       const [d, r] = await Promise.all([
         firstValueFrom(this.dishesService.getDishes()),
@@ -99,7 +99,7 @@ export class DishesComponent implements OnInit {
       this.dishes = d;
       this.recipes = r;
     } finally {
-      this.loading.hide();
+      this.loadingService.hide();
     }
   }
 
@@ -137,7 +137,7 @@ export class DishesComponent implements OnInit {
 
   onRightClick(event: MouseEvent, dish: Dish) {
     event.preventDefault();
-    this.confirm.confirm({
+    this.confirmService.confirm({
       header: 'Delete dish',
       message: `Are you sure you want to delete "${dish.name}"?`,
       icon: 'pi pi-exclamation-triangle',
@@ -149,13 +149,13 @@ export class DishesComponent implements OnInit {
   }
 
   private async deleteDish(id: string) {
-    this.loading.show();
+    this.loadingService.show();
     try {
       await firstValueFrom(this.dishesService.deleteDish(id));
       this.dishes = this.dishes.filter((d) => d.id !== id);
-      this.toast.push('Dish deleted', 'success');
+      this.toastService.push('Dish deleted', 'success');
     } finally {
-      this.loading.hide();
+      this.loadingService.hide();
     }
   }
 
@@ -165,7 +165,7 @@ export class DishesComponent implements OnInit {
       return;
     }
 
-    this.loading.show();
+    this.loadingService.show();
     try {
       const v = this.form.getRawValue();
       const recipeIds = typeof v.recipeId === 'string' && v.recipeId.length > 0 ? [v.recipeId] : [];
@@ -184,16 +184,16 @@ export class DishesComponent implements OnInit {
       const id = this._editId();
       if (id != null && id !== '') {
         await firstValueFrom(this.dishesService.updateDish(id, payload));
-        this.toast.push('Dish updated', 'success');
+        this.toastService.push('Dish updated', 'success');
       } else {
         await firstValueFrom(this.dishesService.createDish(payload));
-        this.toast.push('Dish created', 'success');
+        this.toastService.push('Dish created', 'success');
       }
 
       this.dialogVisible = false;
       await this.loadData();
     } finally {
-      this.loading.hide();
+      this.loadingService.hide();
     }
   }
 
