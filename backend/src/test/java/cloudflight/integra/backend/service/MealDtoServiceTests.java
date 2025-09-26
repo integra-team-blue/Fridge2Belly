@@ -112,7 +112,9 @@ public class MealDtoServiceTests {
         List<MealDto> result = mealService.getAllMeals();
 
         assertEquals(1, result.size());
-        assertEquals(testMealDto.getMealType(), result.get(0).getMealType());
+        assertEquals(testMealDto.getMealType(),
+                     result.get(0)
+                             .getMealType());
         verify(mealRepository).findAll();
         verify(mealMapper).toDto(testMeal);
     }
@@ -200,7 +202,8 @@ public class MealDtoServiceTests {
     void testDeleteMealSuccess() {
         UUID id = UUID.randomUUID();
         when(mealRepository.existsById(id)).thenReturn(true);
-        doNothing().when(mealRepository).deleteById(id);
+        doNothing().when(mealRepository)
+                .deleteById(id);
 
         mealService.deleteMeal(id);
 

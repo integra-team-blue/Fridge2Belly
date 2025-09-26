@@ -51,7 +51,8 @@ public class MealDtoRepositoryTests {
                 .protein(5.0)
                 .fat(2.0)
                 .carbohydrates(8.0)
-                .expirationDate(LocalDate.now().plusDays(7))
+                .expirationDate(LocalDate.now()
+                        .plusDays(7))
                 .build();
         ingredient = ingredientRepository.save(ingredient);
 
@@ -107,8 +108,10 @@ public class MealDtoRepositoryTests {
         List<Meal> allMeals = (List<Meal>) mealRepository.findAll();
 
         assertEquals(2, allMeals.size());
-        assertTrue(allMeals.stream().anyMatch(m -> m.getMealType() == MealType.BREAKFAST));
-        assertTrue(allMeals.stream().anyMatch(m -> m.getMealType() == MealType.DINNER));
+        assertTrue(allMeals.stream()
+                .anyMatch(m -> m.getMealType() == MealType.BREAKFAST));
+        assertTrue(allMeals.stream()
+                .anyMatch(m -> m.getMealType() == MealType.DINNER));
     }
 
     @Test
@@ -119,8 +122,12 @@ public class MealDtoRepositoryTests {
         Optional<Meal> foundMeal = mealRepository.findById(savedMeal.getId());
 
         assertTrue(foundMeal.isPresent());
-        assertEquals(MealType.LUNCH, foundMeal.get().getMealType());
-        assertFalse(foundMeal.get().getDishes().isEmpty());
+        assertEquals(MealType.LUNCH,
+                     foundMeal.get()
+                             .getMealType());
+        assertFalse(foundMeal.get()
+                .getDishes()
+                .isEmpty());
     }
 
     @Test
@@ -158,9 +165,16 @@ public class MealDtoRepositoryTests {
         Optional<Meal> foundMeal = mealRepository.findById(savedMeal.getId());
 
         assertTrue(foundMeal.isPresent());
-        assertEquals(2, foundMeal.get().getDishes().size());
-        assertTrue(foundMeal.get().getDishes().contains(testDish1));
-        assertTrue(foundMeal.get().getDishes().contains(testDish2));
+        assertEquals(2,
+                     foundMeal.get()
+                             .getDishes()
+                             .size());
+        assertTrue(foundMeal.get()
+                .getDishes()
+                .contains(testDish1));
+        assertTrue(foundMeal.get()
+                .getDishes()
+                .contains(testDish2));
     }
 
     @Test
@@ -174,6 +188,8 @@ public class MealDtoRepositoryTests {
         Meal updatedMeal = mealRepository.save(savedMeal);
 
         assertEquals(MealType.LUNCH, updatedMeal.getMealType());
-        assertEquals(2, updatedMeal.getDishes().size());
+        assertEquals(2,
+                     updatedMeal.getDishes()
+                             .size());
     }
 }

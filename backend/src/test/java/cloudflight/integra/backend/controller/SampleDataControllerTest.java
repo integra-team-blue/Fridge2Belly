@@ -27,7 +27,8 @@ public class SampleDataControllerTest {
 
     @Test
     void generateSampleData_success() throws Exception {
-        doNothing().when(sampleDataService).generateAllSampleData();
+        doNothing().when(sampleDataService)
+                .generateAllSampleData();
 
         mockMvc.perform(post("/api/sample-data/generate"))
                 .andExpect(status().isOk())
@@ -40,7 +41,8 @@ public class SampleDataControllerTest {
     @Test
     void generateSampleData_serviceThrowsException_returnsInternalServerError() throws Exception {
         doThrow(new RuntimeException("Database connection failed"))
-                .when(sampleDataService).generateAllSampleData();
+                .when(sampleDataService)
+                .generateAllSampleData();
 
         mockMvc.perform(post("/api/sample-data/generate"))
                 .andExpect(status().isInternalServerError())
@@ -53,7 +55,8 @@ public class SampleDataControllerTest {
     @Test
     void generateSampleData_serviceThrowsIllegalArgumentException_returnsInternalServerError() throws Exception {
         doThrow(new IllegalArgumentException("Invalid data"))
-                .when(sampleDataService).generateAllSampleData();
+                .when(sampleDataService)
+                .generateAllSampleData();
 
         mockMvc.perform(post("/api/sample-data/generate"))
                 .andExpect(status().isInternalServerError())

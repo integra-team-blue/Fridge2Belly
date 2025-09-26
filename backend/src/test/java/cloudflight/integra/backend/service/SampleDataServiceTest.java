@@ -94,11 +94,16 @@ class SampleDataServiceTest {
         sampleDataService.generateAllSampleData();
 
         var inOrder = inOrder(ingredientRepository, recipeRepository, dishRepository, mealRepository);
-        inOrder.verify(ingredientRepository).saveAll(anyList());
-        inOrder.verify(recipeRepository).saveAll(anyList());
-        inOrder.verify(dishRepository).saveAll(anyList());
-        inOrder.verify(recipeRepository).saveAll(anyList());
-        inOrder.verify(mealRepository).saveAll(anyList());
+        inOrder.verify(ingredientRepository)
+                .saveAll(anyList());
+        inOrder.verify(recipeRepository)
+                .saveAll(anyList());
+        inOrder.verify(dishRepository)
+                .saveAll(anyList());
+        inOrder.verify(recipeRepository)
+                .saveAll(anyList());
+        inOrder.verify(mealRepository)
+                .saveAll(anyList());
     }
 
     @Test
@@ -119,10 +124,12 @@ class SampleDataServiceTest {
 
         verify(ingredientRepository).saveAll(argThat(ingredients -> {
             List<Ingredient> ingredientList = new ArrayList<>((Collection<Ingredient>) ingredients);
-            return ingredientList.size() == 5 &&
-                    ingredientList.stream().anyMatch(i -> i.getName().equals("Chicken Breast")) &&
-                    ingredientList.stream().anyMatch(i -> i.getUnit().equals("grams")) &&
-                    ingredientList.stream().allMatch(i -> i.getCalories() != null);
+            return ingredientList.size() == 5 && ingredientList.stream()
+                    .anyMatch(i -> i.getName()
+                            .equals("Chicken Breast")) && ingredientList.stream()
+                                    .anyMatch(i -> i.getUnit()
+                                            .equals("grams")) && ingredientList.stream()
+                                                    .allMatch(i -> i.getCalories() != null);
         }));
     }
 
@@ -130,7 +137,9 @@ class SampleDataServiceTest {
     private List<Ingredient> createMockIngredients() {
         List<Ingredient> ingredients = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            ingredients.add(Ingredient.builder().name("ingredient" + i).build());
+            ingredients.add(Ingredient.builder()
+                    .name("ingredient" + i)
+                    .build());
         }
         return ingredients;
     }
@@ -138,7 +147,9 @@ class SampleDataServiceTest {
     private List<Recipe> createMockRecipes() {
         List<Recipe> recipes = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            recipes.add(Recipe.builder().name("recipe" + i).build());
+            recipes.add(Recipe.builder()
+                    .name("recipe" + i)
+                    .build());
         }
         return recipes;
     }
@@ -146,7 +157,9 @@ class SampleDataServiceTest {
     private List<Dish> createMockDishes() {
         List<Dish> dishes = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            dishes.add(Dish.builder().name("dish" + i).build());
+            dishes.add(Dish.builder()
+                    .name("dish" + i)
+                    .build());
         }
         return dishes;
     }
@@ -154,7 +167,9 @@ class SampleDataServiceTest {
     private List<Meal> createMockMeals() {
         List<Meal> meals = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
-            meals.add(Meal.builder().mealType(MealType.BREAKFAST).build());
+            meals.add(Meal.builder()
+                    .mealType(MealType.BREAKFAST)
+                    .build());
         }
         return meals;
     }

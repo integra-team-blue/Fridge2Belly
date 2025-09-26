@@ -29,7 +29,8 @@ public class DishService {
 
     @Transactional
     public List<DishDto> getAll() {
-        return dishRepository.findAll().stream()
+        return dishRepository.findAll()
+                .stream()
                 .map(dishMapper::toDto)
                 .collect(Collectors.toList());
     }

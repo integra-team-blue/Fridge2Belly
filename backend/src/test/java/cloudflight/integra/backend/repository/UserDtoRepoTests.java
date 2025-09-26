@@ -39,8 +39,12 @@ public class UserDtoRepoTests {
         List<User> users = userRepository.findAll();
 
         assertEquals(2, users.size());
-        assertTrue(users.stream().anyMatch(u -> u.getUsername().equals("Ana")));
-        assertTrue(users.stream().anyMatch(u -> u.getUsername().equals("Ion")));
+        assertTrue(users.stream()
+                .anyMatch(u -> u.getUsername()
+                        .equals("Ana")));
+        assertTrue(users.stream()
+                .anyMatch(u -> u.getUsername()
+                        .equals("Ion")));
     }
 
     @Test
@@ -51,8 +55,12 @@ public class UserDtoRepoTests {
         Optional<User> foundUser = userRepository.findById(savedUser.getId());
 
         assertTrue(foundUser.isPresent());
-        assertEquals("Ana", foundUser.get().getUsername());
-        assertEquals("ana@email.com", foundUser.get().getEmail());
+        assertEquals("Ana",
+                     foundUser.get()
+                             .getUsername());
+        assertEquals("ana@email.com",
+                     foundUser.get()
+                             .getEmail());
     }
 
     @Test
@@ -73,7 +81,9 @@ public class UserDtoRepoTests {
         userRepository.deleteById(savedUser.getId());
 
         assertFalse(userRepository.existsById(savedUser.getId()));
-        assertEquals(0, userRepository.findAll().size());
+        assertEquals(0,
+                     userRepository.findAll()
+                             .size());
     }
 
     @Test
@@ -114,7 +124,9 @@ public class UserDtoRepoTests {
         Optional<User> foundUser = userRepository.findByEmailIgnoreCase("ANA@EMAIL.COM");
 
         assertTrue(foundUser.isPresent());
-        assertEquals("Ana", foundUser.get().getUsername());
+        assertEquals("Ana",
+                     foundUser.get()
+                             .getUsername());
     }
 
     @Test

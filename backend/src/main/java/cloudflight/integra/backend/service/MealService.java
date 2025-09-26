@@ -44,7 +44,8 @@ public class MealService {
     @Transactional
     public List<MealDto> getAllMeals() {
         List<Meal> meals = new ArrayList<>();
-        mealRepository.findAll().forEach(meals::add);
+        mealRepository.findAll()
+                .forEach(meals::add);
 
         return meals.stream()
                 .map(mealMapper::toDto)

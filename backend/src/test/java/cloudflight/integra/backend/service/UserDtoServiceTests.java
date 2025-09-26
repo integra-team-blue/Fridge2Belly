@@ -60,7 +60,9 @@ public class UserDtoServiceTests {
         List<UserDto> result = userService.findAll();
 
         assertEquals(1, result.size());
-        assertEquals("Ana", result.get(0).getUsername());
+        assertEquals("Ana",
+                     result.get(0)
+                             .getUsername());
         verify(userRepository).findAll();
         verify(userMapper).toDto(testUser);
     }
@@ -128,7 +130,8 @@ public class UserDtoServiceTests {
     void testDeleteUser() {
         UUID id = UUID.randomUUID();
         when(userRepository.existsById(id)).thenReturn(true);
-        doNothing().when(userRepository).deleteById(id);
+        doNothing().when(userRepository)
+                .deleteById(id);
 
         userService.deleteUser(id);
 
@@ -208,9 +211,15 @@ public class UserDtoServiceTests {
         Optional<UserDto> result = userService.findByEmail(email);
 
         assertEquals(true, result.isPresent());
-        assertEquals(testUser.getId(), result.get().getId());
-        assertEquals(testUser.getUsername(), result.get().getUsername());
-        assertEquals(testUser.getEmail(), result.get().getEmail());
+        assertEquals(testUser.getId(),
+                     result.get()
+                             .getId());
+        assertEquals(testUser.getUsername(),
+                     result.get()
+                             .getUsername());
+        assertEquals(testUser.getEmail(),
+                     result.get()
+                             .getEmail());
         verify(userRepository).findByEmailIgnoreCase(email);
     }
 

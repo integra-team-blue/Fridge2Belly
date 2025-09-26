@@ -25,7 +25,8 @@ public class UserService {
 
     @Transactional
     public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
+        return userRepository.findAll()
+                .stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -73,7 +74,6 @@ public class UserService {
         return userRepository.findByEmailIgnoreCase(email)
                 .map(u -> new UserDto(u.getId(), u.getUsername(), u.getEmail()));
     }
-
 
 
 }

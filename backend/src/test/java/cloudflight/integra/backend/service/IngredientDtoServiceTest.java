@@ -42,10 +42,10 @@ class IngredientDtoServiceTest {
     void getAllIngredients_ShouldReturnEmptyList_WhenNoIngredients() {
         when(ingredientRepository.findAll()).thenReturn(Collections.emptyList());
 
-        
+
         List<IngredientDto> result = ingredientService.getAllIngredients();
 
-        
+
         assertNotNull(result);
         assertTrue(result.isEmpty());
         verify(ingredientRepository).findAll();
@@ -53,35 +53,41 @@ class IngredientDtoServiceTest {
 
     @Test
     void getAllIngredients_ShouldReturnAllIngredients_WhenIngredientsExist() {
-       
+
         List<Ingredient> ingredients = Arrays.asList(
-                createTestIngredient("Ingredient 1"),
-                createTestIngredient("Ingredient 2")
+                                                     createTestIngredient("Ingredient 1"),
+                                                     createTestIngredient("Ingredient 2")
         );
         List<IngredientDto> expectedDtos = Arrays.asList(
-                createTestIngredientDto("Ingredient 1"),
-                createTestIngredientDto("Ingredient 2")
+                                                         createTestIngredientDto("Ingredient 1"),
+                                                         createTestIngredientDto("Ingredient 2")
         );
 
         when(ingredientRepository.findAll()).thenReturn(ingredients);
         when(ingredientMapper.toDto(ingredients.get(0))).thenReturn(expectedDtos.get(0));
         when(ingredientMapper.toDto(ingredients.get(1))).thenReturn(expectedDtos.get(1));
 
-        
+
         List<IngredientDto> result = ingredientService.getAllIngredients();
 
-        
+
         assertNotNull(result);
         assertEquals(2, result.size());
-        assertEquals(expectedDtos.get(0).getName(), result.get(0).getName());
-        assertEquals(expectedDtos.get(1).getName(), result.get(1).getName());
+        assertEquals(expectedDtos.get(0)
+                .getName(),
+                     result.get(0)
+                             .getName());
+        assertEquals(expectedDtos.get(1)
+                .getName(),
+                     result.get(1)
+                             .getName());
         verify(ingredientRepository).findAll();
         verify(ingredientMapper, times(2)).toDto(any(Ingredient.class));
     }
 
     @Test
     void getIngredientById_ShouldReturnIngredient_WhenIngredientExists() {
-       
+
         UUID id = UUID.randomUUID();
         Ingredient ingredient = createTestIngredient("Test Ingredient");
         ingredient.setId(id);
@@ -91,10 +97,10 @@ class IngredientDtoServiceTest {
         when(ingredientRepository.findById(id)).thenReturn(Optional.of(ingredient));
         when(ingredientMapper.toDto(ingredient)).thenReturn(expectedDto);
 
-        
+
         IngredientDto result = ingredientService.getIngredientById(id);
 
-        
+
         assertNotNull(result);
         assertEquals(expectedDto.getName(), result.getName());
         assertEquals(id, result.getId());
@@ -104,13 +110,13 @@ class IngredientDtoServiceTest {
 
     @Test
     void getIngredientById_ShouldThrowException_WhenIngredientNotFound() {
-       
+
         UUID id = UUID.randomUUID();
         when(ingredientRepository.findById(id)).thenReturn(Optional.empty());
 
-        
+
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientService.getIngredientById(id));
+                                                     () -> ingredientService.getIngredientById(id));
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());
         verify(ingredientRepository).findById(id);
@@ -119,7 +125,7 @@ class IngredientDtoServiceTest {
 
     @Test
     void createIngredient_ShouldReturnCreatedIngredient_WhenValidIngredient() {
-       
+
         IngredientDto inputDto = createTestIngredientDto("New Ingredient");
         inputDto.setId(null); // Simulate new ingredient without ID
 
@@ -130,15 +136,16 @@ class IngredientDtoServiceTest {
         IngredientDto expectedDto = createTestIngredientDto("New Ingredient");
         expectedDto.setId(savedEntity.getId());
 
-        doNothing().when(validator).validateIngredient(inputDto);
+        doNothing().when(validator)
+                .validateIngredient(inputDto);
         when(ingredientMapper.toEntity(any(IngredientDto.class))).thenReturn(entityToSave);
         when(ingredientRepository.save(entityToSave)).thenReturn(savedEntity);
         when(ingredientMapper.toDto(savedEntity)).thenReturn(expectedDto);
 
-        
+
         IngredientDto result = ingredientService.createIngredient(inputDto);
 
-        
+
         assertNotNull(result);
         assertNotNull(result.getId());
         assertEquals("New Ingredient", result.getName());
@@ -150,7 +157,7 @@ class IngredientDtoServiceTest {
 
     @Test
     void updateIngredient_ShouldReturnUpdatedIngredient_WhenIngredientExists() {
-       
+
         UUID id = UUID.randomUUID();
         IngredientDto updateDto = createTestIngredientDto("Updated Ingredient");
 
@@ -163,15 +170,16 @@ class IngredientDtoServiceTest {
         expectedDto.setId(id);
 
         when(ingredientRepository.existsById(id)).thenReturn(true);
-        doNothing().when(validator).validateIngredient(any(IngredientDto.class));
+        doNothing().when(validator)
+                .validateIngredient(any(IngredientDto.class));
         when(ingredientMapper.toEntity(any(IngredientDto.class))).thenReturn(entityToSave);
         when(ingredientRepository.save(entityToSave)).thenReturn(savedEntity);
         when(ingredientMapper.toDto(savedEntity)).thenReturn(expectedDto);
 
-        
+
         IngredientDto result = ingredientService.updateIngredient(id, updateDto);
 
-        
+
         assertNotNull(result);
         assertEquals(id, result.getId());
         assertEquals("Updated Ingredient", result.getName());
@@ -190,7 +198,7 @@ class IngredientDtoServiceTest {
         when(ingredientRepository.existsById(id)).thenReturn(false);
 
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientService.updateIngredient(id, updateDto));
+                                                     () -> ingredientService.updateIngredient(id, updateDto));
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());
         verify(ingredientRepository).existsById(id);
@@ -204,10 +212,11 @@ class IngredientDtoServiceTest {
         IngredientDto updateDto = createTestIngredientDto("Invalid Ingredient");
 
         when(ingredientRepository.existsById(id)).thenReturn(true);
-        doThrow(new IngredientsExeption("Validation failed")).when(validator).validateIngredient(any(IngredientDto.class));
+        doThrow(new IngredientsExeption("Validation failed")).when(validator)
+                .validateIngredient(any(IngredientDto.class));
 
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientService.updateIngredient(id, updateDto));
+                                                     () -> ingredientService.updateIngredient(id, updateDto));
 
         assertEquals("Validation failed", exception.getMessage());
         verify(ingredientRepository).existsById(id);
@@ -219,12 +228,13 @@ class IngredientDtoServiceTest {
     void deleteIngredient_ShouldDeleteSuccessfully_WhenIngredientExists() {
         UUID id = UUID.randomUUID();
         when(ingredientRepository.existsById(id)).thenReturn(true);
-        doNothing().when(ingredientRepository).deleteById(id);
+        doNothing().when(ingredientRepository)
+                .deleteById(id);
 
-        
+
         assertDoesNotThrow(() -> ingredientService.deleteIngredient(id));
 
-        
+
         verify(ingredientRepository).existsById(id);
         verify(ingredientRepository).deleteById(id);
     }
@@ -235,7 +245,7 @@ class IngredientDtoServiceTest {
         when(ingredientRepository.existsById(id)).thenReturn(false);
 
         IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                () -> ingredientService.deleteIngredient(id));
+                                                     () -> ingredientService.deleteIngredient(id));
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());
         verify(ingredientRepository).existsById(id);
@@ -252,7 +262,8 @@ class IngredientDtoServiceTest {
                 .protein(5.0)
                 .fat(2.0)
                 .carbohydrates(8.0)
-                .expirationDate(LocalDate.now().plusDays(7))
+                .expirationDate(LocalDate.now()
+                        .plusDays(7))
                 .build();
     }
 
@@ -265,7 +276,8 @@ class IngredientDtoServiceTest {
                 .protein(5.0)
                 .fat(2.0)
                 .carbohydrates(8.0)
-                .expirationDate(LocalDate.now().plusDays(7))
+                .expirationDate(LocalDate.now()
+                        .plusDays(7))
                 .build();
     }
 }

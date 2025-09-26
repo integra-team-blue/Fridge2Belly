@@ -22,7 +22,8 @@ public class IngredientService {
     private final IngredientMapper ingredientMapper;
 
     @Autowired
-    public IngredientService(IngredientRepository ingredientRepository, IngredientsValidator validator, IngredientMapper ingredientMapper) {
+    public IngredientService(IngredientRepository ingredientRepository, IngredientsValidator validator,
+                             IngredientMapper ingredientMapper) {
         this.ingredientRepository = ingredientRepository;
         this.validator = validator;
         this.ingredientMapper = ingredientMapper;
@@ -30,7 +31,8 @@ public class IngredientService {
 
     @Transactional
     public List<IngredientDto> getAllIngredients() {
-        return ingredientRepository.findAll().stream()
+        return ingredientRepository.findAll()
+                .stream()
                 .map(ingredientMapper::toDto)
                 .collect(Collectors.toList());
     }

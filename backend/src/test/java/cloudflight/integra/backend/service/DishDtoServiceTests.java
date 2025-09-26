@@ -102,7 +102,9 @@ class DishDtoServiceTests {
         List<DishDto> result = dishService.getAll();
 
         assertEquals(1, result.size());
-        assertEquals(testDishDto.getName(), result.get(0).getName());
+        assertEquals(testDishDto.getName(),
+                     result.get(0)
+                             .getName());
         verify(dishRepository).findAll();
         verify(dishMapper).toDto(testDish);
     }
@@ -158,7 +160,8 @@ class DishDtoServiceTests {
     @Test
     void delete_removes() {
         when(dishRepository.existsById(testId)).thenReturn(true);
-        doNothing().when(dishRepository).deleteById(testId);
+        doNothing().when(dishRepository)
+                .deleteById(testId);
 
         dishService.delete(testId);
 

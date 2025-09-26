@@ -26,7 +26,8 @@ public class SampleDataController {
         } catch (Exception e) {
             Map<String, String> response = new HashMap<>();
             response.put("message", "Error generating sample data: " + e.getMessage());
-            return ResponseEntity.status(500).body(response);
+            return ResponseEntity.status(500)
+                    .body(response);
         }
     }
 }

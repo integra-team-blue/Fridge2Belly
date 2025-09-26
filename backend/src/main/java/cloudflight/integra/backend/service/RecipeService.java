@@ -38,7 +38,8 @@ public class RecipeService {
     @Transactional
     public List<RecipeDto> getAllRecipes() {
         List<Recipe> recipes = new ArrayList<>();
-        recipeRepository.findAll().forEach(recipes::add);
+        recipeRepository.findAll()
+                .forEach(recipes::add);
 
         return recipes.stream()
                 .map(recipeMapper::toDto)

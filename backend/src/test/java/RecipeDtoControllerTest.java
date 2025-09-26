@@ -70,11 +70,12 @@ class RecipeDtoControllerTest {
         recipeDto.setDishIds(Collections.emptyList());
 
         MvcResult result = mockMvc.perform(post("/api/recipes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(recipeDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(recipeDto)))
                 .andReturn();
 
-        String responseBody = result.getResponse().getContentAsString();
+        String responseBody = result.getResponse()
+                .getContentAsString();
         System.out.println("Response: " + responseBody);
     }
 
@@ -89,7 +90,8 @@ class RecipeDtoControllerTest {
                 .protein(5.0)
                 .fat(2.0)
                 .carbohydrates(8.0)
-                .expirationDate(LocalDate.now().plusDays(7))
+                .expirationDate(LocalDate.now()
+                        .plusDays(7))
                 .build();
         ingredient = ingredientRepository.save(ingredient);
 
@@ -112,8 +114,8 @@ class RecipeDtoControllerTest {
         recipeDto.setDishIds(List.of(dish.getId())); // UUID direct, nu String
 
         mockMvc.perform(post("/api/recipes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(recipeDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(recipeDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Recipe with Dish"));
     }
@@ -129,8 +131,8 @@ class RecipeDtoControllerTest {
         RecipeDto recipeDto = new RecipeDto();
 
         mockMvc.perform(post("/api/recipes")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(recipeDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(recipeDto)))
                 .andExpect(status().isBadRequest());
     }
 }

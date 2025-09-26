@@ -46,7 +46,8 @@ class DishDtoRepositoryTests {
                 .protein(5.0)
                 .fat(2.0)
                 .carbohydrates(8.0)
-                .expirationDate(LocalDate.now().plusDays(7))
+                .expirationDate(LocalDate.now()
+                        .plusDays(7))
                 .build();
         testIngredient = ingredientRepository.save(testIngredient);
 
@@ -80,10 +81,18 @@ class DishDtoRepositoryTests {
         Optional<Dish> foundDish = dishRepository.findById(savedDish.getId());
 
         assertTrue(foundDish.isPresent());
-        assertEquals("Pasta", foundDish.get().getName());
-        assertEquals(100.0, foundDish.get().getCalories());
-        assertFalse(foundDish.get().getIngredients().isEmpty());
-        assertFalse(foundDish.get().getRecipes().isEmpty());
+        assertEquals("Pasta",
+                     foundDish.get()
+                             .getName());
+        assertEquals(100.0,
+                     foundDish.get()
+                             .getCalories());
+        assertFalse(foundDish.get()
+                .getIngredients()
+                .isEmpty());
+        assertFalse(foundDish.get()
+                .getRecipes()
+                .isEmpty());
     }
 
     @Test
@@ -94,8 +103,12 @@ class DishDtoRepositoryTests {
         List<Dish> allDishes = dishRepository.findAll();
 
         assertEquals(2, allDishes.size());
-        assertTrue(allDishes.stream().anyMatch(d -> d.getName().equals("Dish A")));
-        assertTrue(allDishes.stream().anyMatch(d -> d.getName().equals("Dish B")));
+        assertTrue(allDishes.stream()
+                .anyMatch(d -> d.getName()
+                        .equals("Dish A")));
+        assertTrue(allDishes.stream()
+                .anyMatch(d -> d.getName()
+                        .equals("Dish B")));
     }
 
     @Test
