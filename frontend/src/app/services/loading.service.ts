@@ -2,11 +2,17 @@ import { Injectable, signal } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class LoadingService {
-  active = signal(false);
+  private _active = signal(false);
+
   show() {
-    this.active.set(true);
+    this._active.set(true);
   }
+
   hide() {
-    this.active.set(false);
+    this._active.set(false);
+  }
+
+  active() {
+    return this._active();
   }
 }
