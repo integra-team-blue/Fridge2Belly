@@ -13,7 +13,7 @@
       <td>{{ meal.dateTime | date:'yyyy-MM-dd HH:mm' }}</td>
       <td>
         <span *ngFor="let dish of meal.dishes; let last = last">
-              {{ dish.name }}<span *ngif="!last">, </span>
+              {{ dish.name }}<span *ngIf="!last">, </span>
         </span>
       </td>
     </tr>
