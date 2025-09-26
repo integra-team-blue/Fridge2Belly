@@ -1,4 +1,5 @@
 <p-confirmDialog header="Confirm" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+<p-contextMenu #cm [model]="menuItems"></p-contextMenu>
 
 <p-table
   [value]="recipes"
@@ -6,6 +7,7 @@
   [(selection)] = "selectedRecipe"
   (onRowSelect) = "openEditDialog($event.data)"
   (onContextMenuSelect)="selectedRecipe = $event.data"
+  [contextMenu]="cm"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -113,7 +115,7 @@
   <ng-template pTemplate="footer">
     <div class="form-buttons">
       <p-button label="Save" (click)="editRecipe()"></p-button>
-      <p-button label="Cancel" class="p-button-secondary" (click)="showDialog = false"></p-button>
+      <p-button label="Cancel" class="p-button-secondary" (click)="editDialogVisible  = false"></p-button>
     </div>
   </ng-template>
 </p-dialog>
