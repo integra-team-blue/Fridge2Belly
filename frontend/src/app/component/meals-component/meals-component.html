@@ -10,10 +10,10 @@
   <ng-template pTemplate="body" let-meal>
     <tr>
       <td>{{ meal.mealType }}</td>
-      <td>{{ meal.dateTime | date:'yyyy-MM-dd HH:mm' }}</td>
+      <td>{{ meal.dateTime | date: 'yyyy-MM-dd HH:mm' }}</td>
       <td>
         <span *ngFor="let dish of meal.dishes; let last = last">
-              {{ dish.name }}<span *ngIf="!last">, </span>
+          {{ dish.name }}<span *ngIf="!last">, </span>
         </span>
       </td>
     </tr>
@@ -21,9 +21,7 @@
 
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td colspan="3" style="text-align:center; font-style:italic;">
-        No meals found.
-      </td>
+      <td colspan="3" style="text-align: center; font-style: italic">No meals found.</td>
     </tr>
   </ng-template>
 </p-table>

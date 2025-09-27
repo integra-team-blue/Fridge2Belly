@@ -8,7 +8,7 @@ export interface SampleDataResponse {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SampleDataService {
   private apiUrl = 'http://localhost:8080/api/sample-data';
@@ -16,7 +16,7 @@ export class SampleDataService {
 
   constructor(
     private http: HttpClient,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) {}
 
   get isLoading(): boolean {
@@ -37,7 +37,7 @@ export class SampleDataService {
         severity: 'success',
         summary: 'Success',
         detail: 'Sample data generated successfully!',
-        life: 5000
+        life: 5000,
       });
     } catch (error: any) {
       console.error('Error generating sample data', error);
@@ -48,7 +48,7 @@ export class SampleDataService {
         severity: 'error',
         summary: 'Error',
         detail: errorMessage,
-        life: 5000
+        life: 5000,
       });
     } finally {
       this._isLoading = false;

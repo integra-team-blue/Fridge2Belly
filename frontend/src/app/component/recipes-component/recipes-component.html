@@ -4,8 +4,8 @@
 <p-table
   [value]="recipes"
   selectionMode="single"
-  [(selection)] = "selectedRecipe"
-  (onRowSelect) = "openEditDialog($event.data)"
+  [(selection)]="selectedRecipe"
+  (onRowSelect)="openEditDialog($event.data)"
   (onContextMenuSelect)="selectedRecipe = $event.data"
   [contextMenu]="cm"
 >
@@ -52,13 +52,18 @@
   [modal]="true"
   [style]="{ width: '700px', height: '550px', maxHeight: '90vh' }"
   [baseZIndex]="10000"
-  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
+  [breakpoints]="{ '960px': '95vw', '640px': '100vw' }"
 >
   <form [formGroup]="recipeForm" class="form-container">
     <div class="form-content">
       <div class="form-row"><label>Name</label><input pInputText formControlName="name" /></div>
-      <div class="form-row"><label>Description</label><textarea pInputTextarea formControlName="description"></textarea></div>
-      <div class="form-row"><label>Cooking Time (min)</label><input pInputText type="number" formControlName="cookingTimeMinutes" /></div>
+      <div class="form-row">
+        <label>Description</label><textarea pInputTextarea formControlName="description"></textarea>
+      </div>
+      <div class="form-row">
+        <label>Cooking Time (min)</label
+        ><input pInputText type="number" formControlName="cookingTimeMinutes" />
+      </div>
       <div class="form-row">
         <label>Dishes</label>
         <p-multiSelect
@@ -72,16 +77,19 @@
           [scrollHeight]="'300px'"
         ></p-multiSelect>
       </div>
-      <div class="form-row"><label>Instructions</label><textarea pInputTextarea formControlName="instructions"></textarea></div>
+      <div class="form-row">
+        <label>Instructions</label
+        ><textarea pInputTextarea formControlName="instructions"></textarea>
+      </div>
     </div>
   </form>
 
-    <ng-template pTemplate="footer">
-      <div class="form-buttons">
-        <p-button label="Save" (click)="addRecipe()"></p-button>
-        <p-button label="Cancel" class="p-button-secondary" (click)="showDialog = false"></p-button>
-      </div>
-    </ng-template>
+  <ng-template pTemplate="footer">
+    <div class="form-buttons">
+      <p-button label="Save" (click)="addRecipe()"></p-button>
+      <p-button label="Cancel" class="p-button-secondary" (click)="showDialog = false"></p-button>
+    </div>
+  </ng-template>
 </p-dialog>
 
 <p-dialog
@@ -90,12 +98,17 @@
   [modal]="true"
   [style]="{ width: '800px', maxHeight: '90vh' }"
   [baseZIndex]="10000"
-  [breakpoints]="{'960px': '95vw', '640px': '100vw'}"
+  [breakpoints]="{ '960px': '95vw', '640px': '100vw' }"
 >
   <form [formGroup]="editForm">
     <div class="form-row"><label>Name</label><input pInputText formControlName="name" /></div>
-    <div class="form-row"><label>Description</label><textarea pInputTextarea formControlName="description"></textarea></div>
-    <div class="form-row"><label>Cooking Time (min)</label><input pInputText type="number" formControlName="cookingTimeMinutes" /></div>
+    <div class="form-row">
+      <label>Description</label><textarea pInputTextarea formControlName="description"></textarea>
+    </div>
+    <div class="form-row">
+      <label>Cooking Time (min)</label
+      ><input pInputText type="number" formControlName="cookingTimeMinutes" />
+    </div>
     <div class="form-row">
       <label>Dishes</label>
       <p-multiSelect
@@ -109,13 +122,19 @@
         [scrollHeight]="'300px'"
       ></p-multiSelect>
     </div>
-    <div class="form-row"><label>Instructions</label><textarea pInputTextarea formControlName="instructions"></textarea></div>
+    <div class="form-row">
+      <label>Instructions</label><textarea pInputTextarea formControlName="instructions"></textarea>
+    </div>
   </form>
 
   <ng-template pTemplate="footer">
     <div class="form-buttons">
       <p-button label="Save" (click)="editRecipe()"></p-button>
-      <p-button label="Cancel" class="p-button-secondary" (click)="editDialogVisible  = false"></p-button>
+      <p-button
+        label="Cancel"
+        class="p-button-secondary"
+        (click)="editDialogVisible = false"
+      ></p-button>
     </div>
   </ng-template>
 </p-dialog>

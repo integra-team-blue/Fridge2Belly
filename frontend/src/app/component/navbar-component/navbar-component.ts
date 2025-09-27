@@ -12,7 +12,7 @@ import { SampleDataService } from '../../services/sample-data/sample-data-servic
   standalone: true,
   templateUrl: './navbar-component.html',
   imports: [MenubarModule, RouterLink, Toast, ButtonModule, CommonModule],
-  styleUrls: ['./navbar-component.css']
+  styleUrls: ['./navbar-component.css'],
 })
 export class NavbarComponent {
   items: MenuItem[] = [];
@@ -23,20 +23,20 @@ export class NavbarComponent {
     this.items = [
       {
         label: 'Meals',
-        routerLink: '/meals'
+        routerLink: '/meals',
       },
       {
         label: 'Dishes',
-        routerLink: '/dishes'
+        routerLink: '/dishes',
       },
       {
         label: 'Recipes',
-        routerLink: '/recipes'
+        routerLink: '/recipes',
       },
       {
         label: 'Ingredients',
-        routerLink: '/ingredients'
-      }
+        routerLink: '/ingredients',
+      },
     ];
   }
 

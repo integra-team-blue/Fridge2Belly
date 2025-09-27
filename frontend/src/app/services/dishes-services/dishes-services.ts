@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {Recipe} from '../recipes-services/recipes-service';
-import {Ingredient} from '../ingredients-services/ingredients-service';
+import { Recipe } from '../recipes-services/recipes-service';
+import { Ingredient } from '../ingredients-services/ingredients-service';
 
 export type Dish = {
   id: string;

@@ -1,3 +1,9 @@
-.page { padding: 1rem; }
-.toolbar { margin: 0 0 1rem 0; }
-.dish-row { margin-bottom: .25rem; }
+.page {
+  padding: 1rem;
+}
+.toolbar {
+  margin: 0 0 1rem 0;
+}
+.dish-row {
+  margin-bottom: 0.25rem;
+}

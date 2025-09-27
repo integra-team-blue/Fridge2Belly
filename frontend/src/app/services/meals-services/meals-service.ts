@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {Dish} from '../dishes-services/dishes-services';
+import { Dish } from '../dishes-services/dishes-services';
 
 export type Meal = {
   id: string;

@@ -12,7 +12,7 @@ import { SampleDataService } from '../../services/sample-data/sample-data-servic
   imports: [CommonModule, ToastModule, ButtonModule],
   providers: [MessageService],
   templateUrl: './sample-data-component.html',
-  styleUrls: ['./sample-data-component.css']
+  styleUrls: ['./sample-data-component.css'],
 })
 export class SampleDataComponent implements OnInit {
   isLoading = false;
@@ -20,7 +20,7 @@ export class SampleDataComponent implements OnInit {
 
   constructor(
     private sampleDataService: SampleDataService,
-    private messageService: MessageService
+    private messageService: MessageService,
   ) {}
 
   ngOnInit() {}
@@ -37,18 +37,23 @@ export class SampleDataComponent implements OnInit {
         severity: 'success',
         summary: 'Success',
         detail: response.message || 'Sample data generated successfully!',
-        life: 6000
+        life: 6000,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error generating sample data:', error);
 
-      const errorMessage = error?.error?.message || 'Failed to generate sample data!';
+      let errorMessage = 'Failed to generate sample data!';
+
+      if (error && typeof error === 'object' && 'error' in error) {
+        const apiError = error as { error?: { message?: string } };
+        errorMessage = apiError.error?.message || errorMessage;
+      }
 
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: errorMessage,
-        life: 6000
+        life: 6000,
       });
     } finally {
       this.isLoading = false;
