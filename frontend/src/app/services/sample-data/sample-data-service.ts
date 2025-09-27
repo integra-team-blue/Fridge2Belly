@@ -3,9 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { Observable, firstValueFrom } from 'rxjs';
 
-export interface SampleDataResponse {
+export type SampleDataResponse = {
   message: string;
-}
+};
 
 @Injectable({
   providedIn: 'root',
@@ -39,10 +39,24 @@ export class SampleDataService {
         detail: 'Sample data generated successfully!',
         life: 5000,
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error generating sample data', error);
 
-      const errorMessage = error?.error?.message || 'Failed to generate sample data';
+      let errorMessage = 'Failed to generate sample data';
+
+      if (error !== null && typeof error === 'object') {
+        const errorObj = error as Record<string, unknown>;
+        if (
+          errorObj['error'] !== null &&
+          errorObj['error'] !== undefined &&
+          typeof errorObj['error'] === 'object'
+        ) {
+          const apiError = errorObj['error'] as Record<string, unknown>;
+          if (typeof apiError['message'] === 'string') {
+            errorMessage = apiError['message'];
+          }
+        }
+      }
 
       this.messageService.add({
         severity: 'error',

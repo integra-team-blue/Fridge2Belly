@@ -36,7 +36,7 @@ export class SampleDataComponent implements OnInit {
       this.messageService.add({
         severity: 'success',
         summary: 'Success',
-        detail: response.message || 'Sample data generated successfully!',
+        detail: response.message ?? 'Sample data generated successfully!',
         life: 6000,
       });
     } catch (error: unknown) {
@@ -44,9 +44,18 @@ export class SampleDataComponent implements OnInit {
 
       let errorMessage = 'Failed to generate sample data!';
 
-      if (error && typeof error === 'object' && 'error' in error) {
-        const apiError = error as { error?: { message?: string } };
-        errorMessage = apiError.error?.message || errorMessage;
+      if (error !== null && typeof error === 'object') {
+        const errorObj = error as Record<string, unknown>;
+        if (
+          errorObj['error'] !== null &&
+          errorObj['error'] !== undefined &&
+          typeof errorObj['error'] === 'object'
+        ) {
+          const apiError = errorObj['error'] as Record<string, unknown>;
+          if (typeof apiError['message'] === 'string') {
+            errorMessage = apiError['message'];
+          }
+        }
       }
 
       this.messageService.add({
