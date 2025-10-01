@@ -30,7 +30,7 @@ public class Recipe {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String instructions;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "recipe_dishes", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "dish_id")
     )

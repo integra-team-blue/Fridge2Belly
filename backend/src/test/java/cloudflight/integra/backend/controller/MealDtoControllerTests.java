@@ -72,7 +72,6 @@ public class MealDtoControllerTests {
         ingredientRepository.deleteAll();
         realDishId = createTestDish();
 
-        // SOLUȚIA 1: Folosește builder pattern în loc de constructor
         testMealDto = MealDto.builder()
                 .id(UUID.randomUUID())
                 .mealType(MealType.LUNCH)
@@ -157,7 +156,6 @@ public class MealDtoControllerTests {
     // GET /api/meals/{id} - success
     @Test
     void getMealById_success() throws Exception {
-        // SOLUȚIA 2: Obține response-ul și parsează ID-ul creat
         MvcResult result = mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testMealDto)))
@@ -186,7 +184,6 @@ public class MealDtoControllerTests {
     // PUT /api/meals/{id} - success
     @Test
     void updateMeal_success() throws Exception {
-        // Creează meal-ul și obține ID-ul
         MvcResult result = mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testMealDto)))
@@ -197,7 +194,6 @@ public class MealDtoControllerTests {
                 .getContentAsString();
         MealDto createdMeal = objectMapper.readValue(responseContent, MealDto.class);
 
-        // Actualizează meal-ul
         createdMeal.setMealType(MealType.DINNER);
 
         mockMvc.perform(put("/api/meals/" + createdMeal.getId())
@@ -221,7 +217,6 @@ public class MealDtoControllerTests {
     // DELETE /api/meals/{id} - success
     @Test
     void deleteMeal_success() throws Exception {
-        // Creează meal-ul și obține ID-ul
         MvcResult result = mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(testMealDto)))

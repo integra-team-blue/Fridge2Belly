@@ -38,12 +38,12 @@ public class Dish {
     @Column(nullable = false)
     private double carbohydrates;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "dish_ingredients", joinColumns = @JoinColumn(name = "dish_id"), inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )
     private List<Ingredient> ingredients;
 
-    @ManyToMany(mappedBy = "dishes")
+    @ManyToMany(mappedBy = "dishes", cascade = {CascadeType.MERGE})
     private List<Recipe> recipes;
 }

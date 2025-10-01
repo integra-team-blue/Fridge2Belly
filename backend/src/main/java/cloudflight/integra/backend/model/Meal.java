@@ -25,7 +25,7 @@ public class Meal {
     @Column(name = "date_time", nullable = false)
     private LocalDateTime dateTime;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE})
     @JoinTable(
             name = "meal_dishes", joinColumns = @JoinColumn(name = "meal_id"), inverseJoinColumns = @JoinColumn(name = "dish_id")
     )

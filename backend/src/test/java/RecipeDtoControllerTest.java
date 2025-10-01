@@ -63,20 +63,42 @@ class RecipeDtoControllerTest {
 
     @Test
     void testCreateRecipe() throws Exception {
+        Ingredient ingredient = Ingredient.builder()
+                .name("Test Ingredient")
+                .quantity(100.0)
+                .unit("grams")
+                .calories(50.0)
+                .protein(5.0)
+                .fat(2.0)
+                .carbohydrates(8.0)
+                .expirationDate(LocalDate.now().plusDays(7))
+                .build();
+        ingredient = ingredientRepository.save(ingredient);
+
+        Dish dish = Dish.builder()
+                .name("Test Dish")
+                .calories(100)
+                .protein(10)
+                .fat(5)
+                .carbohydrates(12)
+                .preparedAt(LocalDateTime.now())
+                .ingredients(List.of(ingredient))
+                .build();
+        dish = dishRepository.save(dish);
+
         RecipeDto recipeDto = new RecipeDto();
         recipeDto.setName("ControllerTest");
         recipeDto.setCookingTimeMinutes(30);
         recipeDto.setInstructions("Bake");
-        recipeDto.setDishIds(Collections.emptyList());
+        recipeDto.setDishIds(List.of(dish.getId()));
 
-        MvcResult result = mockMvc.perform(post("/api/recipes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(recipeDto)))
-                .andReturn();
-
-        String responseBody = result.getResponse()
-                .getContentAsString();
-        System.out.println("Response: " + responseBody);
+        mockMvc.perform(post("/api/recipes")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(recipeDto)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name").value("ControllerTest"))
+                .andExpect(jsonPath("$.cookingTimeMinutes").value(30))
+                .andExpect(jsonPath("$.instructions").value("Bake"));
     }
 
 
@@ -111,7 +133,7 @@ class RecipeDtoControllerTest {
         recipeDto.setDescription("Test recipe with existing dish");
         recipeDto.setCookingTimeMinutes(45);
         recipeDto.setInstructions("Cook and serve");
-        recipeDto.setDishIds(List.of(dish.getId())); // UUID direct, nu String
+        recipeDto.setDishIds(List.of(dish.getId()));
 
         mockMvc.perform(post("/api/recipes")
                 .contentType(MediaType.APPLICATION_JSON)

@@ -4,6 +4,7 @@ import cloudflight.integra.backend.exception.IngredientsExeption;
 import cloudflight.integra.backend.model.Ingredient;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.model.mappers.IngredientMapper;
+import cloudflight.integra.backend.repository.DishRepository;
 import cloudflight.integra.backend.repository.IngredientRepository;
 import cloudflight.integra.backend.validation.IngredientsValidator;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ class IngredientDtoServiceTest {
 
     @Mock
     private IngredientMapper ingredientMapper;
+
+    @Mock
+    private DishRepository dishRepository;
 
     @InjectMocks
     private IngredientService ingredientService;
@@ -127,7 +131,7 @@ class IngredientDtoServiceTest {
     void createIngredient_ShouldReturnCreatedIngredient_WhenValidIngredient() {
 
         IngredientDto inputDto = createTestIngredientDto("New Ingredient");
-        inputDto.setId(null); // Simulate new ingredient without ID
+        inputDto.setId(null);
 
         Ingredient entityToSave = createTestIngredient("New Ingredient");
         Ingredient savedEntity = createTestIngredient("New Ingredient");
@@ -227,27 +231,31 @@ class IngredientDtoServiceTest {
     @Test
     void deleteIngredient_ShouldDeleteSuccessfully_WhenIngredientExists() {
         UUID id = UUID.randomUUID();
-        when(ingredientRepository.existsById(id)).thenReturn(true);
-        doNothing().when(ingredientRepository)
-                .deleteById(id);
 
+        when(ingredientRepository.existsById(id)).thenReturn(true);
+
+        when(dishRepository.findAll()).thenReturn(List.of());
 
         assertDoesNotThrow(() -> ingredientService.deleteIngredient(id));
 
-
         verify(ingredientRepository).existsById(id);
+        verify(dishRepository).findAll();
         verify(ingredientRepository).deleteById(id);
     }
 
     @Test
     void deleteIngredient_ShouldThrowException_WhenIngredientNotFound() {
         UUID id = UUID.randomUUID();
+
         when(ingredientRepository.existsById(id)).thenReturn(false);
 
-        IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                                                     () -> ingredientService.deleteIngredient(id));
+        IngredientsExeption exception = assertThrows(
+                IngredientsExeption.class,
+                () -> ingredientService.deleteIngredient(id)
+        );
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());
+
         verify(ingredientRepository).existsById(id);
         verify(ingredientRepository, never()).deleteById(any());
     }

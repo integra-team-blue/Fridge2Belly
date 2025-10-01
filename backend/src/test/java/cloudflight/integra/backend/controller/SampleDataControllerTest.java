@@ -32,7 +32,6 @@ public class SampleDataControllerTest {
 
         mockMvc.perform(post("/api/sample-data/generate"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").value(containsString("Sample data generated successfully")));
 
         verify(sampleDataService, times(1)).generateAllSampleData();
@@ -46,7 +45,6 @@ public class SampleDataControllerTest {
 
         mockMvc.perform(post("/api/sample-data/generate"))
                 .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").exists())
                 .andExpect(jsonPath("$.message").value(containsString("Error generating sample data")));
 
         verify(sampleDataService, times(1)).generateAllSampleData();

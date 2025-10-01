@@ -1,15 +1,18 @@
 package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.exception.IngredientsExeption;
+import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Ingredient;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.model.mappers.IngredientMapper;
+import cloudflight.integra.backend.repository.DishRepository;
 import cloudflight.integra.backend.repository.IngredientRepository;
 import cloudflight.integra.backend.validation.IngredientsValidator;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -18,13 +21,17 @@ import java.util.stream.Collectors;
 public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
+    private final DishRepository dishRepository;
     private final IngredientsValidator validator;
     private final IngredientMapper ingredientMapper;
 
     @Autowired
-    public IngredientService(IngredientRepository ingredientRepository, IngredientsValidator validator,
+    public IngredientService(IngredientRepository ingredientRepository,
+                             DishRepository dishRepository,
+                             IngredientsValidator validator,
                              IngredientMapper ingredientMapper) {
         this.ingredientRepository = ingredientRepository;
+        this.dishRepository = dishRepository;
         this.validator = validator;
         this.ingredientMapper = ingredientMapper;
     }
@@ -76,11 +83,25 @@ public class IngredientService {
         return ingredientMapper.toDto(savedIngredient);
     }
 
+    @Transactional
     public void deleteIngredient(UUID id) {
         validateId(id);
 
         if (!ingredientRepository.existsById(id)) {
             throw new IngredientsExeption("Ingredient not found with id: " + id);
+        }
+
+        List<Dish> dishesUsingIngredient = new ArrayList<>();
+        dishRepository.findAll().forEach(dish -> {
+            if (dish.getIngredients() != null &&
+                    dish.getIngredients().stream().anyMatch(ing -> ing.getId().equals(id))) {
+                dishesUsingIngredient.add(dish);
+            }
+        });
+
+        for (Dish dish : dishesUsingIngredient) {
+            dish.getIngredients().removeIf(ing -> ing.getId().equals(id));
+            dishRepository.save(dish);
         }
 
         ingredientRepository.deleteById(id);
