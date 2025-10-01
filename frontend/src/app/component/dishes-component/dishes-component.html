@@ -31,19 +31,17 @@
         <td>{{ dish.fat }}</td>
         <td>{{ dish.carbohydrates }}</td>
         <td>
-          <ng-container *ngIf="dish.recipes?.length; else noRecipes">
-            <span *ngFor="let recipe of dish.recipes; let last = last">
-              {{ recipe.name }}<span *ngIf="!last">, </span>
-            </span>
-          </ng-container>
+          <ul *ngIf="dish.recipeIds?.length; else noRecipes">
+            <li *ngFor="let recipeId of dish.recipeIds">
+              {{ getRecipeName(recipeId) }}
+            </li>
+          </ul>
           <ng-template #noRecipes>-</ng-template>
         </td>
         <td>
-          <ng-container *ngIf="dish.ingredients?.length; else noIngredients">
-            <span *ngFor="let ingredient of dish.ingredients; let last = last">
-              {{ ingredient.name }}<span *ngIf="!last">, </span>
-            </span>
-          </ng-container>
+          <ul *ngIf="dish.ingredientIds?.length; else noIngredients">
+            <li *ngFor="let ingId of dish.ingredientIds">{{ ingId }}</li>
+          </ul>
           <ng-template #noIngredients>-</ng-template>
         </td>
       </tr>
