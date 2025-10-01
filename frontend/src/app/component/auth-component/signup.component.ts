@@ -9,8 +9,8 @@ import {
 } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { NgIf } from '@angular/common';
-import { catchError, map, of, switchMap, timer } from 'rxjs';
-import { AuthService } from '../../services/auth-services/auth.service';
+import {catchError, firstValueFrom, map, of, switchMap, timer} from 'rxjs';
+import { UserControllerService, AuthResponse, LoginRequest } from '../../api';
 import { ToastService } from '../../services/toast.service';
 import { LoadingService } from '../../services/loading.service';
 import { InputTextModule } from 'primeng/inputtext';
@@ -104,7 +104,7 @@ const strong = (v: string) => v.length >= 8 && /[A-Z]/.test(v) && /[a-z]/.test(v
 })
 export class SignupComponent {
   private formBuilder = inject(FormBuilder);
-  private auth = inject(AuthService);
+  private userApi = inject(UserControllerService);
   private toast = inject(ToastService);
   loading = inject(LoadingService);
   private router = inject(Router);
@@ -142,8 +142,8 @@ export class SignupComponent {
         return of(null);
       }
       return timer(300).pipe(
-        switchMap(() => this.auth.isUsernameTaken(value)),
-        map((taken) => (taken ? ({ taken: true } as ValidationErrors) : null)),
+        switchMap(() => this.userApi.checkUsername(value)),
+        map((res) => (res?.['taken'] ? { taken: true } : null)),
         catchError(() => of(null)),
       );
     };
@@ -156,8 +156,8 @@ export class SignupComponent {
         return of(null);
       }
       return timer(300).pipe(
-        switchMap(() => this.auth.isEmailTaken(value)),
-        map((taken) => (taken ? ({ taken: true } as ValidationErrors) : null)),
+        switchMap(() => this.userApi.checkEmail(value)),
+        map((res) => (res?.['taken'] ? { taken: true } : null)),
         catchError(() => of(null)),
       );
     };
@@ -174,7 +174,11 @@ export class SignupComponent {
     }
     this.loading.show();
     try {
-      await this.auth.signup({ username: v.username, email: v.email });
+      const userDto = {email: v.email, username: v.username};
+      const createdUser = await firstValueFrom(this.userApi.addUser(userDto));
+
+      localStorage.setItem('token', 'temp-token');
+
       this.toast.push('Account created. Welcome!', 'success');
       this.router.navigateByUrl('/dishes');
     } catch (err) {

@@ -11,12 +11,7 @@ import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
-import {
-  DishesService,
-  Dish,
-  RecipeOption,
-  CreateDishPayload,
-} from '../../services/dishes-services/dishes-services';
+import { DishControllerService, DishDto, RecipeDto, RecipeControllerService } from '../../api';
 import { LoadingService } from '../../services/loading.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -41,12 +36,13 @@ import { ToastService } from '../../services/toast.service';
   ],
 })
 export class DishesComponent implements OnInit {
-  dishes: Dish[] = [];
-  recipes: RecipeOption[] = [];
+  dishes: DishDto[] = [];
+  recipes: RecipeDto[] = [];
   dialogVisible = false;
 
   private fb = inject(FormBuilder);
-  private dishesService = inject(DishesService);
+  private dishesService = inject(DishControllerService);
+  private recipesService = inject(RecipeControllerService);
   public loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
   private confirmService = inject(ConfirmationService);
@@ -92,12 +88,11 @@ export class DishesComponent implements OnInit {
   async loadData() {
     this.loadingService.show();
     try {
-      const [d, r] = await Promise.all([
-        firstValueFrom(this.dishesService.getDishes()),
-        firstValueFrom(this.dishesService.getRecipes()),
-      ]);
-      this.dishes = d;
-      this.recipes = r;
+      const dishes = await firstValueFrom(this.dishesService.getAll('body', false, { httpHeaderAccept: 'application/json' as '*/*' }));
+      const recipes = await firstValueFrom(this.recipesService.getAllRecipes('body', false, { httpHeaderAccept: 'application/json' as '*/*' }));
+
+      this.dishes = dishes;
+      this.recipes = recipes;
     } finally {
       this.loadingService.hide();
     }
@@ -117,15 +112,15 @@ export class DishesComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  onRowSelect(event: { data?: Dish | Dish[] }) {
+  onRowSelect(event: { data?: DishDto | DishDto[] }) {
     const dish = Array.isArray(event?.data) ? event.data[0] : event?.data;
     if (dish == null) {
       return;
     }
-    this._editId.set(dish.id);
+    this._editId.set(dish.id ?? null);
     this.form.patchValue({
       name: dish.name,
-      recipeId: dish.recipes?.[0]?.id ?? '',
+      recipeId: dish.recipeIds?.[0] ?? '',
       preparedAt: new Date(dish.preparedAt),
       calories: dish.calories,
       protein: dish.protein,
@@ -135,7 +130,7 @@ export class DishesComponent implements OnInit {
     this.dialogVisible = true;
   }
 
-  onRightClick(event: MouseEvent, dish: Dish) {
+  onRightClick(event: MouseEvent, dish: DishDto) {
     event.preventDefault();
     this.confirmService.confirm({
       header: 'Delete dish',
@@ -144,14 +139,20 @@ export class DishesComponent implements OnInit {
       acceptLabel: 'Delete',
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.deleteDish(dish.id),
+      accept: () => {
+        if (dish.id) {
+          this.deleteDish(dish.id);
+        } else {
+          this.toastService.push('Cannot delete: dish has no ID', 'error');
+        }
+      }
     });
   }
 
   private async deleteDish(id: string) {
     this.loadingService.show();
     try {
-      await firstValueFrom(this.dishesService.deleteDish(id));
+      await firstValueFrom(this.dishesService._delete(id));
       this.dishes = this.dishes.filter((d) => d.id !== id);
       this.toastService.push('Dish deleted', 'success');
     } finally {
@@ -169,33 +170,24 @@ export class DishesComponent implements OnInit {
     try {
       const v = this.form.getRawValue();
       const recipeIds = typeof v.recipeId === 'string' && v.recipeId.length > 0 ? [v.recipeId] : [];
-      const recipes = recipeIds.map((id) => ({ id }));
-      const id = this._editId();
-      let ingredients: { id: string }[] = [];
 
-      if (id != null && id !== '') {
-        const existingDish = this.dishes.find((d) => d.id === id);
-        if (existingDish?.ingredients != null && existingDish.ingredients.length > 0) {
-          ingredients = existingDish.ingredients.map((ing) => ({ id: ing.id }));
-        }
-      }
-
-      const payload: CreateDishPayload = {
-        name: String(v.name),
+      const payload: DishDto = {
+        name: v.name,
         preparedAt: this.toLocalDateTimeString(v.preparedAt),
-        calories: Number(v.calories),
-        protein: Number(v.protein),
-        fat: Number(v.fat),
-        carbohydrates: Number(v.carbohydrates),
-        recipes,
-        ingredients,
+        calories: v.calories,
+        protein: v.protein,
+        fat: v.fat,
+        carbohydrates: v.carbohydrates,
+        recipeIds,
+        ingredientIds: [],
       };
 
+      const id = this._editId();
       if (id != null && id !== '') {
-        await firstValueFrom(this.dishesService.updateDish(id, payload));
+        await firstValueFrom(this.dishesService.update(id, payload));
         this.toastService.push('Dish updated', 'success');
       } else {
-        await firstValueFrom(this.dishesService.createDish(payload));
+        await firstValueFrom(this.dishesService.create(payload));
         this.toastService.push('Dish created', 'success');
       }
 
@@ -220,5 +212,11 @@ export class DishesComponent implements OnInit {
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
       d.getMinutes(),
     )}:${pad(d.getSeconds())}`;
+  }
+
+  getRecipeName(id: string | undefined): string {
+    if (!id) return '-';
+    const recipe = this.recipes.find(r => r.id === id);
+    return recipe ? recipe.name : id;
   }
 }
