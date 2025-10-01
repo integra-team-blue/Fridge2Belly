@@ -92,15 +92,20 @@ public class IngredientService {
         }
 
         List<Dish> dishesUsingIngredient = new ArrayList<>();
-        dishRepository.findAll().forEach(dish -> {
-            if (dish.getIngredients() != null &&
-                    dish.getIngredients().stream().anyMatch(ing -> ing.getId().equals(id))) {
-                dishesUsingIngredient.add(dish);
-            }
-        });
+        dishRepository.findAll()
+                .forEach(dish -> {
+                    if (dish.getIngredients() != null && dish.getIngredients()
+                            .stream()
+                            .anyMatch(ing -> ing.getId()
+                                    .equals(id))) {
+                        dishesUsingIngredient.add(dish);
+                    }
+                });
 
         for (Dish dish : dishesUsingIngredient) {
-            dish.getIngredients().removeIf(ing -> ing.getId().equals(id));
+            dish.getIngredients()
+                    .removeIf(ing -> ing.getId()
+                            .equals(id));
             dishRepository.save(dish);
         }
 

@@ -71,7 +71,8 @@ class RecipeDtoControllerTest {
                 .protein(5.0)
                 .fat(2.0)
                 .carbohydrates(8.0)
-                .expirationDate(LocalDate.now().plusDays(7))
+                .expirationDate(LocalDate.now()
+                        .plusDays(7))
                 .build();
         ingredient = ingredientRepository.save(ingredient);
 
@@ -93,8 +94,8 @@ class RecipeDtoControllerTest {
         recipeDto.setDishIds(List.of(dish.getId()));
 
         mockMvc.perform(post("/api/recipes")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(objectMapper.writeValueAsString(recipeDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(recipeDto)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("ControllerTest"))
                 .andExpect(jsonPath("$.cookingTimeMinutes").value(30))

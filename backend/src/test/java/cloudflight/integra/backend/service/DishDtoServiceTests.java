@@ -185,8 +185,8 @@ class DishDtoServiceTests {
         when(dishRepository.existsById(testId)).thenReturn(false);
 
         RuntimeException exception = assertThrows(
-                RuntimeException.class,
-                () -> dishService.delete(testId)
+                                                  RuntimeException.class,
+                                                  () -> dishService.delete(testId)
         );
 
         assertEquals("Dish not found: " + testId, exception.getMessage());

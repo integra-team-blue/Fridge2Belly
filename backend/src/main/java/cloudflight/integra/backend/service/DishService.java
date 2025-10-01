@@ -72,15 +72,18 @@ public class DishService {
         existingDish.setCarbohydrates(dishDto.getCarbohydrates());
 
         if (dishDto.getIngredientIds() != null) {
-            List<Ingredient> ingredients = dishDto.getIngredientIds().stream()
+            List<Ingredient> ingredients = dishDto.getIngredientIds()
+                    .stream()
                     .map(ingredientId -> ingredientRepository.findById(ingredientId)
                             .orElseThrow(() -> new RuntimeException("Ingredient not found: " + ingredientId)))
                     .collect(Collectors.toList());
             existingDish.setIngredients(ingredients);
-        };
+        }
+        ;
 
         if (dishDto.getRecipeIds() != null) {
-            List<Recipe> recipes = dishDto.getRecipeIds().stream()
+            List<Recipe> recipes = dishDto.getRecipeIds()
+                    .stream()
                     .map(recipeId -> recipeRepository.findById(recipeId)
                             .orElseThrow(() -> new RuntimeException("Recipe not found: " + recipeId)))
                     .collect(Collectors.toList());
@@ -100,28 +103,38 @@ public class DishService {
         }
 
         List<Meal> mealsUsingDish = new ArrayList<>();
-        mealRepository.findAll().forEach(meal -> {
-            if (meal.getDishes() != null &&
-                    meal.getDishes().stream().anyMatch(d -> d.getId().equals(id))) {
-                mealsUsingDish.add(meal);
-            }
-        });
+        mealRepository.findAll()
+                .forEach(meal -> {
+                    if (meal.getDishes() != null && meal.getDishes()
+                            .stream()
+                            .anyMatch(d -> d.getId()
+                                    .equals(id))) {
+                        mealsUsingDish.add(meal);
+                    }
+                });
 
         for (Meal meal : mealsUsingDish) {
-            meal.getDishes().removeIf(d -> d.getId().equals(id));
+            meal.getDishes()
+                    .removeIf(d -> d.getId()
+                            .equals(id));
             mealRepository.save(meal);
         }
 
         List<Recipe> recipesUsingDish = new ArrayList<>();
-        recipeRepository.findAll().forEach(recipe -> {
-            if (recipe.getDishes() != null &&
-                    recipe.getDishes().stream().anyMatch(d -> d.getId().equals(id))) {
-                recipesUsingDish.add(recipe);
-            }
-        });
+        recipeRepository.findAll()
+                .forEach(recipe -> {
+                    if (recipe.getDishes() != null && recipe.getDishes()
+                            .stream()
+                            .anyMatch(d -> d.getId()
+                                    .equals(id))) {
+                        recipesUsingDish.add(recipe);
+                    }
+                });
 
         for (Recipe recipe : recipesUsingDish) {
-            recipe.getDishes().removeIf(d -> d.getId().equals(id));
+            recipe.getDishes()
+                    .removeIf(d -> d.getId()
+                            .equals(id));
             recipeRepository.save(recipe);
         }
 

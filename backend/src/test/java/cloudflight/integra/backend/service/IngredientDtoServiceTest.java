@@ -250,8 +250,8 @@ class IngredientDtoServiceTest {
         when(ingredientRepository.existsById(id)).thenReturn(false);
 
         IngredientsExeption exception = assertThrows(
-                IngredientsExeption.class,
-                () -> ingredientService.deleteIngredient(id)
+                                                     IngredientsExeption.class,
+                                                     () -> ingredientService.deleteIngredient(id)
         );
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());

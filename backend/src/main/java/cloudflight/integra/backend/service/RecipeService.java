@@ -72,15 +72,20 @@ public class RecipeService {
         }
 
         List<Dish> dishesUsingRecipe = new ArrayList<>();
-        dishRepository.findAll().forEach(dish -> {
-            if (dish.getRecipes() != null &&
-                    dish.getRecipes().stream().anyMatch(r -> r.getId().equals(id))) {
-                dishesUsingRecipe.add(dish);
-            }
-        });
+        dishRepository.findAll()
+                .forEach(dish -> {
+                    if (dish.getRecipes() != null && dish.getRecipes()
+                            .stream()
+                            .anyMatch(r -> r.getId()
+                                    .equals(id))) {
+                        dishesUsingRecipe.add(dish);
+                    }
+                });
 
         for (Dish dish : dishesUsingRecipe) {
-            dish.getRecipes().removeIf(r -> r.getId().equals(id));
+            dish.getRecipes()
+                    .removeIf(r -> r.getId()
+                            .equals(id));
             dishRepository.save(dish);
         }
 
