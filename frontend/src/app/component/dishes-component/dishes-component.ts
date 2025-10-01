@@ -171,8 +171,8 @@ export class DishesComponent implements OnInit {
       const v = this.form.getRawValue();
       const recipeIds = typeof v.recipeId === 'string' && v.recipeId.length > 0 ? [v.recipeId] : [];
 
-      const payload: CreateDishPayload = {
-        name: String(v.name),
+      const payload: DishDto = {
+        name: v.name,
         preparedAt: this.toLocalDateTimeString(v.preparedAt),
         calories: Number(v.calories),
         protein: Number(v.protein),
