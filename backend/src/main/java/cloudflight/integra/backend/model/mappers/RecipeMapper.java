@@ -7,6 +7,7 @@ import cloudflight.integra.backend.repository.DishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,7 +25,7 @@ public class RecipeMapper {
         List<UUID> dishIds = recipe.getDishes() != null ? recipe.getDishes()
                 .stream()
                 .map(Dish::getId)
-                .collect(Collectors.toList()) : List.of();
+                .collect(Collectors.toList()) : new ArrayList<>();
 
         return RecipeDto.builder()
                 .id(recipe.getId())
@@ -41,11 +42,12 @@ public class RecipeMapper {
             return null;
         }
 
-        List<Dish> dishes = dto.getDishIds() != null ? dto.getDishIds()
-                .stream()
-                .map(id -> dishRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Dish not found: " + id)))
-                .collect(Collectors.toList()) : List.of();
+        List<UUID> dishIds = dto.getDishIds() != null ? new ArrayList<>(dto.getDishIds()) : new ArrayList<>();
+        List<Dish> dishes = dishIds.isEmpty() ? new ArrayList<>() : dishRepository.findAllByIdIn(dishIds);
+
+        if (dishes.size() != dishIds.size()) {
+            throw new IllegalArgumentException("Some dishes were not found");
+        }
 
         return Recipe.builder()
                 .id(dto.getId())

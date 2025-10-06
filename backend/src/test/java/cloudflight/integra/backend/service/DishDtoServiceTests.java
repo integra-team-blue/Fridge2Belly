@@ -1,7 +1,10 @@
 package cloudflight.integra.backend.service;
 
+import cloudflight.integra.backend.exception.DishNotFoundException;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.dtos.DishDto;
+import cloudflight.integra.backend.model.dtos.IngredientDto;
+import cloudflight.integra.backend.model.dtos.RecipeDto;
 import cloudflight.integra.backend.model.mappers.DishMapper;
 import cloudflight.integra.backend.repository.DishRepository;
 import cloudflight.integra.backend.repository.MealRepository;
@@ -53,11 +56,21 @@ class DishDtoServiceTests {
     }
 
     private DishDto createTestDishDto(String name) {
+        RecipeDto recipe = RecipeDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Recipe")
+                .build();
+
+        IngredientDto ingredient = IngredientDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Ingredient")
+                .build();
+
         DishDto d = new DishDto();
         d.setId(testId);
         d.setName(name);
-        d.setRecipeIds(List.of(UUID.randomUUID()));
-        d.setIngredientIds(List.of(UUID.randomUUID()));
+        d.setRecipes(List.of(recipe));
+        d.setIngredients(List.of(ingredient));
         d.setPreparedAt(LocalDateTime.now());
         d.setCalories(120);
         d.setProtein(7);
@@ -134,37 +147,6 @@ class DishDtoServiceTests {
         assertThrows(RuntimeException.class, () -> dishService.getById(missingId));
     }
 
-//    @Test
-//    void update_replacesAndKeepsId() {
-//        DishDto updateDto = createTestDishDto("Updated Dish");
-//        updateDto.setId(null);
-//
-//        Dish updatedDish = createTestDish("Updated Dish");
-//        DishDto expectedResult = createTestDishDto("Updated Dish");
-//
-//        when(dishRepository.existsById(testId)).thenReturn(true);
-//        when(dishMapper.toEntity(any(DishDto.class))).thenReturn(updatedDish);
-//        when(dishRepository.save(updatedDish)).thenReturn(updatedDish);
-//        when(dishMapper.toDto(updatedDish)).thenReturn(expectedResult);
-//
-//        DishDto result = dishService.update(testId, updateDto);
-//
-//        assertEquals(testId, result.getId());
-//        assertEquals("Updated Dish", result.getName());
-//        verify(dishRepository).existsById(testId);
-//        verify(dishRepository).save(updatedDish);
-//    }
-
-//    @Test
-//    void update_throwsWhenNotFound() {
-//        DishDto updateDto = createTestDishDto("Updated Dish");
-//        when(dishRepository.existsById(testId)).thenReturn(false);
-//
-//        assertThrows(RuntimeException.class, () -> dishService.update(testId, updateDto));
-//        verify(dishRepository).existsById(testId);
-//        verify(dishRepository, never()).save(any());
-//    }
-
     @Test
     void delete_removes() {
         when(dishRepository.existsById(testId)).thenReturn(true);
@@ -184,12 +166,12 @@ class DishDtoServiceTests {
     void delete_throwsWhenNotFound() {
         when(dishRepository.existsById(testId)).thenReturn(false);
 
-        RuntimeException exception = assertThrows(
-                                                  RuntimeException.class,
-                                                  () -> dishService.delete(testId)
+        DishNotFoundException exception = assertThrows(
+                                                       DishNotFoundException.class,
+                                                       () -> dishService.delete(testId)
         );
 
-        assertEquals("Dish not found: " + testId, exception.getMessage());
+        assertEquals("Dish not found with id: " + testId, exception.getMessage());
 
         verify(dishRepository).existsById(testId);
         verify(dishRepository, never()).deleteById(any());

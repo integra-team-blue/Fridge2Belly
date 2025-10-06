@@ -12,10 +12,8 @@ export type Dish = {
   protein: number;
   fat: number;
   carbohydrates: number;
-  recipeIds: string[];
-  ingredientIds: string[];
-  recipes: Recipe[];
-  ingredients: Ingredient[];
+  recipes: { id: string }[];
+  ingredients: { id: string }[];
 };
 
 export type RecipeOption = { id: string; name: string };
@@ -27,8 +25,8 @@ export type CreateDishPayload = {
   protein: number;
   fat: number;
   carbohydrates: number;
-  recipeIds: string[];
-  ingredientIds: string[];
+  recipes: { id: string }[];
+  ingredients: { id: string }[];
 };
 
 @Injectable({ providedIn: 'root' })

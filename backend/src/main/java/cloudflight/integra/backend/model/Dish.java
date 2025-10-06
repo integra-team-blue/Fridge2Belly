@@ -38,7 +38,7 @@ public class Dish {
     @Column(nullable = false)
     private double carbohydrates;
 
-    @ManyToMany(cascade = {CascadeType.MERGE})
+    @ManyToMany
     @JoinTable(
             name = "dish_ingredients", joinColumns = @JoinColumn(name = "dish_id"), inverseJoinColumns = @JoinColumn(name = "ingredient_id")
     )

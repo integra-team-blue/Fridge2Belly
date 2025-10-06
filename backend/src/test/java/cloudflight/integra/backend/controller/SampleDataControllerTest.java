@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SampleDataController.class)
@@ -44,21 +44,20 @@ public class SampleDataControllerTest {
                 .generateAllSampleData();
 
         mockMvc.perform(post("/api/sample-data/generate"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").value(containsString("Error generating sample data")));
+                .andExpect(status().isInternalServerError());
 
         verify(sampleDataService, times(1)).generateAllSampleData();
     }
 
     @Test
-    void generateSampleData_serviceThrowsIllegalArgumentException_returnsInternalServerError() throws Exception {
+    void generateSampleData_serviceThrowsIllegalArgumentException_returnsBadRequest() throws Exception {
         doThrow(new IllegalArgumentException("Invalid data"))
                 .when(sampleDataService)
                 .generateAllSampleData();
 
         mockMvc.perform(post("/api/sample-data/generate"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.message").value(containsString("Invalid data")));
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("Invalid data"));
 
         verify(sampleDataService, times(1)).generateAllSampleData();
     }
@@ -68,5 +67,22 @@ public class SampleDataControllerTest {
         mockMvc.perform(post("/api/sample-data/generate"))
                 .andExpect(status().isOk());
     }
-}
 
+    @Test
+    void generateSampleData_getMethod_returnsMethodNotAllowed() throws Exception {
+        mockMvc.perform(get("/api/sample-data/generate"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    void generateSampleData_putMethod_returnsMethodNotAllowed() throws Exception {
+        mockMvc.perform(put("/api/sample-data/generate"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    void generateSampleData_deleteMethod_returnsMethodNotAllowed() throws Exception {
+        mockMvc.perform(delete("/api/sample-data/generate"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+}

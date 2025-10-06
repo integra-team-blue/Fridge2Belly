@@ -1,12 +1,13 @@
 package cloudflight.integra.backend.service;
 
+import cloudflight.integra.backend.exception.RecipeNotFoundException;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Recipe;
 import cloudflight.integra.backend.model.dtos.RecipeDto;
 import cloudflight.integra.backend.model.mappers.RecipeMapper;
 import cloudflight.integra.backend.repository.DishRepository;
 import cloudflight.integra.backend.repository.RecipeRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,13 +36,14 @@ public class RecipeService {
         return recipeMapper.toDto(savedRecipe);
     }
 
+    @Transactional(readOnly = true)
     public RecipeDto getRecipe(UUID id) {
         Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id));
         return recipeMapper.toDto(recipe);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<RecipeDto> getAllRecipes() {
         List<Recipe> recipes = new ArrayList<>();
         recipeRepository.findAll()
@@ -54,7 +56,7 @@ public class RecipeService {
 
     public RecipeDto updateRecipe(UUID id, RecipeDto updated) {
         Recipe existingRecipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new RecipeNotFoundException("Recipe not found with id: " + id));
 
         existingRecipe.setName(updated.getName());
         existingRecipe.setDescription(updated.getDescription());
@@ -68,7 +70,7 @@ public class RecipeService {
     @Transactional
     public void deleteRecipe(UUID id) {
         if (!recipeRepository.existsById(id)) {
-            throw new RuntimeException("Recipe not found");
+            throw new RecipeNotFoundException("Recipe not found with id: " + id);
         }
 
         List<Dish> dishesUsingRecipe = new ArrayList<>();

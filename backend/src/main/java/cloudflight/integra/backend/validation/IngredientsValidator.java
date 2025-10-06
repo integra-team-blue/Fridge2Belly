@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.validation;
 
-import cloudflight.integra.backend.exception.IngredientsExeption;
+import cloudflight.integra.backend.exception.IngredientsException;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ public class IngredientsValidator {
 
     public void validateIngredient(IngredientDto ingredient) {
         if (ingredient == null) {
-            throw new IngredientsExeption("Ingredient cannot be null");
+            throw new IngredientsException("Ingredient cannot be null");
         }
 
         validateName(ingredient.getName());
@@ -21,28 +21,28 @@ public class IngredientsValidator {
     private void validateName(String name) {
         if (name == null || name.trim()
                 .isEmpty()) {
-            throw new IngredientsExeption("Ingredient name is required");
+            throw new IngredientsException("Ingredient name is required");
         }
 
         if (name.length() > 100) {
-            throw new IngredientsExeption("Ingredient name cannot exceed 100 characters");
+            throw new IngredientsException("Ingredient name cannot exceed 100 characters");
         }
     }
 
     private void validateQuantity(Double quantity) {
         if (quantity == null || quantity <= 0) {
-            throw new IngredientsExeption("Quantity must be positive");
+            throw new IngredientsException("Quantity must be positive");
         }
 
         if (quantity > 10000) {
-            throw new IngredientsExeption("Quantity cannot exceed 10000");
+            throw new IngredientsException("Quantity cannot exceed 10000");
         }
     }
 
     private void validateUnit(String unit) {
         if (unit == null || unit.trim()
                 .isEmpty()) {
-            throw new IngredientsExeption("Unit is required");
+            throw new IngredientsException("Unit is required");
         }
 
 
@@ -56,25 +56,25 @@ public class IngredientsValidator {
         }
 
         if (!isValidUnit) {
-            throw new IngredientsExeption("Invalid unit. Accepted units: kg, g, l, ml, pieces, cups, tbsp, tsp");
+            throw new IngredientsException("Invalid unit. Accepted units: kg, g, l, ml, pieces, cups, tbsp, tsp");
         }
     }
 
     private void validateNutritionalValues(IngredientDto ingredient) {
         if (ingredient.getCalories() != null && ingredient.getCalories() < 0) {
-            throw new IngredientsExeption("Calories cannot be negative");
+            throw new IngredientsException("Calories cannot be negative");
         }
 
         if (ingredient.getProtein() != null && ingredient.getProtein() < 0) {
-            throw new IngredientsExeption("Protein cannot be negative");
+            throw new IngredientsException("Protein cannot be negative");
         }
 
         if (ingredient.getFat() != null && ingredient.getFat() < 0) {
-            throw new IngredientsExeption("Fat cannot be negative");
+            throw new IngredientsException("Fat cannot be negative");
         }
 
         if (ingredient.getCarbohydrates() != null && ingredient.getCarbohydrates() < 0) {
-            throw new IngredientsExeption("Carbohydrates cannot be negative");
+            throw new IngredientsException("Carbohydrates cannot be negative");
         }
 
     }

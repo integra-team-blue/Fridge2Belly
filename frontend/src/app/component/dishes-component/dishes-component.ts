@@ -125,7 +125,7 @@ export class DishesComponent implements OnInit {
     this._editId.set(dish.id);
     this.form.patchValue({
       name: dish.name,
-      recipeId: dish.recipeIds?.[0] ?? '',
+      recipeId: dish.recipes?.[0]?.id ?? '',
       preparedAt: new Date(dish.preparedAt),
       calories: dish.calories,
       protein: dish.protein,
@@ -169,6 +169,16 @@ export class DishesComponent implements OnInit {
     try {
       const v = this.form.getRawValue();
       const recipeIds = typeof v.recipeId === 'string' && v.recipeId.length > 0 ? [v.recipeId] : [];
+      const recipes = recipeIds.map((id) => ({ id }));
+      const id = this._editId();
+      let ingredients: { id: string }[] = [];
+
+      if (id != null && id !== '') {
+        const existingDish = this.dishes.find((d) => d.id === id);
+        if (existingDish?.ingredients != null && existingDish.ingredients.length > 0) {
+          ingredients = existingDish.ingredients.map((ing) => ({ id: ing.id }));
+        }
+      }
 
       const payload: CreateDishPayload = {
         name: String(v.name),
@@ -177,11 +187,10 @@ export class DishesComponent implements OnInit {
         protein: Number(v.protein),
         fat: Number(v.fat),
         carbohydrates: Number(v.carbohydrates),
-        recipeIds,
-        ingredientIds: [],
+        recipes,
+        ingredients,
       };
 
-      const id = this._editId();
       if (id != null && id !== '') {
         await firstValueFrom(this.dishesService.updateDish(id, payload));
         this.toastService.push('Dish updated', 'success');

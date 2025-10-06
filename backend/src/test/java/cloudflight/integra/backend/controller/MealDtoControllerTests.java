@@ -4,6 +4,7 @@ import cloudflight.integra.backend.BackendApplication;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Ingredient;
 import cloudflight.integra.backend.model.Recipe;
+import cloudflight.integra.backend.model.dtos.DishDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.model.MealType;
 import cloudflight.integra.backend.repository.DishRepository;
@@ -76,7 +77,9 @@ public class MealDtoControllerTests {
                 .id(UUID.randomUUID())
                 .mealType(MealType.LUNCH)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Collections.singletonList(realDishId))
+                .dishes(List.of(DishDto.builder()
+                        .id(realDishId)
+                        .build()))
                 .build();
     }
 

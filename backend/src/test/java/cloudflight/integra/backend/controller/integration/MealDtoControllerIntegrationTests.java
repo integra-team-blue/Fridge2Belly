@@ -19,7 +19,6 @@ import org.testcontainers.junit.jupiter.Container;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -52,7 +51,6 @@ public class MealDtoControllerIntegrationTests {
 
     private MealDto testMealDto;
     private UUID realDishId;
-    private List<DishDto> dishes;
 
     @BeforeEach
     void setup() {
@@ -63,11 +61,15 @@ public class MealDtoControllerIntegrationTests {
 
         realDishId = createTestDish();
 
+        DishDto dishDto = DishDto.builder()
+                .id(realDishId)
+                .build();
+
         testMealDto = MealDto.builder()
                 .id(UUID.randomUUID())
                 .mealType(MealType.LUNCH)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Collections.singletonList(realDishId))
+                .dishes(List.of(dishDto))
                 .build();
     }
 
@@ -123,7 +125,11 @@ public class MealDtoControllerIntegrationTests {
         assertThat(response.getBody()
                 .getMealType()).isEqualTo(MealType.LUNCH);
         assertThat(response.getBody()
-                .getDishIds()).containsExactly(realDishId);
+                .getDishes()).hasSize(1);
+        assertThat(response.getBody()
+                .getDishes()
+                .get(0)
+                .getId()).isEqualTo(realDishId);
     }
 
     // POST /api/meals - fail, no MealType

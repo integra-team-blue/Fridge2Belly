@@ -1,6 +1,8 @@
 package cloudflight.integra.backend.controller;
 
 import cloudflight.integra.backend.model.dtos.DishDto;
+import cloudflight.integra.backend.model.dtos.RecipeDto;
+import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.model.*;
 import cloudflight.integra.backend.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,7 +20,6 @@ import org.testcontainers.junit.jupiter.Container;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -87,10 +88,10 @@ class DishDtoControllerIntegrationTests {
         return """
                 {
                   "name": "%s",
-                  "recipeIds": ["%s"],
+                  "recipes": [{"id": "%s"}],
                   "preparedAt": "2025-01-01T12:00:00",
                   "calories": 100, "protein": 10, "fat": 5, "carbohydrates": 12,
-                  "ingredientIds": ["%s"]
+                  "ingredients": [{"id": "%s"}]
                 }""".formatted(name, realRecipeId, realIngredientId);
     }
 
@@ -186,10 +187,10 @@ class DishDtoControllerIntegrationTests {
         String bad = """
                 {
                   "name": "Bad",
-                  "recipeIds": ["%s"],
+                  "recipes": [{"id": "%s"}],
                   "preparedAt": "2025-01-01T12:00:00",
                   "calories": -1, "protein": 10, "fat": 5, "carbohydrates": 12,
-                  "ingredientIds": ["%s"]
+                  "ingredients": [{"id": "%s"}]
                 }""".formatted(realRecipeId, realIngredientId);
         mvc.perform(post("/api/dishes")
                 .contentType(MediaType.APPLICATION_JSON)

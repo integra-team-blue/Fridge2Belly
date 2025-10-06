@@ -5,7 +5,7 @@ import cloudflight.integra.backend.model.User;
 import cloudflight.integra.backend.model.dtos.UserDto;
 import cloudflight.integra.backend.model.mappers.UserMapper;
 import cloudflight.integra.backend.repository.UserRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class UserService {
         this.userMapper = userMapper;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<UserDto> findAll() {
         return userRepository.findAll()
                 .stream()
@@ -31,6 +31,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public UserDto findUser(UUID id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
@@ -62,19 +63,21 @@ public class UserService {
         userRepository.save(existing);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsernameIgnoreCase(username);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmailIgnoreCase(email);
     }
 
+    @Transactional(readOnly = true)
     public Optional<UserDto> findByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email)
                 .map(u -> new UserDto(u.getId(), u.getUsername(), u.getEmail()));
     }
-
 
 }
 

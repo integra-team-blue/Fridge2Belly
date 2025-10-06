@@ -18,17 +18,10 @@ public class SampleDataController {
 
     @PostMapping("/generate")
     public ResponseEntity<Map<String, String>> generateSampleData() {
-        try {
-            sampleDataService.generateAllSampleData();
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Sample data generated successfully!");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "Error generating sample data: " + e.getMessage());
-            return ResponseEntity.status(500)
-                    .body(response);
-        }
+        sampleDataService.generateAllSampleData();
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Sample data generated successfully!");
+        return ResponseEntity.ok(response);
     }
 }
-

@@ -11,6 +11,7 @@ import cloudflight.integra.backend.repository.RecipeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,17 +24,28 @@ public class DishMapper {
     private final IngredientMapper ingredientMapper;
 
     public Dish toEntity(DishDto dto) {
-        List<Recipe> recipes = dto.getRecipeIds() != null ? dto.getRecipeIds()
+        List<UUID> recipeIds = dto.getRecipes() != null ? dto.getRecipes()
                 .stream()
-                .map(id -> recipeRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Recipe not found: " + id)))
-                .collect(Collectors.toList()) : List.of();
+                .map(RecipeDto::getId)
+                .collect(Collectors.toList()) : new ArrayList<>();
 
-        List<Ingredient> ingredients = dto.getIngredientIds() != null ? dto.getIngredientIds()
+        List<Recipe> recipes = recipeIds.isEmpty() ? new ArrayList<>() : recipeRepository.findAllByIdIn(recipeIds);
+
+        if (recipes.size() != recipeIds.size()) {
+            throw new IllegalArgumentException("Some recipes were not found");
+        }
+
+        List<UUID> ingredientIds = dto.getIngredients() != null ? dto.getIngredients()
                 .stream()
-                .map(id -> ingredientRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Ingredient not found: " + id)))
-                .collect(Collectors.toList()) : List.of();
+                .map(IngredientDto::getId)
+                .collect(Collectors.toList()) : new ArrayList<>();
+
+        List<Ingredient> ingredients = ingredientIds.isEmpty() ? new ArrayList<>() : ingredientRepository.findAllByIdIn(
+                                                                                                                        ingredientIds);
+
+        if (ingredients.size() != ingredientIds.size()) {
+            throw new IllegalArgumentException("Some ingredients were not found");
+        }
 
         return Dish.builder()
                 .id(dto.getId())
@@ -49,16 +61,6 @@ public class DishMapper {
     }
 
     public DishDto toDto(Dish dish) {
-        List<UUID> recipeIds = dish.getRecipes() != null ? dish.getRecipes()
-                .stream()
-                .map(Recipe::getId)
-                .collect(Collectors.toList()) : List.of();
-
-        List<UUID> ingredientIds = dish.getIngredients() != null ? dish.getIngredients()
-                .stream()
-                .map(Ingredient::getId)
-                .collect(Collectors.toList()) : List.of();
-
         List<RecipeDto> recipes = dish.getRecipes() != null ? dish.getRecipes()
                 .stream()
                 .map(recipe -> RecipeDto.builder()
@@ -67,14 +69,17 @@ public class DishMapper {
                         .description(recipe.getDescription())
                         .cookingTimeMinutes(recipe.getCookingTimeMinutes())
                         .instructions(recipe.getInstructions())
-                        .dishIds(List.of())
+                        .dishIds(recipe.getDishes() != null ? recipe.getDishes()
+                                .stream()
+                                .map(Dish::getId)
+                                .collect(Collectors.toList()) : new ArrayList<>())
                         .build())
-                .collect(Collectors.toList()) : List.of();
+                .collect(Collectors.toList()) : new ArrayList<>();
 
         List<IngredientDto> ingredients = dish.getIngredients() != null ? dish.getIngredients()
                 .stream()
                 .map(ingredientMapper::toDto)
-                .collect(Collectors.toList()) : List.of();
+                .collect(Collectors.toList()) : new ArrayList<>();
 
         return DishDto.builder()
                 .id(dish.getId())
@@ -84,8 +89,6 @@ public class DishMapper {
                 .protein(dish.getProtein())
                 .fat(dish.getFat())
                 .carbohydrates(dish.getCarbohydrates())
-                .recipeIds(recipeIds)
-                .ingredientIds(ingredientIds)
                 .recipes(recipes)
                 .ingredients(ingredients)
                 .build();

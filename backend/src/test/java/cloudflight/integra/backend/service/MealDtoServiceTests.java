@@ -2,6 +2,7 @@ package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.exception.MealNotFoundException;
 import cloudflight.integra.backend.model.Meal;
+import cloudflight.integra.backend.model.dtos.DishDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.model.mappers.MealMapper;
 import cloudflight.integra.backend.model.MealType;
@@ -47,11 +48,16 @@ public class MealDtoServiceTests {
     }
 
     private MealDto createTestMealDto(MealType mealType) {
+        DishDto dish = DishDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Dish")
+                .build();
+
         return MealDto.builder()
                 .id(testId)
                 .mealType(mealType)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Arrays.asList(UUID.randomUUID()))
+                .dishes(List.of(dish))
                 .build();
     }
 
@@ -65,11 +71,16 @@ public class MealDtoServiceTests {
 
     @Test
     void testCreateMealSuccess() {
+        DishDto dish = DishDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Dish")
+                .build();
+
         MealDto inputDto = MealDto.builder()
                 .id(null)
                 .mealType(MealType.BREAKFAST)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Arrays.asList(UUID.randomUUID()))
+                .dishes(List.of(dish))
                 .build();
 
         MealDto expectedResult = createTestMealDto(MealType.BREAKFAST);
@@ -89,11 +100,16 @@ public class MealDtoServiceTests {
 
     @Test
     void testCreateMealMissingMealType() {
+        DishDto dish = DishDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Dish")
+                .build();
+
         MealDto mealDto = MealDto.builder()
                 .id(null)
                 .mealType(null)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Arrays.asList(UUID.randomUUID()))
+                .dishes(List.of(dish))
                 .build();
 
         assertThrows(IllegalArgumentException.class, () -> mealService.createMeal(mealDto));
@@ -146,18 +162,23 @@ public class MealDtoServiceTests {
     void testUpdateMealSuccess() {
         UUID id = UUID.randomUUID();
 
+        DishDto dish = DishDto.builder()
+                .id(UUID.randomUUID())
+                .name("Updated Dish")
+                .build();
+
         MealDto inputDto = MealDto.builder()
                 .id(null)
                 .mealType(MealType.LUNCH)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Arrays.asList(UUID.randomUUID()))
+                .dishes(List.of(dish))
                 .build();
 
         MealDto expectedResult = MealDto.builder()
                 .id(id)
                 .mealType(MealType.LUNCH)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Arrays.asList(UUID.randomUUID()))
+                .dishes(List.of(dish))
                 .build();
 
         Meal updatedMeal = createTestMeal(MealType.LUNCH);
@@ -182,11 +203,16 @@ public class MealDtoServiceTests {
     void testUpdateMealNotFound() {
         UUID id = UUID.randomUUID();
 
+        DishDto dish = DishDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Dish")
+                .build();
+
         MealDto mealDto = MealDto.builder()
                 .id(id)
                 .mealType(MealType.LUNCH)
                 .dateTime(LocalDateTime.now())
-                .dishIds(Arrays.asList(UUID.randomUUID()))
+                .dishes(List.of(dish))
                 .build();
 
         when(mealRepository.existsById(id)).thenReturn(false);

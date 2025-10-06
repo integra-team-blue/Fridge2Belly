@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.service;
 
-import cloudflight.integra.backend.exception.IngredientsExeption;
+import cloudflight.integra.backend.exception.IngredientsException;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Ingredient;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
@@ -8,7 +8,7 @@ import cloudflight.integra.backend.model.mappers.IngredientMapper;
 import cloudflight.integra.backend.repository.DishRepository;
 import cloudflight.integra.backend.repository.IngredientRepository;
 import cloudflight.integra.backend.validation.IngredientsValidator;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,7 +36,7 @@ public class IngredientService {
         this.ingredientMapper = ingredientMapper;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<IngredientDto> getAllIngredients() {
         return ingredientRepository.findAll()
                 .stream()
@@ -44,12 +44,12 @@ public class IngredientService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public IngredientDto getIngredientById(UUID id) {
         validateId(id);
 
         Ingredient ingredient = ingredientRepository.findById(id)
-                .orElseThrow(() -> new IngredientsExeption("Ingredient not found with id: " + id));
+                .orElseThrow(() -> new IngredientsException("Ingredient not found with id: " + id));
 
         return ingredientMapper.toDto(ingredient);
     }
@@ -71,7 +71,7 @@ public class IngredientService {
         validateId(id);
 
         if (!ingredientRepository.existsById(id)) {
-            throw new IngredientsExeption("Ingredient not found with id: " + id);
+            throw new IngredientsException("Ingredient not found with id: " + id);
         }
 
         validator.validateIngredient(ingredientDto);
@@ -88,7 +88,7 @@ public class IngredientService {
         validateId(id);
 
         if (!ingredientRepository.existsById(id)) {
-            throw new IngredientsExeption("Ingredient not found with id: " + id);
+            throw new IngredientsException("Ingredient not found with id: " + id);
         }
 
         List<Dish> dishesUsingIngredient = new ArrayList<>();
@@ -114,7 +114,7 @@ public class IngredientService {
 
     private void validateId(UUID id) {
         if (id == null) {
-            throw new IngredientsExeption("ID cannot be null");
+            throw new IngredientsException("ID cannot be null");
         }
     }
 }

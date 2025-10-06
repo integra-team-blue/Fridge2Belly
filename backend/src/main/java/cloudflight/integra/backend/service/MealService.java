@@ -5,18 +5,17 @@ import cloudflight.integra.backend.model.Meal;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.model.mappers.MealMapper;
 import cloudflight.integra.backend.repository.MealRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 @Service
-@Transactional
 public class MealService {
 
     private final MealRepository mealRepository;
@@ -28,6 +27,7 @@ public class MealService {
         this.mealMapper = mealMapper;
     }
 
+    @Transactional
     public MealDto createMeal(MealDto mealDto) {
         if (mealDto.getMealType() == null) {
             throw new IllegalArgumentException("MealType is required.");
@@ -41,24 +41,22 @@ public class MealService {
         return mealMapper.toDto(savedMeal);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public List<MealDto> getAllMeals() {
-        List<Meal> meals = new ArrayList<>();
-        mealRepository.findAll()
-                .forEach(meals::add);
-
-        return meals.stream()
+        return StreamSupport.stream(mealRepository.findAll()
+                .spliterator(), false)
                 .map(mealMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public MealDto getMealById(UUID id) {
         Meal meal = mealRepository.findById(id)
                 .orElseThrow(() -> new MealNotFoundException("Meal not found with id: " + id));
         return mealMapper.toDto(meal);
     }
 
+    @Transactional
     public MealDto updateMeal(UUID id, MealDto updatedMealDto) {
         if (!mealRepository.existsById(id)) {
             throw new MealNotFoundException("Meal not found with id: " + id);

@@ -8,6 +8,7 @@ import cloudflight.integra.backend.repository.DishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -23,21 +24,15 @@ public class MealMapper {
             return null;
         }
 
-        List<UUID> dishIds = meal.getDishes() != null ? meal.getDishes()
-                .stream()
-                .map(Dish::getId)
-                .collect(Collectors.toList()) : List.of();
-
         List<DishDto> dishes = meal.getDishes() != null ? meal.getDishes()
                 .stream()
                 .map(dishMapper::toDto)
-                .collect(Collectors.toList()) : List.of();
+                .collect(Collectors.toList()) : new ArrayList<>();
 
         return MealDto.builder()
                 .id(meal.getId())
                 .mealType(meal.getMealType())
                 .dateTime(meal.getDateTime())
-                .dishIds(dishIds)
                 .dishes(dishes)
                 .build();
     }
@@ -46,11 +41,17 @@ public class MealMapper {
         if (dto == null) {
             return null;
         }
-        List<Dish> dishes = dto.getDishIds() != null ? dto.getDishIds()
+
+        List<UUID> dishIds = dto.getDishes() != null ? dto.getDishes()
                 .stream()
-                .map(id -> dishRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Dish not found: " + id)))
-                .collect(Collectors.toList()) : List.of();
+                .map(DishDto::getId)
+                .collect(Collectors.toList()) : new ArrayList<>();
+
+        List<Dish> dishes = dishIds.isEmpty() ? new ArrayList<>() : dishRepository.findAllByIdIn(dishIds);
+
+        if (dishes.size() != dishIds.size()) {
+            throw new IllegalArgumentException("Some dishes were not found");
+        }
 
         return Meal.builder()
                 .id(dto.getId())
@@ -60,4 +61,3 @@ public class MealMapper {
                 .build();
     }
 }
-

@@ -1,6 +1,6 @@
 package cloudflight.integra.backend.service;
 
-import cloudflight.integra.backend.exception.IngredientsExeption;
+import cloudflight.integra.backend.exception.IngredientsException;
 import cloudflight.integra.backend.model.Ingredient;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.model.mappers.IngredientMapper;
@@ -119,8 +119,8 @@ class IngredientDtoServiceTest {
         when(ingredientRepository.findById(id)).thenReturn(Optional.empty());
 
 
-        IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                                                     () -> ingredientService.getIngredientById(id));
+        IngredientsException exception = assertThrows(IngredientsException.class,
+                                                      () -> ingredientService.getIngredientById(id));
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());
         verify(ingredientRepository).findById(id);
@@ -201,8 +201,8 @@ class IngredientDtoServiceTest {
 
         when(ingredientRepository.existsById(id)).thenReturn(false);
 
-        IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                                                     () -> ingredientService.updateIngredient(id, updateDto));
+        IngredientsException exception = assertThrows(IngredientsException.class,
+                                                      () -> ingredientService.updateIngredient(id, updateDto));
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());
         verify(ingredientRepository).existsById(id);
@@ -216,11 +216,11 @@ class IngredientDtoServiceTest {
         IngredientDto updateDto = createTestIngredientDto("Invalid Ingredient");
 
         when(ingredientRepository.existsById(id)).thenReturn(true);
-        doThrow(new IngredientsExeption("Validation failed")).when(validator)
+        doThrow(new IngredientsException("Validation failed")).when(validator)
                 .validateIngredient(any(IngredientDto.class));
 
-        IngredientsExeption exception = assertThrows(IngredientsExeption.class,
-                                                     () -> ingredientService.updateIngredient(id, updateDto));
+        IngredientsException exception = assertThrows(IngredientsException.class,
+                                                      () -> ingredientService.updateIngredient(id, updateDto));
 
         assertEquals("Validation failed", exception.getMessage());
         verify(ingredientRepository).existsById(id);
@@ -249,9 +249,9 @@ class IngredientDtoServiceTest {
 
         when(ingredientRepository.existsById(id)).thenReturn(false);
 
-        IngredientsExeption exception = assertThrows(
-                                                     IngredientsExeption.class,
-                                                     () -> ingredientService.deleteIngredient(id)
+        IngredientsException exception = assertThrows(
+                                                      IngredientsException.class,
+                                                      () -> ingredientService.deleteIngredient(id)
         );
 
         assertEquals("Ingredient not found with id: " + id, exception.getMessage());
