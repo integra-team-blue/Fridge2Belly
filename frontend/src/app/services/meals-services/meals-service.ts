@@ -20,4 +20,12 @@ export class MealsService {
   getMeals(): Observable<Meal[]> {
     return this.http.get<Meal[]>(this.apiUrl);
   }
+
+  addMeal(meal: Omit<Meal, 'id'>): Observable<Meal> {
+    return this.http.post<Meal>(this.apiUrl, meal);
+  }
+
+  updateMeal(id: string, meal: Partial<Meal>): Observable<Meal> {
+    return this.http.put<Meal>(`${this.apiUrl}/${id}`, meal);
+  }
 }

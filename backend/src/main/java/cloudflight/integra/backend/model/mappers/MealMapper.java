@@ -49,8 +49,11 @@ public class MealMapper {
 
         List<Dish> dishes = dishIds.isEmpty() ? new ArrayList<>() : dishRepository.findAllByIdIn(dishIds);
 
+//        if (dishes.size() != dishIds.size()) {
+//            throw new IllegalArgumentException("Some dishes were not found");
+//        }
         if (dishes.size() != dishIds.size()) {
-            throw new IllegalArgumentException("Some dishes were not found");
+            System.out.println("Some dishes were not found");
         }
 
         return Meal.builder()

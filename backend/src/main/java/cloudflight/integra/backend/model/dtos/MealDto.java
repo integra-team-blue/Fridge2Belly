@@ -26,8 +26,7 @@ public class MealDto {
     @NotNull(message = "Date and time is required")
     private LocalDateTime dateTime;
 
-    @NotEmpty(message = "Meal must have at least one dish")
-    @NotNull(message = "Dishes cannot be null")
+//    @NotEmpty(message = "Meal must have at least one dish")
+//    @NotNull(message = "Dishes cannot be null")
     private List<DishDto> dishes;
-
 }
