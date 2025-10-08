@@ -1,11 +1,11 @@
 CREATE TABLE users (
-                       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-                       username VARCHAR(255) NOT NULL,
-                       email VARCHAR(255) NOT NULL
+                       id UUID PRIMARY KEY,
+                       username VARCHAR(255) NOT NULL UNIQUE,
+                       email VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE ingredients (
-                             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                             id UUID PRIMARY KEY,
                              name VARCHAR(255) NOT NULL,
                              quantity DOUBLE PRECISION NOT NULL,
                              unit VARCHAR(100) NOT NULL,
@@ -17,7 +17,7 @@ CREATE TABLE ingredients (
 );
 
 CREATE TABLE dishes (
-                        id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                        id UUID PRIMARY KEY,
                         name VARCHAR(255) NOT NULL,
                         calories DOUBLE PRECISION,
                         carbohydrates DOUBLE PRECISION,
@@ -27,13 +27,13 @@ CREATE TABLE dishes (
 );
 
 CREATE TABLE meals (
-                       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                       id UUID PRIMARY KEY,
                        date_time TIMESTAMP,
                        meal_type VARCHAR(255)
 );
 
 CREATE TABLE recipes (
-                         id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                         id UUID PRIMARY KEY,
                          name VARCHAR(255) NOT NULL,
                          description VARCHAR(255),
                          cooking_time_minutes INT NOT NULL,
