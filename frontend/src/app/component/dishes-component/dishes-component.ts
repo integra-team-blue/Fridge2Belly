@@ -133,7 +133,6 @@ export class DishesComponent implements OnInit {
     this._editId.set(dish.id ?? null);
     this.form.patchValue({
       name: dish.name ?? '',
-      // recipeId: dish.recipes?.[0] ?? '',
       recipeId: dish.recipes?.[0]?.id ?? '',
       preparedAt: dish.preparedAt ? new Date(dish.preparedAt) : '',
       calories: dish.calories ?? 0,
