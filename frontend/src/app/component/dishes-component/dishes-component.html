@@ -31,15 +31,19 @@
         <td>{{ dish.fat }}</td>
         <td>{{ dish.carbohydrates }}</td>
         <td>
-          <ul *ngIf="dish.recipeIds?.length; else noRecipes">
-            <li *ngFor="let recipeId of dish.recipeIds">{{ recipeId }}</li>
-          </ul>
+          <ng-container *ngIf="dish.recipes?.length; else noRecipes">
+            <span *ngFor="let recipe of dish.recipes; let last = last">
+              {{ recipe.name }}<span *ngIf="!last">, </span>
+            </span>
+          </ng-container>
           <ng-template #noRecipes>-</ng-template>
         </td>
         <td>
-          <ul *ngIf="dish.ingredientIds?.length; else noIngredients">
-            <li *ngFor="let ingId of dish.ingredientIds">{{ ingId }}</li>
-          </ul>
+          <ng-container *ngIf="dish.ingredients?.length; else noIngredients">
+            <span *ngFor="let ingredient of dish.ingredients; let last = last">
+              {{ ingredient.name }}<span *ngIf="!last">, </span>
+            </span>
+          </ng-container>
           <ng-template #noIngredients>-</ng-template>
         </td>
       </tr>
@@ -93,7 +97,11 @@
 
         <div class="field col-6">
           <label>Calories</label>
-          <p-inputNumber formControlName="calories" [min]="0" [maxFractionDigits]="0"></p-inputNumber>
+          <p-inputNumber
+            formControlName="calories"
+            [min]="0"
+            [maxFractionDigits]="0"
+          ></p-inputNumber>
           <small *ngIf="calories.touched && calories.hasError('required')">Required.</small>
         </div>
 
@@ -112,19 +120,34 @@
         <div class="field col-6">
           <label>Carbohydrates</label>
           <p-inputNumber formControlName="carbohydrates" [min]="0"></p-inputNumber>
-          <small *ngIf="carbohydrates.touched && carbohydrates.hasError('required')">Required.</small>
+          <small *ngIf="carbohydrates.touched && carbohydrates.hasError('required')"
+            >Required.</small
+          >
         </div>
 
         <div class="field col-12">
           <label>Prepared at</label>
-          <p-datepicker formControlName="preparedAt" dateFormat="yy-mm-dd" [showIcon]="true"></p-datepicker>
+          <p-datepicker
+            formControlName="preparedAt"
+            dateFormat="yy-mm-dd"
+            [showIcon]="true"
+          ></p-datepicker>
           <small *ngIf="preparedAt.touched && preparedAt.hasError('required')">Required.</small>
         </div>
       </div>
 
       <div class="actions">
-        <p-button type="button" label="Cancel" styleClass="p-button-text" (onClick)="cancel()"></p-button>
-        <p-button type="submit" [disabled]="form.invalid || loadingService.active()" [label]="editId() ? 'Save' : 'Create'"></p-button>
+        <p-button
+          type="button"
+          label="Cancel"
+          styleClass="p-button-text"
+          (onClick)="cancel()"
+        ></p-button>
+        <p-button
+          type="submit"
+          [disabled]="form.invalid || loadingService.active()"
+          [label]="editId() ? 'Save' : 'Create'"
+        ></p-button>
       </div>
     </form>
   </p-dialog>

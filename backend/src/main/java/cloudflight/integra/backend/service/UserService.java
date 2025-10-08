@@ -3,40 +3,49 @@ package cloudflight.integra.backend.service;
 import cloudflight.integra.backend.exception.UserNotFoundException;
 import cloudflight.integra.backend.model.User;
 import cloudflight.integra.backend.model.dtos.UserDto;
+import cloudflight.integra.backend.model.mappers.UserMapper;
 import cloudflight.integra.backend.repository.UserRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
+    @Transactional(readOnly = true)
     public List<UserDto> findAll() {
         return userRepository.findAll()
                 .stream()
-                .map(u -> new UserDto(u.getId(), u.getUsername(), u.getEmail()))
-                .toList();
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public UserDto findUser(UUID id) {
-        User u = userRepository.findById(id)
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User with id " + id + " not found"));
-        return new UserDto(u.getId(), u.getUsername(), u.getEmail());
+        return userMapper.toDto(user);
     }
 
-    public UserDto createUser(UserDto dto) {
-        UUID id = Optional.ofNullable(dto.getId())
-                .orElse(UUID.randomUUID());
-        User u = new User(id, dto.getUsername(), dto.getEmail());
-        u = userRepository.save(u);
-        return new UserDto(u.getId(), u.getUsername(), u.getEmail());
+    public UserDto createUser(UserDto userDto) {
+        if (userDto.getId() == null) {
+            userDto.setId(UUID.randomUUID());
+        }
+
+        User user = userMapper.toEntity(userDto);
+        User savedUser = userRepository.save(user);
+        return userMapper.toDto(savedUser);
     }
 
     public void deleteUser(UUID id) {
@@ -54,16 +63,21 @@ public class UserService {
         userRepository.save(existing);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsernameIgnoreCase(username);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmailIgnoreCase(email);
     }
 
+    @Transactional(readOnly = true)
     public Optional<UserDto> findByEmail(String email) {
         return userRepository.findByEmailIgnoreCase(email)
                 .map(u -> new UserDto(u.getId(), u.getUsername(), u.getEmail()));
     }
+
 }
+

@@ -2,4 +2,18 @@
   <ng-template pTemplate="start">
     <a routerLink="" class="brand">Fridge2Belly</a>
   </ng-template>
+  <ng-template pTemplate="end">
+    <p-button
+      [label]="isLoading ? 'Generating...' : 'Generate Sample Data'"
+      icon="pi pi-database"
+      [disabled]="isLoading"
+      (click)="generateSampleData()"
+      size="small"
+      severity="secondary"
+      class="sample-data-btn"
+    >
+    </p-button>
+  </ng-template>
 </p-menubar>
+
+<p-toast></p-toast>

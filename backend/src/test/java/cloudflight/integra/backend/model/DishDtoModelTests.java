@@ -1,6 +1,8 @@
 package cloudflight.integra.backend.model;
 
 import cloudflight.integra.backend.model.dtos.DishDto;
+import cloudflight.integra.backend.model.dtos.RecipeDto;
+import cloudflight.integra.backend.model.dtos.IngredientDto;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -33,11 +35,21 @@ class DishDtoModelTests {
     }
 
     private DishDto validDish() {
+        RecipeDto recipe = RecipeDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Recipe")
+                .build();
+
+        IngredientDto ingredient = IngredientDto.builder()
+                .id(UUID.randomUUID())
+                .name("Test Ingredient")
+                .build();
+
         DishDto d = new DishDto();
         d.setName("Pasta");
-        d.setRecipeIds(List.of(UUID.randomUUID()));
+        d.setRecipes(List.of(recipe));
         d.setPreparedAt(LocalDateTime.parse("2025-01-01T12:00:00"));
-        d.setIngredientIds(List.of(UUID.randomUUID()));
+        d.setIngredients(List.of(ingredient));
         d.setCalories(100);
         d.setProtein(10);
         d.setFat(5);
@@ -64,12 +76,12 @@ class DishDtoModelTests {
     }
 
     @Test
-    void recipeId_null_isViolation() {
+    void recipes_null_isViolation() {
         DishDto d = validDish();
-        d.setRecipeIds(null);
+        d.setRecipes(null);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
         assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
-                .toString()).isEqualTo("recipeIds")
+                .toString()).isEqualTo("recipes")
         );
     }
 
@@ -141,9 +153,14 @@ class DishDtoModelTests {
         UUID recipeId = UUID.randomUUID();
         LocalDateTime ts = LocalDateTime.parse("2025-01-01T12:00:00");
 
+        RecipeDto recipe = RecipeDto.builder()
+                .id(recipeId)
+                .name("Test Recipe")
+                .build();
+
         d.setId(id);
         d.setName("Burger");
-        d.setRecipeIds(List.of(recipeId));
+        d.setRecipes(List.of(recipe));
         d.setPreparedAt(ts);
         d.setCalories(800);
         d.setProtein(40);
@@ -152,7 +169,10 @@ class DishDtoModelTests {
 
         assertThat(d.getId()).isEqualTo(id);
         assertThat(d.getName()).isEqualTo("Burger");
-        assertThat(d.getRecipeIds()).isEqualTo(List.of(recipeId));
+        assertThat(d.getRecipes()).hasSize(1);
+        assertThat(d.getRecipes()
+                .get(0)
+                .getId()).isEqualTo(recipeId);
         assertThat(d.getPreparedAt()).isEqualTo(ts);
         assertThat(d.getCalories()).isEqualTo(800);
         assertThat(d.getProtein()).isEqualTo(40);

@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.controller;
 
 import cloudflight.integra.backend.model.dtos.IngredientDto;
-import cloudflight.integra.backend.service.IngredientsService;
+import cloudflight.integra.backend.service.IngredientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +13,12 @@ import java.util.UUID;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("api/ingredients")
-public class IngredientsController {
+public class IngredientController {
 
-    public final IngredientsService ingredientsService;
+    public final IngredientService ingredientsService;
 
     @Autowired
-    public IngredientsController(IngredientsService ingredientsService) {
+    public IngredientController(IngredientService ingredientsService) {
         this.ingredientsService = ingredientsService;
     }
 

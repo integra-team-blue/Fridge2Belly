@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Recipe } from '../recipes-services/recipes-service';
+import { Ingredient } from '../ingredients-services/ingredients-service';
 
 export type Dish = {
   id: string;
@@ -10,8 +12,8 @@ export type Dish = {
   protein: number;
   fat: number;
   carbohydrates: number;
-  recipeIds: string[];
-  ingredientIds: string[];
+  recipes: { id: string }[];
+  ingredients: { id: string }[];
 };
 
 export type RecipeOption = { id: string; name: string };
@@ -23,8 +25,8 @@ export type CreateDishPayload = {
   protein: number;
   fat: number;
   carbohydrates: number;
-  recipeIds: string[];
-  ingredientIds: string[];
+  recipes: { id: string }[];
+  ingredients: { id: string }[];
 };
 
 @Injectable({ providedIn: 'root' })

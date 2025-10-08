@@ -44,6 +44,6 @@ public class Dish {
     )
     private List<Ingredient> ingredients;
 
-    @ManyToMany(mappedBy = "dishes")
+    @ManyToMany(mappedBy = "dishes", cascade = {CascadeType.MERGE})
     private List<Recipe> recipes;
 }

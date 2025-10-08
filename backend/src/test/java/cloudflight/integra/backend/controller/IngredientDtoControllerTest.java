@@ -1,7 +1,7 @@
 package cloudflight.integra.backend.controller;
 
 import cloudflight.integra.backend.model.dtos.IngredientDto;
-import cloudflight.integra.backend.service.IngredientsService;
+import cloudflight.integra.backend.service.IngredientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +32,7 @@ class IngredientDtoControllerTest {
     private MockMvc mockMvc;
 
     @Mock
-    private IngredientsService ingredientsService;
+    private IngredientService ingredientsService;
 
     private ObjectMapper objectMapper;
     private IngredientDto testIngredient;
@@ -44,7 +44,7 @@ class IngredientDtoControllerTest {
         objectMapper.registerModule(new JavaTimeModule());
 
         mockMvc = MockMvcBuilders
-                .standaloneSetup(new IngredientsController(ingredientsService))
+                .standaloneSetup(new IngredientController(ingredientsService))
                 .build();
 
         testId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
@@ -211,3 +211,4 @@ class IngredientDtoControllerTest {
 
 
 }
+
