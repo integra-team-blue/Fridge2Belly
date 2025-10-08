@@ -16,11 +16,6 @@ export type Dish = {
   ingredients: { id: string }[];
 };
 
-export type DishRef = {
-  id?: string;
-  name: string;
-};
-
 export type RecipeOption = { id: string; name: string };
 
 export type CreateDishPayload = {

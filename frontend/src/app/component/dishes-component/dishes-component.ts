@@ -120,7 +120,7 @@ export class DishesComponent implements OnInit {
     this._editId.set(dish.id ?? null);
     this.form.patchValue({
       name: dish.name,
-      recipeId: dish.recipeIds?.[0] ?? '',
+      recipeId: dish.recipes?.[0]?.id ?? '',
       preparedAt: new Date(dish.preparedAt),
       calories: dish.calories,
       protein: dish.protein,
@@ -171,13 +171,13 @@ export class DishesComponent implements OnInit {
       const v = this.form.getRawValue();
       const recipeIds = typeof v.recipeId === 'string' && v.recipeId.length > 0 ? [v.recipeId] : [];
 
-      const payload: DishDto = {
-        name: v.name,
+      const payload: CreateDishPayload = {
+        name: String(v.name),
         preparedAt: this.toLocalDateTimeString(v.preparedAt),
-        calories: v.calories,
-        protein: v.protein,
-        fat: v.fat,
-        carbohydrates: v.carbohydrates,
+        calories: Number(v.calories),
+        protein: Number(v.protein),
+        fat: Number(v.fat),
+        carbohydrates: Number(v.carbohydrates),
         recipeIds,
         ingredientIds: [],
       };
