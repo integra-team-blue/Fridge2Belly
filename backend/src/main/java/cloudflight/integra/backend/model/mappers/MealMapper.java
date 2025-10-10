@@ -67,9 +67,10 @@ public class MealMapper {
             }
         }
 
-        else if (dto.getDishIds() != null && !dto.getDishIds().isEmpty()) {
-            dishes = dishRepository.findAllByIdIn(dto.getDishIds());
-        }
+        else if (dto.getDishIds() != null && !dto.getDishIds()
+                .isEmpty()) {
+                    dishes = dishRepository.findAllByIdIn(dto.getDishIds());
+                }
 
         if (dishes.isEmpty()) {
             System.out.println("No dishes found for meal DTO: " + dto.getId());

@@ -9,5 +9,6 @@ import java.util.UUID;
 
 public interface DishRepository extends JpaRepository<Dish, UUID> {
     List<Dish> findAllByIdIn(List<UUID> ids);
+
     Optional<Dish> findByName(String name);
 }
