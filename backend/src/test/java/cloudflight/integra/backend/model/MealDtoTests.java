@@ -55,7 +55,7 @@ public class MealDtoTests {
                 .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
-//        assertFalse(violations.isEmpty());
+        assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
                 .anyMatch(v -> v.getPropertyPath()
                         .toString()
@@ -74,7 +74,7 @@ public class MealDtoTests {
                 .build();
 
         Set<ConstraintViolation<MealDto>> violations = validator.validate(mealDto);
-//        assertFalse(violations.isEmpty());
+        assertFalse(violations.isEmpty());
         assertTrue(violations.stream()
                 .anyMatch(v -> v.getPropertyPath()
                         .toString()
