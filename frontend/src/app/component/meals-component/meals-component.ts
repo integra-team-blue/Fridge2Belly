@@ -17,8 +17,7 @@ import { Select } from 'primeng/select';
   standalone: true,
   templateUrl: './meals-component.html',
   styleUrls: ['./meals-component.css'],
-  imports: [TableModule, CommonModule, Dialog, Button, ReactiveFormsModule, DatePicker, Select],
-})
+  imports: [TableModule, CommonModule, Dialog, Button, ReactiveFormsModule, DatePicker, Select], })
 
 export class MealsComponent {
   meals: Meal[] = [];
@@ -90,7 +89,7 @@ export class MealsComponent {
       mealType: (raw.mealType as string).toUpperCase(),
       dateTime: new Date(raw.dateTime!).toISOString().slice(0, 19),
       dishIds: Array.isArray(raw.dishIds)
-        ? raw.dishIds.filter((id) => !! id)
+        ? raw.dishIds.filter((id) => !! (id))
         : [],
       dishes: [],
     };
@@ -119,7 +118,9 @@ export class MealsComponent {
   }
 
   async editMeal() {
-    if (!this.selectedMeal) return;
+    if (!this.selectedMeal) {
+      return;
+    }
 
     try {
       const updated = await firstValueFrom(
