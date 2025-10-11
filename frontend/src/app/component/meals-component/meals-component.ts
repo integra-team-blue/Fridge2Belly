@@ -106,7 +106,7 @@ export class MealsComponent {
   }
 
   openEditDialog(meal: Meal | Meal[] | undefined) {
-    if (!meal || Array.isArray(meal)) {
+    if (meal == null || Array.isArray(meal)) {
       return;
     }
 
@@ -116,7 +116,7 @@ export class MealsComponent {
   }
 
   async editMeal() {
-    if (!this.selectedMeal) {
+    if (this.selectedMeal == null) {
       return;
     }
 
