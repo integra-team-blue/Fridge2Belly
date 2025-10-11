@@ -17,9 +17,8 @@ import { Select } from 'primeng/select';
   standalone: true,
   templateUrl: './meals-component.html',
   styleUrls: ['./meals-component.css'],
-  imports: [TableModule, CommonModule, Dialog, Button, ReactiveFormsModule, DatePicker, Select]
+  imports: [TableModule, CommonModule, Dialog, Button, ReactiveFormsModule, DatePicker, Select],
 })
-
 export class MealsComponent {
   meals: Meal[] = [];
   dishes: Dish[] = [];
@@ -89,8 +88,7 @@ export class MealsComponent {
     const payload = {
       mealType: (raw.mealType as string).toUpperCase(),
       dateTime: new Date(raw.dateTime!).toISOString().slice(0, 19),
-      dishIds: Array.isArray(raw.dishIds) ? raw.dishIds.filter((id) => !!id)
-        : [],
+      dishIds: Array.isArray(raw.dishIds) ? raw.dishIds.filter((id) => Boolean(id)) : [],
       dishes: [],
     };
 
