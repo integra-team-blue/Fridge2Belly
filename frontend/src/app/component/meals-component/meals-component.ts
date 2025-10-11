@@ -24,8 +24,8 @@ import { Select } from 'primeng/select';
     Button,
     ReactiveFormsModule,
     DatePicker,
-    Select
-  ]
+    Select,
+  ],
 })
 
 export class MealsComponent {
@@ -61,13 +61,19 @@ export class MealsComponent {
   mealForm = new FormGroup({
     mealType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     dateTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dishIds: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
+    dishIds: new FormControl<string[]>([], {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
   });
 
   editForm = new FormGroup({
     mealType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     dateTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dishIds: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
+    dishIds: new FormControl<string[]>([], {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
   });
 
   openAddDialog() {
@@ -86,18 +92,18 @@ export class MealsComponent {
     }
 
     const raw = this.mealForm.getRawValue();
-    console.log("Payload final trimis:", raw);
+    console.log('Payload final trimis:', raw);
 
     const payload = {
       mealType: (raw.mealType as string).toUpperCase(),
       dateTime: new Date(raw.dateTime!).toISOString().slice(0, 19),
       dishIds: Array.isArray(raw.dishIds)
-        ? raw.dishIds.filter(id => !!id)
+        ? raw.dishIds.filter((id) => !! id)
         : [],
-      dishes: []
+      dishes: [],
     };
 
-    console.log("Payload final:", payload);
+    console.log('Payload final:', payload);
 
     try {
       const newMeal = await firstValueFrom(this.mealsService.addMeal(payload));
@@ -105,13 +111,13 @@ export class MealsComponent {
       this.showDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Meal added.' });
     } catch (err) {
-      console.error("Eroare backend:", err);
+      console.error('Eroare backend:', err);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Add failed.' });
     }
   }
 
   openEditDialog(meal: Meal | Meal[] | undefined) {
-    if (!meal || Array.isArray(meal)) {
+    if (! meal || Array.isArray(meal)) {
       return;
     }
 
@@ -121,7 +127,7 @@ export class MealsComponent {
   }
 
   async editMeal() {
-    if (!this.selectedMeal) return;
+    if (! this.selectedMeal) return;
 
     try {
       const updated = await firstValueFrom(
