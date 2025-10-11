@@ -17,15 +17,7 @@ import { Select } from 'primeng/select';
   standalone: true,
   templateUrl: './meals-component.html',
   styleUrls: ['./meals-component.css'],
-  imports: [
-    TableModule,
-    CommonModule,
-    Dialog,
-    Button,
-    ReactiveFormsModule,
-    DatePicker,
-    Select,
-  ],
+  imports: [TableModule, CommonModule, Dialog, Button, ReactiveFormsModule, DatePicker, Select],
 })
 
 export class MealsComponent {
@@ -117,7 +109,7 @@ export class MealsComponent {
   }
 
   openEditDialog(meal: Meal | Meal[] | undefined) {
-    if (! meal || Array.isArray(meal)) {
+    if (!meal || Array.isArray(meal)) {
       return;
     }
 
@@ -127,7 +119,7 @@ export class MealsComponent {
   }
 
   async editMeal() {
-    if (! this.selectedMeal) return;
+    if (!this.selectedMeal) return;
 
     try {
       const updated = await firstValueFrom(
