@@ -1,4 +1,8 @@
-<p-table [value]="meals" [tableStyle]="{ 'min-width': '50rem' }">
+<p-table
+  [value]="meals"
+  selectionMode="single"
+  [(selection)]="selectedMeal"
+  (onRowSelect)="openEditDialog($event.data)">
   <ng-template pTemplate="header">
     <tr>
       <th>Meal Type</th>
@@ -8,13 +12,13 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-meal>
-    <tr>
+    <tr [pSelectableRow]="meal">
       <td>{{ meal.mealType }}</td>
       <td>{{ meal.dateTime | date: 'yyyy-MM-dd HH:mm' }}</td>
       <td>
-        <span *ngFor="let dish of meal.dishes; let last = last">
-          {{ dish.name }}<span *ngIf="!last">, </span>
-        </span>
+        <ul>
+          <li *ngFor="let id of meal.dishIds">{{ id }}</li>
+        </ul>
       </td>
     </tr>
   </ng-template>
@@ -25,3 +29,98 @@
     </tr>
   </ng-template>
 </p-table>
+
+<div class="center-button">
+  <p-button label="Add Meal" icon="pi pi-plus" (click)="openAddDialog()"></p-button>
+</div>
+
+<p-dialog
+  header="Add Meal"
+  [(visible)]="showDialog"
+  [modal]="true"
+  [style]="{ width: '600px' }"
+>
+  <form [formGroup]="mealForm" class="form-container">
+    <div class="form-row">
+      <label>Meal Type</label>
+      <p-select
+        [options]="mealTypes"
+        formControlName="mealType"
+        optionLabel="label"
+        optionValue="value"
+        [style]="{ width: '100%' }"
+        appendTo="body">
+      </p-select>
+    </div>
+
+    <div class="form-row">
+      <label>Date</label>
+      <p-datepicker
+        formControlName="dateTime"
+        appendTo="body"
+        [style]="{ width: '100%' }"
+      ></p-datepicker>
+    </div>
+
+    <div class="form-row">
+      <label>Dishes</label>
+      <p-select
+        [options]="dishes"
+        optionLabel="name"
+        optionValue="id"
+        formControlName="dishIds"
+        [style]="{ width: '100%' }"
+        appendTo="body">
+      </p-select>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Save" (click)="addMeal()"></p-button>
+    <p-button label="Cancel" class="p-button-secondary" (click)="showDialog = false"></p-button>
+  </ng-template>
+</p-dialog>
+
+<p-dialog
+  header="Edit Meal"
+  [(visible)]="editDialogVisible"
+  [modal]="true"
+  [style]="{ width: '600px' }">
+  <form [formGroup]="editForm" class="form-container">
+    <div class="form-row">
+      <label>Meal Type</label>
+      <p-select
+        [options]="mealTypes"
+        formControlName="mealType"
+        optionLabel="label"
+        optionValue="value"
+      ></p-select>
+    </div>
+
+    <div class="form-row">
+      <label>Date</label>
+      <p-datepicker
+        formControlName="dateTime"
+        appendTo="body"
+        [style]="{ width: '100%' }"
+      ></p-datepicker>
+    </div>
+
+    <div class="form-row">
+      <label>Dishes</label>
+      <p-select
+        [options]="dishes"
+        formControlName="dishIds"
+        optionLabel="name"
+        optionValue="id"
+        [style]="{ width: '100%' }"
+        appendTo="body">
+      </p-select>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Save" (click)="editMeal()"></p-button>
+    <p-button label="Cancel" class="p-button-secondary" (click)="editDialogVisible = false"></p-button>
+  </ng-template>
+</p-dialog>

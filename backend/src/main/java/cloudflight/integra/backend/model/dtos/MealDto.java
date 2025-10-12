@@ -30,4 +30,5 @@ public class MealDto {
     @NotNull(message = "Dishes cannot be null")
     private List<DishDto> dishes;
 
+    private List<UUID> dishIds;
 }

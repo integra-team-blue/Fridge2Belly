@@ -42,15 +42,38 @@ public class MealMapper {
             return null;
         }
 
-        List<UUID> dishIds = dto.getDishes() != null ? dto.getDishes()
-                .stream()
-                .map(DishDto::getId)
-                .collect(Collectors.toList()) : new ArrayList<>();
+        List<Dish> dishes = new ArrayList<>();
 
-        List<Dish> dishes = dishIds.isEmpty() ? new ArrayList<>() : dishRepository.findAllByIdIn(dishIds);
+        if (dto.getDishes() != null && !dto.getDishes()
+                .isEmpty()) {
+            for (DishDto dishDto : dto.getDishes()) {
+                Dish dish = null;
 
-        if (dishes.size() != dishIds.size()) {
-            throw new IllegalArgumentException("Some dishes were not found");
+                if (dishDto.getId() != null) {
+                    dish = dishRepository.findById(dishDto.getId())
+                            .orElse(null);
+                }
+
+                if (dish == null && dishDto.getName() != null) {
+                    dish = dishRepository.findByName(dishDto.getName())
+                            .orElse(null);
+                }
+
+                if (dish != null) {
+                    dishes.add(dish);
+                } else {
+                    System.out.println("Dish not found for DTO: " + dishDto);
+                }
+            }
+        }
+
+        else if (dto.getDishIds() != null && !dto.getDishIds()
+                .isEmpty()) {
+                    dishes = dishRepository.findAllByIdIn(dto.getDishIds());
+                }
+
+        if (dishes.isEmpty()) {
+            System.out.println("No dishes found for meal DTO: " + dto.getId());
         }
 
         return Meal.builder()

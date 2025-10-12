@@ -61,6 +61,7 @@ public class MealService {
         if (!mealRepository.existsById(id)) {
             throw new MealNotFoundException("Meal not found with id: " + id);
         }
+
         updatedMealDto.setId(id);
 
         Meal meal = mealMapper.toEntity(updatedMealDto);
@@ -75,4 +76,3 @@ public class MealService {
         mealRepository.deleteById(id);
     }
 }
-
