@@ -23,9 +23,8 @@ public class MealMapper {
             return null;
         }
 
-        List<DishDto> dishes = meal.getDishes() == null
-                ? List.of()
-                : meal.getDishes().stream()
+        List<DishDto> dishes = meal.getDishes() == null ? List.of() : meal.getDishes()
+                .stream()
                 .map(dishMapper::toDto)
                 .collect(Collectors.toList());
 
@@ -42,21 +41,22 @@ public class MealMapper {
             return null;
         }
 
-        List<Dish> dishes = dto.getDishes() == null
-                ? List.of()
-                : dto.getDishes().stream()
-                    .map(d -> {
-                        if (d.getId() != null) {
-                            return dishRepository.findById(d.getId()).orElse(null);
-                        }
+        List<Dish> dishes = dto.getDishes() == null ? List.of() : dto.getDishes()
+                .stream()
+                .map(d -> {
+                    if (d.getId() != null) {
+                        return dishRepository.findById(d.getId())
+                                .orElse(null);
+                    }
 
-                        if (d.getName() != null) {
-                            return dishRepository.findByName(d.getName()).orElse(null);
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                    if (d.getName() != null) {
+                        return dishRepository.findByName(d.getName())
+                                .orElse(null);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         if (dishes.isEmpty()) {
             System.out.printf("No dishes found for Meal DTO: %s%n", dto.getId());
