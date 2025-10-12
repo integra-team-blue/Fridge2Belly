@@ -5,19 +5,34 @@ import { firstValueFrom } from 'rxjs';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
-import { MessageService } from 'primeng/api';
-
-import { Meal, MealsService } from '../../services/meals-services/meals-service';
-import { Dish, DishesService } from '../../services/dishes-services/dishes-services';
+import { MessageService, MenuItem } from 'primeng/api';
+import { ContextMenu } from 'primeng/contextmenu';
 import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
+import { MultiSelect } from 'primeng/multiselect';
+
+import { Meal, MealsService, MealPayload } from '../../services/meals-services/meals-service';
+import { Dish, DishesService, DishRef } from '../../services/dishes-services/dishes-services';
 
 @Component({
   selector: 'app-meals',
   standalone: true,
   templateUrl: './meals-component.html',
   styleUrls: ['./meals-component.css'],
-  imports: [TableModule, CommonModule, Dialog, Button, ReactiveFormsModule, DatePicker, Select],
+  imports: [
+    TableModule,
+    CommonModule,
+    Dialog,
+    Button,
+    ReactiveFormsModule,
+    DatePicker,
+    Select,
+    ContextMenu,
+    ConfirmDialog,
+    MultiSelect,
+  ],
 })
 export class MealsComponent {
   meals: Meal[] = [];
@@ -34,13 +49,28 @@ export class MealsComponent {
   showDialog = false;
   editDialogVisible = false;
 
+  menuItems: MenuItem[] = [];
+
   constructor(
     private mealsService: MealsService,
     private dishesService: DishesService,
     private messageService: MessageService,
+    private confirmationService: ConfirmationService,
   ) {}
 
   async ngOnInit() {
+    await this.loadData();
+
+    this.menuItems = [
+      {
+        label: 'Delete Meal',
+        icon: 'pi pi-trash',
+        command: () => this.confirmDelete(),
+      },
+    ];
+  }
+
+  async loadData() {
     try {
       this.meals = await firstValueFrom(this.mealsService.getMeals());
       this.dishes = await firstValueFrom(this.dishesService.getDishes());
@@ -52,7 +82,7 @@ export class MealsComponent {
   mealForm = new FormGroup({
     mealType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     dateTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dishIds: new FormControl<string[]>([], {
+    dishes: new FormControl<string[]>([], {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -61,7 +91,7 @@ export class MealsComponent {
   editForm = new FormGroup({
     mealType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
     dateTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dishIds: new FormControl<string[]>([], {
+    dishes: new FormControl<string[]>([], {
       nonNullable: true,
       validators: [Validators.required],
     }),
@@ -71,9 +101,35 @@ export class MealsComponent {
     this.mealForm.reset({
       mealType: '',
       dateTime: '',
-      dishIds: [],
+      dishes: [],
     });
     this.showDialog = true;
+  }
+
+  private buildPayload(form: FormGroup): MealPayload {
+    const raw = form.getRawValue();
+    const dateTime = new Date(raw.dateTime!).toISOString().slice(0, 19);
+
+    const rawDishes = raw.dishes;
+    const dishesArray = Array.isArray(rawDishes)
+      ? rawDishes
+      : Boolean(rawDishes)
+        ? [rawDishes]
+        : [];
+
+    const dishesPayload: DishRef[] = dishesArray.map((d: any): DishRef => {
+      if (typeof d === 'object' && d !== null) {
+        return { id: d.id ?? undefined, name: d.name };
+      }
+      const found = this.dishes.find((dish) => dish.name === d);
+      return found ? { id: found.id, name: found.name } : { name: d };
+    });
+
+    return {
+      mealType: (raw.mealType as string).toUpperCase(),
+      dateTime,
+      dishes: dishesPayload,
+    };
   }
 
   async addMeal() {
@@ -82,17 +138,7 @@ export class MealsComponent {
       return;
     }
 
-    const raw = this.mealForm.getRawValue();
-    console.log('Payload final trimis:', raw);
-
-    const payload = {
-      mealType: (raw.mealType as string).toUpperCase(),
-      dateTime: new Date(raw.dateTime!).toISOString().slice(0, 19),
-      dishIds: Array.isArray(raw.dishIds) ? raw.dishIds.filter((id) => Boolean(id)) : [],
-      dishes: [],
-    };
-
-    console.log('Payload final:', payload);
+    const payload = this.buildPayload(this.mealForm);
 
     try {
       const newMeal = await firstValueFrom(this.mealsService.addMeal(payload));
@@ -100,7 +146,7 @@ export class MealsComponent {
       this.showDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Meal added.' });
     } catch (err) {
-      console.error('Eroare backend:', err);
+      console.error('Backend error:', err);
       this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Add failed.' });
     }
   }
@@ -111,7 +157,13 @@ export class MealsComponent {
     }
 
     this.selectedMeal = meal;
-    this.editForm.patchValue(meal);
+    const dishNames = meal.dishes?.map((d) => d.name) ?? [];
+
+    this.editForm.patchValue({
+      mealType: meal.mealType,
+      dateTime: meal.dateTime,
+      dishes: dishNames,
+    });
     this.editDialogVisible = true;
   }
 
@@ -120,20 +172,73 @@ export class MealsComponent {
       return;
     }
 
+    if (this.editForm.invalid) {
+      this.messageService.add({ severity: 'warn', summary: 'Invalid', detail: 'Fill all fields' });
+      return;
+    }
+
+    const payload = this.buildPayload(this.editForm);
+
     try {
       const updated = await firstValueFrom(
-        this.mealsService.updateMeal(this.selectedMeal.id, this.editForm.getRawValue()),
+        this.mealsService.updateMeal(this.selectedMeal.id, payload),
       );
+
       const idx = this.meals.findIndex((m) => m.id === this.selectedMeal!.id);
       if (idx !== -1) {
         this.meals[idx] = updated;
       }
+
       this.editDialogVisible = false;
       this.selectedMeal = null;
-      this.messageService.add({ severity: 'success', summary: 'Updated', detail: 'Meal updated.' });
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Updated',
+        detail: 'Meal updated successfully.',
+      });
     } catch (err) {
-      console.error(err);
-      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Update failed.' });
+      console.error('Backend error on update:', err);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Meal update failed.',
+      });
+    }
+  }
+
+  confirmDelete() {
+    if (this.selectedMeal == null) {
+      return;
+    }
+
+    this.confirmationService.confirm({
+      message: `Are you sure you want to delete the meal "${this.selectedMeal.mealType}"?`,
+      header: 'Confirm Deletion',
+      icon: 'pi pi-exclamation-triangle',
+      acceptButtonStyleClass: 'p-button-danger',
+      acceptIcon: 'pi pi-check',
+      rejectIcon: 'pi pi-times',
+      accept: () => {
+        this.deleteMeal(this.selectedMeal!.id);
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Cancelled',
+          detail: 'Delete cancelled.',
+        });
+      },
+    });
+  }
+
+  async deleteMeal(id: string) {
+    try {
+      await firstValueFrom(this.mealsService.deleteMeal(id));
+      this.meals = this.meals.filter((m) => m.id !== id);
+      this.messageService.add({ severity: 'success', summary: 'Deleted', detail: 'Meal deleted.' });
+    } catch (err) {
+      console.error('Error deleting meal:', err);
+      this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Delete failed.' });
     }
   }
 }

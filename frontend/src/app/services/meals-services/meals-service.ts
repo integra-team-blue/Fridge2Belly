@@ -1,14 +1,19 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Dish } from '../dishes-services/dishes-services';
+import { Dish, DishRef } from '../dishes-services/dishes-services';
 
 export type Meal = {
   id: string;
   mealType: string;
   dateTime: string;
-  dishIds: string[];
   dishes: Dish[];
+};
+
+export type MealPayload = {
+  mealType: string;
+  dateTime: string;
+  dishes: DishRef[];
 };
 
 @Injectable({ providedIn: 'root' })
@@ -21,11 +26,15 @@ export class MealsService {
     return this.http.get<Meal[]>(this.apiUrl);
   }
 
-  addMeal(meal: Omit<Meal, 'id'>): Observable<Meal> {
+  addMeal(meal: MealPayload): Observable<Meal> {
     return this.http.post<Meal>(this.apiUrl, meal);
   }
 
-  updateMeal(id: string, meal: Partial<Meal>): Observable<Meal> {
+  updateMeal(id: string, meal: MealPayload): Observable<Meal> {
     return this.http.put<Meal>(`${this.apiUrl}/${id}`, meal);
+  }
+
+  deleteMeal(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }
