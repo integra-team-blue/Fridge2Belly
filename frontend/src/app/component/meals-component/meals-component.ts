@@ -33,7 +33,7 @@ import { Dish, DishesService, DishRef } from '../../services/dishes-services/dis
     ConfirmDialog,
     MultiSelect,
   ],
-
+})
 export class MealsComponent {
   meals: Meal[] = [];
   dishes: Dish[] = [];
