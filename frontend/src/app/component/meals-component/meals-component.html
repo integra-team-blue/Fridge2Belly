@@ -1,8 +1,13 @@
+<p-contextMenu #cm [model]="menuItems"></p-contextMenu>
+
 <p-table
   [value]="meals"
+  dataKey="id"
   selectionMode="single"
-  [(selection)]="selectedMeal"
-  (onRowSelect)="openEditDialog($event.data)">
+  [(contextMenuSelection)]="selectedMeal"
+  (onRowSelect)="openEditDialog($event.data)"
+  [contextMenu]="cm"
+>
   <ng-template pTemplate="header">
     <tr>
       <th>Meal Type</th>
@@ -12,13 +17,16 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-meal>
-    <tr [pSelectableRow]="meal">
+    <tr [pSelectableRow]="meal" [pContextMenuRow]="meal">
       <td>{{ meal.mealType }}</td>
       <td>{{ meal.dateTime | date: 'yyyy-MM-dd HH:mm' }}</td>
       <td>
-        <ul>
-          <li *ngFor="let id of meal.dishIds">{{ id }}</li>
+        <ul *ngIf="meal.dishes && meal.dishes.length > 0; else noDishes">
+          <li *ngFor="let dish of meal.dishes">{{ dish.name }}</li>
         </ul>
+        <ng-template #noDishes>
+          <span style="font-style: italic; color: gray;">No dishes</span>
+        </ng-template>
       </td>
     </tr>
   </ng-template>
@@ -67,8 +75,8 @@
       <p-select
         [options]="dishes"
         optionLabel="name"
-        optionValue="id"
-        formControlName="dishIds"
+        optionValue="name"
+        formControlName="dishes"
         [style]="{ width: '100%' }"
         appendTo="body">
       </p-select>
@@ -108,14 +116,14 @@
 
     <div class="form-row">
       <label>Dishes</label>
-      <p-select
+      <p-multiSelect
         [options]="dishes"
-        formControlName="dishIds"
+        formControlName="dishes"
         optionLabel="name"
-        optionValue="id"
+        optionValue="name"
         [style]="{ width: '100%' }"
         appendTo="body">
-      </p-select>
+      </p-multiSelect>
     </div>
   </form>
 
@@ -124,3 +132,5 @@
     <p-button label="Cancel" class="p-button-secondary" (click)="editDialogVisible = false"></p-button>
   </ng-template>
 </p-dialog>
+
+<p-confirmDialog></p-confirmDialog>

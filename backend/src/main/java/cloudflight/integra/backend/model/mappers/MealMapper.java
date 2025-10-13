@@ -8,9 +8,8 @@ import cloudflight.integra.backend.repository.DishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,10 +23,10 @@ public class MealMapper {
             return null;
         }
 
-        List<DishDto> dishes = meal.getDishes() != null ? meal.getDishes()
+        List<DishDto> dishes = meal.getDishes() == null ? List.of() : meal.getDishes()
                 .stream()
                 .map(dishMapper::toDto)
-                .collect(Collectors.toList()) : new ArrayList<>();
+                .collect(Collectors.toList());
 
         return MealDto.builder()
                 .id(meal.getId())
@@ -42,38 +41,25 @@ public class MealMapper {
             return null;
         }
 
-        List<Dish> dishes = new ArrayList<>();
+        List<Dish> dishes = dto.getDishes() == null ? List.of() : dto.getDishes()
+                .stream()
+                .map(d -> {
+                    if (d.getId() != null) {
+                        return dishRepository.findById(d.getId())
+                                .orElse(null);
+                    }
 
-        if (dto.getDishes() != null && !dto.getDishes()
-                .isEmpty()) {
-            for (DishDto dishDto : dto.getDishes()) {
-                Dish dish = null;
-
-                if (dishDto.getId() != null) {
-                    dish = dishRepository.findById(dishDto.getId())
-                            .orElse(null);
-                }
-
-                if (dish == null && dishDto.getName() != null) {
-                    dish = dishRepository.findByName(dishDto.getName())
-                            .orElse(null);
-                }
-
-                if (dish != null) {
-                    dishes.add(dish);
-                } else {
-                    System.out.println("Dish not found for DTO: " + dishDto);
-                }
-            }
-        }
-
-        else if (dto.getDishIds() != null && !dto.getDishIds()
-                .isEmpty()) {
-                    dishes = dishRepository.findAllByIdIn(dto.getDishIds());
-                }
+                    if (d.getName() != null) {
+                        return dishRepository.findByName(d.getName())
+                                .orElse(null);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
 
         if (dishes.isEmpty()) {
-            System.out.println("No dishes found for meal DTO: " + dto.getId());
+            System.out.printf("No dishes found for Meal DTO: %s%n", dto.getId());
         }
 
         return Meal.builder()
