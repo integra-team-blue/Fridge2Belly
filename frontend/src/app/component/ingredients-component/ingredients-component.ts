@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 
-import {IngredientsControllerService, IngredientDto } from '../../api'
+import { IngredientsControllerService, IngredientDto } from '../../api';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -57,7 +57,9 @@ export class IngredientsComponent {
 
   async ngOnInit() {
     this.ingredients = await firstValueFrom(
-      this.ingredientsService.getAllIngredients('body', false, { httpHeaderAccept: 'application/json' as '*/*' })
+      this.ingredientsService.getAllIngredients('body', false, {
+        httpHeaderAccept: 'application/json' as '*/*',
+      }),
     );
   }
 
@@ -97,7 +99,9 @@ export class IngredientsComponent {
 
       try {
         const savedIngredient = await firstValueFrom(
-          this.ingredientsService.addIngredient(ingredientToSave, 'body', false, { httpHeaderAccept: 'application/json' as '*/*' })
+          this.ingredientsService.addIngredient(ingredientToSave, 'body', false, {
+            httpHeaderAccept: 'application/json' as '*/*',
+          }),
         );
         this.ingredients.push(savedIngredient);
         this.showDialog = false;
@@ -128,9 +132,10 @@ export class IngredientsComponent {
       name: ingredient.name,
       quantity: ingredient.quantity,
       unit: ingredient.unit,
-      expirationDate: ingredient.expirationDate
-        ? new Date(ingredient.expirationDate).toISOString().split('T')[0]
-        : null,
+      expirationDate:
+        ingredient.expirationDate != null && ingredient.expirationDate !== ''
+          ? new Date(ingredient.expirationDate).toISOString().split('T')[0]
+          : null,
       calories: ingredient.calories,
       protein: ingredient.protein,
       fat: ingredient.fat,
@@ -158,9 +163,10 @@ export class IngredientsComponent {
         name: this.editForm.value.name ?? '',
         quantity: Number(this.editForm.value.quantity ?? 0),
         unit: this.editForm.value.unit ?? '',
-        expirationDate: this.editForm.value.expirationDate
-          ? new Date(this.editForm.value.expirationDate).toISOString()
-          : new Date().toISOString(),
+        expirationDate:
+          this.editForm.value.expirationDate != null && this.editForm.value.expirationDate !== ''
+            ? new Date(this.editForm.value.expirationDate).toISOString()
+            : new Date().toISOString(),
         calories: Number(this.editForm.value.calories ?? 0),
         protein: Number(this.editForm.value.protein ?? 0),
         fat: Number(this.editForm.value.fat ?? 0),
@@ -174,8 +180,8 @@ export class IngredientsComponent {
             updatedIngredient,
             'body',
             false,
-            { httpHeaderAccept: 'application/json' as '*/*' }
-          )
+            { httpHeaderAccept: 'application/json' as '*/*' },
+          ),
         );
 
         const index = this.ingredients.findIndex((i) => i.id === this.selectedIngredient!.id);

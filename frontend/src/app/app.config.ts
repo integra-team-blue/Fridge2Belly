@@ -1,7 +1,7 @@
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
-  importProvidersFrom
+  importProvidersFrom,
 } from '@angular/core';
 
 import { provideRouter } from '@angular/router';
@@ -35,9 +35,12 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     ConfirmationService,
     importProvidersFrom(
-      ApiModule.forRoot(() => new Configuration({
-        basePath: 'http://localhost:8080'
-      }))
-    )
+      ApiModule.forRoot(
+        () =>
+          new Configuration({
+            basePath: 'http://localhost:8080',
+          }),
+      ),
+    ),
   ],
 };

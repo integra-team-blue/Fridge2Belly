@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { NgIf } from '@angular/common';
-import {catchError, firstValueFrom, map, of, switchMap, timer} from 'rxjs';
+import { catchError, firstValueFrom, map, of, switchMap, timer } from 'rxjs';
 import { UserControllerService, AuthResponse, LoginRequest } from '../../api';
 import { ToastService } from '../../services/toast.service';
 import { LoadingService } from '../../services/loading.service';
@@ -174,7 +174,7 @@ export class SignupComponent {
     }
     this.loading.show();
     try {
-      const userDto = {email: v.email, username: v.username};
+      const userDto = { email: v.email, username: v.username };
       const createdUser = await firstValueFrom(this.userApi.addUser(userDto));
 
       localStorage.setItem('token', 'temp-token');

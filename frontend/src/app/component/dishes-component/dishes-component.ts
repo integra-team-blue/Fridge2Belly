@@ -4,7 +4,7 @@ import { firstValueFrom } from 'rxjs';
 import { NgForOf, NgIf, DatePipe } from '@angular/common';
 import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
-import { ConfirmDialog } from 'primeng/confirmdialog';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -27,7 +27,7 @@ import { ToastService } from '../../services/toast.service';
     DatePipe,
     TableModule,
     DialogModule,
-    ConfirmDialog,
+    ConfirmDialogModule,
     Button,
     InputText,
     Select,
@@ -88,8 +88,14 @@ export class DishesComponent implements OnInit {
   async loadData() {
     this.loadingService.show();
     try {
-      const dishes = await firstValueFrom(this.dishesService.getAll('body', false, { httpHeaderAccept: 'application/json' as '*/*' }));
-      const recipes = await firstValueFrom(this.recipesService.getAllRecipes('body', false, { httpHeaderAccept: 'application/json' as '*/*' }));
+      const dishes = await firstValueFrom(
+        this.dishesService.getAll('body', false, { httpHeaderAccept: 'application/json' as '*/*' }),
+      );
+      const recipes = await firstValueFrom(
+        this.recipesService.getAllRecipes('body', false, {
+          httpHeaderAccept: 'application/json' as '*/*',
+        }),
+      );
 
       this.dishes = dishes;
       this.recipes = recipes;
@@ -120,7 +126,7 @@ export class DishesComponent implements OnInit {
     this._editId.set(dish.id ?? null);
     this.form.patchValue({
       name: dish.name,
-      recipeId: dish.recipes?.[0]?.id ?? '',
+      recipeId: dish.recipeIds?.[0] ?? '',
       preparedAt: new Date(dish.preparedAt),
       calories: dish.calories,
       protein: dish.protein,
@@ -140,12 +146,12 @@ export class DishesComponent implements OnInit {
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        if (dish.id) {
+        if (dish.id !== null && dish.id !== undefined) {
           this.deleteDish(dish.id);
         } else {
           this.toastService.push('Cannot delete: dish has no ID', 'error');
         }
-      }
+      },
     });
   }
 
@@ -169,21 +175,30 @@ export class DishesComponent implements OnInit {
     this.loadingService.show();
     try {
       const v = this.form.getRawValue();
-      const recipeIds = typeof v.recipeId === 'string' && v.recipeId.length > 0 ? [v.recipeId] : [];
+
+      const recipeIds: string[] = v.recipeId != null && v.recipeId !== '' ? [v.recipeId] : [];
+
+      let ingredientIds: string[] = [];
+      const id = this._editId();
+      if (id != null) {
+        const existingDish = this.dishes.find((d) => d.id === id);
+        if (existingDish?.ingredientIds && existingDish.ingredientIds.length > 0) {
+          ingredientIds = [...existingDish.ingredientIds];
+        }
+      }
 
       const payload: DishDto = {
         name: v.name,
         preparedAt: this.toLocalDateTimeString(v.preparedAt),
-        calories: Number(v.calories),
-        protein: Number(v.protein),
-        fat: Number(v.fat),
-        carbohydrates: Number(v.carbohydrates),
+        calories: Number(v.calories) || 0,
+        protein: Number(v.protein) || 0,
+        fat: Number(v.fat) || 0,
+        carbohydrates: Number(v.carbohydrates) || 0,
         recipeIds,
-        ingredientIds: [],
+        ingredientIds,
       };
 
-      const id = this._editId();
-      if (id != null && id !== '') {
+      if (id != null) {
         await firstValueFrom(this.dishesService.update(id, payload));
         this.toastService.push('Dish updated', 'success');
       } else {
@@ -203,20 +218,34 @@ export class DishesComponent implements OnInit {
     this.form.reset();
   }
 
-  private toLocalDateTimeString(value: unknown): string {
-    const d =
-      value instanceof Date
-        ? value
-        : new Date(typeof value === 'string' && value ? value : Date.now());
-    const pad = (n: number) => n.toString().padStart(2, '0');
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(
-      d.getMinutes(),
-    )}:${pad(d.getSeconds())}`;
+  getRecipeName(id: string | undefined): string {
+    if (id === null || id === undefined || id === '') {
+      return '-';
+    }
+    const recipe = this.recipes.find((r) => r.id === id);
+    return recipe ? recipe.name : id;
   }
 
-  getRecipeName(id: string | undefined): string {
-    if (!id) return '-';
-    const recipe = this.recipes.find(r => r.id === id);
-    return recipe ? recipe.name : id;
+  private toLocalDateTimeString(value: unknown): string {
+    if (value === null || value === undefined) {
+      throw new Error('PreparedAt is required');
+    }
+
+    let d: Date;
+    if (value instanceof Date) {
+      d = value;
+    } else if (typeof value === 'string') {
+      d = new Date(value);
+    } else {
+      throw new Error('Invalid preparedAt value');
+    }
+
+    if (isNaN(d.getTime())) {
+      throw new Error('Invalid preparedAt date');
+    }
+
+    const pad = (n: number) => n.toString().padStart(2, '0');
+
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T00:00:00`;
   }
 }

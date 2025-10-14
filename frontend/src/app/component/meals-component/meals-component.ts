@@ -13,8 +13,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { MultiSelect } from 'primeng/multiselect';
 
-import { Meal, MealsService, MealPayload } from '../../services/meals-services/meals-service';
-import { Dish, DishesService, DishRef } from '../../services/dishes-services/dishes-services';
+import { MealControllerService, DishControllerService, MealDto, DishDto } from '../../api';
 
 @Component({
   selector: 'app-meals',
@@ -35,8 +34,8 @@ import { Dish, DishesService, DishRef } from '../../services/dishes-services/dis
   ],
 })
 export class MealsComponent {
-  meals: Meal[] = [];
-  dishes: Dish[] = [];
+  meals: MealDto[] = [];
+  dishes: DishDto[] = [];
 
   mealTypes = [
     { label: 'Breakfast', value: 'BREAKFAST' },
@@ -45,15 +44,15 @@ export class MealsComponent {
     { label: 'Snack', value: 'SNACK' },
   ];
 
-  selectedMeal: Meal | null = null;
+  selectedMeal: MealDto | null = null;
   showDialog = false;
   editDialogVisible = false;
 
   menuItems: MenuItem[] = [];
 
   constructor(
-    private mealsService: MealsService,
-    private dishesService: DishesService,
+    private mealsService: MealControllerService,
+    private dishesService: DishControllerService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
   ) {}
@@ -72,16 +71,23 @@ export class MealsComponent {
 
   async loadData() {
     try {
-      this.meals = await firstValueFrom(this.mealsService.getMeals());
-      this.dishes = await firstValueFrom(this.dishesService.getDishes());
+      this.meals = await firstValueFrom(
+        this.mealsService.getAllMeals('body', false, {
+          httpHeaderAccept: 'application/json' as '*/*',
+        }),
+      );
+
+      this.dishes = await firstValueFrom(
+        this.dishesService.getAll('body', false, { httpHeaderAccept: 'application/json' as '*/*' }),
+      );
     } catch (error) {
       console.error('Error loading meals or dishes:', error);
     }
   }
 
   mealForm = new FormGroup({
-    mealType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dateTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    mealType: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+    dateTime: new FormControl<Date | string | null>(null, { validators: [Validators.required] }),
     dishes: new FormControl<string[]>([], {
       nonNullable: true,
       validators: [Validators.required],
@@ -90,7 +96,7 @@ export class MealsComponent {
 
   editForm = new FormGroup({
     mealType: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    dateTime: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    dateTime: new FormControl<Date | string | null>(null, { validators: [Validators.required] }),
     dishes: new FormControl<string[]>([], {
       nonNullable: true,
       validators: [Validators.required],
@@ -106,29 +112,43 @@ export class MealsComponent {
     this.showDialog = true;
   }
 
-  private buildPayload(form: FormGroup): MealPayload {
+  private buildPayload(form: FormGroup): MealDto {
     const raw = form.getRawValue();
-    const dateTime = new Date(raw.dateTime!).toISOString().slice(0, 19);
 
-    const rawDishes = raw.dishes;
-    const dishesArray = Array.isArray(rawDishes)
-      ? rawDishes
-      : Boolean(rawDishes)
-        ? [rawDishes]
+    const dateTime = raw.dateTime instanceof Date ? raw.dateTime.toISOString() : raw.dateTime;
+
+    const dishIds: string[] = Array.isArray(raw.dishes)
+      ? raw.dishes
+      : raw.dishes != null && raw.dishes !== ''
+        ? [raw.dishes]
         : [];
 
-    const dishesPayload: DishRef[] = dishesArray.map((d: any): DishRef => {
-      if (typeof d === 'object' && d !== null) {
-        return { id: d.id ?? undefined, name: d.name };
-      }
-      const found = this.dishes.find((dish) => dish.name === d);
-      return found ? { id: found.id, name: found.name } : { name: d };
-    });
+    if (dishIds.length === 0) {
+      console.warn('No dishes selected! Backend might reject this.');
+    }
 
     return {
-      mealType: (raw.mealType as string).toUpperCase(),
+      id: undefined,
+      mealType: (raw.mealType as string).toUpperCase() as MealDto.MealTypeEnum,
       dateTime,
-      dishes: dishesPayload,
+      dishIds,
+    };
+  }
+
+  private buildUpdatePayload(form: FormGroup, mealId: string): MealDto {
+    const raw = form.getRawValue();
+    const dateTime = raw.dateTime instanceof Date ? raw.dateTime.toISOString() : raw.dateTime;
+    const dishIds: string[] = Array.isArray(raw.dishes)
+      ? raw.dishes
+      : raw.dishes != null && raw.dishes !== ''
+        ? [raw.dishes]
+        : [];
+
+    return {
+      id: mealId,
+      mealType: (raw.mealType as string).toUpperCase() as MealDto.MealTypeEnum,
+      dateTime,
+      dishIds,
     };
   }
 
@@ -141,8 +161,7 @@ export class MealsComponent {
     const payload = this.buildPayload(this.mealForm);
 
     try {
-      const newMeal = await firstValueFrom(this.mealsService.addMeal(payload));
-      this.meals.push(newMeal);
+      await firstValueFrom(this.mealsService.createMeal(payload));
       this.showDialog = false;
       this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Meal added.' });
     } catch (err) {
@@ -151,18 +170,19 @@ export class MealsComponent {
     }
   }
 
-  openEditDialog(meal: Meal | Meal[] | undefined) {
+  openEditDialog(meal: MealDto | MealDto[] | undefined) {
     if (meal == null || Array.isArray(meal)) {
       return;
     }
 
     this.selectedMeal = meal;
-    const dishNames = meal.dishes?.map((d) => d.name) ?? [];
+
+    const selectedDishIds = meal.dishIds ?? [];
 
     this.editForm.patchValue({
       mealType: meal.mealType,
-      dateTime: meal.dateTime,
-      dishes: dishNames,
+      dateTime: new Date(meal.dateTime),
+      dishes: selectedDishIds,
     });
     this.editDialogVisible = true;
   }
@@ -180,17 +200,10 @@ export class MealsComponent {
     const payload = this.buildPayload(this.editForm);
 
     try {
-      const updated = await firstValueFrom(
-        this.mealsService.updateMeal(this.selectedMeal.id, payload),
-      );
-
-      const idx = this.meals.findIndex((m) => m.id === this.selectedMeal!.id);
-      if (idx !== -1) {
-        this.meals[idx] = updated;
-      }
-
+      await firstValueFrom(this.mealsService.updateMeal(this.selectedMeal.id!, payload));
       this.editDialogVisible = false;
       this.selectedMeal = null;
+      await this.loadData();
       this.messageService.add({
         severity: 'success',
         summary: 'Updated',
@@ -219,8 +232,17 @@ export class MealsComponent {
       acceptIcon: 'pi pi-check',
       rejectIcon: 'pi pi-times',
       accept: () => {
-        this.deleteMeal(this.selectedMeal!.id);
+        if (this.selectedMeal?.id != null && this.selectedMeal.id !== '') {
+          this.deleteMeal(this.selectedMeal.id);
+        } else {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'Cannot delete meal: no ID',
+          });
+        }
       },
+
       reject: () => {
         this.messageService.add({
           severity: 'info',

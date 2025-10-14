@@ -1,5 +1,6 @@
 package cloudflight.integra.backend.controller;
 
+import cloudflight.integra.backend.model.dtos.DishCreateDto;
 import cloudflight.integra.backend.service.DishService;
 import cloudflight.integra.backend.model.dtos.DishDto;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,7 @@ public class DishController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public DishDto create(@Valid @RequestBody DishDto body) {
+    public DishDto create(@Valid @RequestBody DishCreateDto body) {
         return service.create(body);
     }
 

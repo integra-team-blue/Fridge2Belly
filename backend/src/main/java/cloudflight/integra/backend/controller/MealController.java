@@ -1,5 +1,6 @@
 package cloudflight.integra.backend.controller;
 
+import cloudflight.integra.backend.model.dtos.MealCreateDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.service.MealService;
 import jakarta.validation.Valid;
@@ -20,7 +21,7 @@ public class MealController {
     }
 
     @PostMapping
-    public MealDto createMeal(@Valid @RequestBody MealDto mealDto) {
+    public MealDto createMeal(@Valid @RequestBody MealCreateDto mealDto) {
         return mealService.createMeal(mealDto);
     }
 
@@ -33,7 +34,7 @@ public class MealController {
     }
 
     @PutMapping("/{id}")
-    public MealDto updateMeal(@PathVariable UUID id, @Valid @RequestBody MealDto mealDto) {
+    public MealDto updateMeal(@PathVariable UUID id, @Valid @RequestBody MealCreateDto mealDto) {
         return mealService.updateMeal(id, mealDto);
     }
 

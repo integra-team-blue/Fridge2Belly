@@ -13,11 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class DishDto {
-
-    @EqualsAndHashCode.Include
-    private UUID id;
+public class DishCreateDto {
 
     @NotBlank(message = "Name cannot be blank")
     private String name;
@@ -37,10 +33,6 @@ public class DishDto {
     @PositiveOrZero(message = "Carbohydrates must be >= 0")
     private double carbohydrates;
 
-    //@NotNull(message = "Recipes cannot be null")
-    private List<RecipeDto> recipes;
-
-    //@NotNull(message = "Ingredients cannot be null")
-    private List<IngredientDto> ingredients;
+    private List<UUID> recipeIds;
+    private List<UUID> ingredientIds;
 }
-

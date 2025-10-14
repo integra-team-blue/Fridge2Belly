@@ -63,6 +63,16 @@ public class RecipeService {
         existingRecipe.setCookingTimeMinutes(updated.getCookingTimeMinutes());
         existingRecipe.setInstructions(updated.getInstructions());
 
+        List<Dish> dishes = new ArrayList<>();
+        if (updated.getDishIds() != null && !updated.getDishIds().isEmpty()) {
+            dishes = dishRepository.findAllByIdIn(updated.getDishIds());
+            if (dishes.size() != updated.getDishIds().size()) {
+                throw new IllegalArgumentException("Some dishes were not found");
+            }
+        }
+
+        existingRecipe.setDishes(dishes);
+
         Recipe savedRecipe = recipeRepository.save(existingRecipe);
         return recipeMapper.toDto(savedRecipe);
     }
