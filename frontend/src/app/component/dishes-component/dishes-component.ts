@@ -11,7 +11,13 @@ import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
-import { DishControllerService, DishDto, RecipeDto, RecipeControllerService } from '../../api';
+import {
+  DishControllerService,
+  DishDto,
+  RecipeDto,
+  RecipeControllerService,
+  DishCreateDto,
+} from '../../api';
 import { LoadingService } from '../../services/loading.service';
 import { ToastService } from '../../services/toast.service';
 
@@ -97,8 +103,8 @@ export class DishesComponent implements OnInit {
         }),
       );
 
-      this.dishes = dishes;
-      this.recipes = recipes;
+      this.dishes = dishes ?? [];
+      this.recipes = recipes ?? [];
     } finally {
       this.loadingService.hide();
     }
@@ -123,15 +129,17 @@ export class DishesComponent implements OnInit {
     if (dish == null) {
       return;
     }
+
     this._editId.set(dish.id ?? null);
     this.form.patchValue({
-      name: dish.name,
-      recipeId: dish.recipeIds?.[0] ?? '',
-      preparedAt: new Date(dish.preparedAt),
-      calories: dish.calories,
-      protein: dish.protein,
-      fat: dish.fat,
-      carbohydrates: dish.carbohydrates,
+      name: dish.name ?? '',
+      // recipeId: dish.recipes?.[0] ?? '',
+      recipeId: dish.recipes?.[0]?.id ?? '',
+      preparedAt: dish.preparedAt ? new Date(dish.preparedAt) : '',
+      calories: dish.calories ?? 0,
+      protein: dish.protein ?? 0,
+      fat: dish.fat ?? 0,
+      carbohydrates: dish.carbohydrates ?? 0,
     });
     this.dialogVisible = true;
   }
@@ -146,7 +154,7 @@ export class DishesComponent implements OnInit {
       rejectLabel: 'Cancel',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        if (dish.id !== null && dish.id !== undefined) {
+        if (dish.id != null) {
           this.deleteDish(dish.id);
         } else {
           this.toastService.push('Cannot delete: dish has no ID', 'error');
@@ -175,27 +183,22 @@ export class DishesComponent implements OnInit {
     this.loadingService.show();
     try {
       const v = this.form.getRawValue();
-
-      const recipeIds: string[] = v.recipeId != null && v.recipeId !== '' ? [v.recipeId] : [];
-
-      let ingredientIds: string[] = [];
       const id = this._editId();
-      if (id != null) {
-        const existingDish = this.dishes.find((d) => d.id === id);
-        if (existingDish?.ingredientIds && existingDish.ingredientIds.length > 0) {
-          ingredientIds = [...existingDish.ingredientIds];
-        }
-      }
 
-      const payload: DishDto = {
-        name: v.name,
+      const existingDish = id != null ? this.dishes.find((d) => d.id === id) : undefined;
+
+      const payload: DishCreateDto = {
+        name: v.name ?? '',
         preparedAt: this.toLocalDateTimeString(v.preparedAt),
         calories: Number(v.calories) || 0,
         protein: Number(v.protein) || 0,
         fat: Number(v.fat) || 0,
         carbohydrates: Number(v.carbohydrates) || 0,
-        recipeIds,
-        ingredientIds,
+        recipeIds: v.recipeId != null && v.recipeId !== '' ? [v.recipeId] : [],
+        ingredientIds:
+          id != null && existingDish?.ingredients != null && existingDish.ingredients.length > 0
+            ? existingDish.ingredients.map((i) => i.id!)
+            : [],
       };
 
       if (id != null) {
@@ -219,15 +222,15 @@ export class DishesComponent implements OnInit {
   }
 
   getRecipeName(id: string | undefined): string {
-    if (id === null || id === undefined || id === '') {
+    if (id == null || id === '') {
       return '-';
     }
     const recipe = this.recipes.find((r) => r.id === id);
-    return recipe ? recipe.name : id;
+    return recipe?.name ?? id;
   }
 
   private toLocalDateTimeString(value: unknown): string {
-    if (value === null || value === undefined) {
+    if (value == null) {
       throw new Error('PreparedAt is required');
     }
 
@@ -245,7 +248,6 @@ export class DishesComponent implements OnInit {
     }
 
     const pad = (n: number) => n.toString().padStart(2, '0');
-
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T00:00:00`;
   }
 }

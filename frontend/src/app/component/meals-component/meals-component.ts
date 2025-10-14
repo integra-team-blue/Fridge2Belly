@@ -13,7 +13,13 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { MultiSelect } from 'primeng/multiselect';
 
-import { MealControllerService, DishControllerService, MealDto, DishDto } from '../../api';
+import {
+  MealControllerService,
+  DishControllerService,
+  MealDto,
+  DishDto,
+  MealCreateDto,
+} from '../../api';
 
 @Component({
   selector: 'app-meals',
@@ -112,44 +118,22 @@ export class MealsComponent {
     this.showDialog = true;
   }
 
-  private buildPayload(form: FormGroup): MealDto {
+  private buildPayload(form: FormGroup): MealCreateDto {
     const raw = form.getRawValue();
 
     const dateTime = raw.dateTime instanceof Date ? raw.dateTime.toISOString() : raw.dateTime;
 
-    const dishIds: string[] = Array.isArray(raw.dishes)
-      ? raw.dishes
-      : raw.dishes != null && raw.dishes !== ''
-        ? [raw.dishes]
-        : [];
-
-    if (dishIds.length === 0) {
-      console.warn('No dishes selected! Backend might reject this.');
-    }
+    const dishIds: string[] = Array.isArray(raw.dishes) ? raw.dishes : [];
 
     return {
-      id: undefined,
-      mealType: (raw.mealType as string).toUpperCase() as MealDto.MealTypeEnum,
+      mealType: (raw.mealType as string).toUpperCase() as MealCreateDto.MealTypeEnum,
       dateTime,
       dishIds,
     };
   }
 
-  private buildUpdatePayload(form: FormGroup, mealId: string): MealDto {
-    const raw = form.getRawValue();
-    const dateTime = raw.dateTime instanceof Date ? raw.dateTime.toISOString() : raw.dateTime;
-    const dishIds: string[] = Array.isArray(raw.dishes)
-      ? raw.dishes
-      : raw.dishes != null && raw.dishes !== ''
-        ? [raw.dishes]
-        : [];
-
-    return {
-      id: mealId,
-      mealType: (raw.mealType as string).toUpperCase() as MealDto.MealTypeEnum,
-      dateTime,
-      dishIds,
-    };
+  private buildUpdatePayload(form: FormGroup): MealCreateDto {
+    return this.buildPayload(form);
   }
 
   async addMeal() {
@@ -177,7 +161,7 @@ export class MealsComponent {
 
     this.selectedMeal = meal;
 
-    const selectedDishIds = meal.dishIds ?? [];
+    const selectedDishIds = meal.dishes?.map((d) => d.id!) ?? [];
 
     this.editForm.patchValue({
       mealType: meal.mealType,
