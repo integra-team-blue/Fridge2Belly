@@ -7,6 +7,7 @@ import cloudflight.integra.backend.model.Recipe;
 import cloudflight.integra.backend.model.dtos.DishDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.model.MealType;
+import cloudflight.integra.backend.model.dtos.MealCreateDto;
 import cloudflight.integra.backend.repository.DishRepository;
 import cloudflight.integra.backend.repository.IngredientRepository;
 import cloudflight.integra.backend.repository.MealRepository;
@@ -72,15 +73,6 @@ public class MealDtoControllerTests {
         recipeRepository.deleteAll();
         ingredientRepository.deleteAll();
         realDishId = createTestDish();
-
-        testMealDto = MealDto.builder()
-                .id(UUID.randomUUID())
-                .mealType(MealType.LUNCH)
-                .dateTime(LocalDateTime.now())
-                .dishes(List.of(DishDto.builder()
-                        .id(realDishId)
-                        .build()))
-                .build();
     }
 
     private UUID createTestDish() {
@@ -123,9 +115,15 @@ public class MealDtoControllerTests {
     // POST /api/meals - success
     @Test
     void createMeal_success() throws Exception {
+        MealCreateDto mealCreateDto = MealCreateDto.builder()
+                .mealType(MealType.LUNCH)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
+
         mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                .content(objectMapper.writeValueAsString(mealCreateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.mealType").value("LUNCH"));
@@ -134,11 +132,15 @@ public class MealDtoControllerTests {
     // POST /api/meals - fail, no MealType
     @Test
     void createMeal_fail_noMealType() throws Exception {
-        testMealDto.setMealType(null);
+        MealCreateDto mealCreateDto = MealCreateDto.builder()
+                .mealType(null)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
 
         mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                .content(objectMapper.writeValueAsString(mealCreateDto)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors.mealType").value("Meal type is required"));
     }
@@ -146,9 +148,15 @@ public class MealDtoControllerTests {
     // GET /api/meals - success
     @Test
     void getAllMeals_success() throws Exception {
+        MealCreateDto mealCreateDto = MealCreateDto.builder()
+                .mealType(MealType.LUNCH)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
+
         mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                .content(objectMapper.writeValueAsString(mealCreateDto)))
                 .andExpect(status().isOk());
 
         mockMvc.perform(get("/api/meals"))
@@ -159,9 +167,15 @@ public class MealDtoControllerTests {
     // GET /api/meals/{id} - success
     @Test
     void getMealById_success() throws Exception {
+        MealCreateDto mealCreateDto = MealCreateDto.builder()
+                .mealType(MealType.LUNCH)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
+
         MvcResult result = mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                .content(objectMapper.writeValueAsString(mealCreateDto)))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -187,9 +201,15 @@ public class MealDtoControllerTests {
     // PUT /api/meals/{id} - success
     @Test
     void updateMeal_success() throws Exception {
+        MealCreateDto mealCreateDto = MealCreateDto.builder()
+                .mealType(MealType.LUNCH)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
+
         MvcResult result = mockMvc.perform(post("/api/meals")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                                                   .contentType(MediaType.APPLICATION_JSON)
+                                                   .content(objectMapper.writeValueAsString(mealCreateDto)))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -197,11 +217,15 @@ public class MealDtoControllerTests {
                 .getContentAsString();
         MealDto createdMeal = objectMapper.readValue(responseContent, MealDto.class);
 
-        createdMeal.setMealType(MealType.DINNER);
+        MealCreateDto updateDto = MealCreateDto.builder()
+                .mealType(MealType.DINNER)
+                .dateTime(createdMeal.getDateTime())
+                .dishIds(List.of(realDishId))
+                .build();
 
         mockMvc.perform(put("/api/meals/" + createdMeal.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(createdMeal)))
+                .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.mealType").value("DINNER"));
     }
@@ -210,9 +234,16 @@ public class MealDtoControllerTests {
     @Test
     void updateMeal_notFound() throws Exception {
         UUID randomId = UUID.randomUUID();
+
+        MealCreateDto updateDto = MealCreateDto.builder()
+                .mealType(MealType.LUNCH)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
+
         mockMvc.perform(put("/api/meals/" + randomId)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                .content(objectMapper.writeValueAsString(updateDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Meal not found with id: " + randomId));
     }
@@ -220,9 +251,15 @@ public class MealDtoControllerTests {
     // DELETE /api/meals/{id} - success
     @Test
     void deleteMeal_success() throws Exception {
+        MealCreateDto mealCreateDto = MealCreateDto.builder()
+                .mealType(MealType.LUNCH)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
+
         MvcResult result = mockMvc.perform(post("/api/meals")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(testMealDto)))
+                .content(objectMapper.writeValueAsString(mealCreateDto)))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -243,3 +280,4 @@ public class MealDtoControllerTests {
                 .andExpect(jsonPath("$.message").value("Meal not found with id: " + randomId));
     }
 }
+
