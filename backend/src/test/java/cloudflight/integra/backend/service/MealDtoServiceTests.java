@@ -70,35 +70,6 @@ public class MealDtoServiceTests {
                 .build();
     }
 
-//    @Test
-//    void testCreateMealSuccess() {
-//        DishDto dish = DishDto.builder()
-//                .id(UUID.randomUUID())
-//                .name("Test Dish")
-//                .build();
-//
-//        MealDto inputDto = MealDto.builder()
-//                .id(null)
-//                .mealType(MealType.BREAKFAST)
-//                .dateTime(LocalDateTime.now())
-//                .dishes(List.of(dish))
-//                .build();
-//
-//        MealDto expectedResult = createTestMealDto(MealType.BREAKFAST);
-//
-//        when(mealMapper.toEntity(any(MealDto.class))).thenReturn(testMeal);
-//        when(mealRepository.save(any(Meal.class))).thenReturn(testMeal);
-//        when(mealMapper.toDto(any(Meal.class))).thenReturn(expectedResult);
-//
-//        MealDto created = mealService.createMeal(inputDto);
-//
-//        assertNotNull(created.getId());
-//        assertEquals(MealType.BREAKFAST, created.getMealType());
-//        verify(mealMapper).toEntity(any(MealDto.class));
-//        verify(mealRepository).save(any(Meal.class));
-//        verify(mealMapper).toDto(testMeal);
-//    }
-
     private MealCreateDto createTestMealCreateDto(MealType mealType) {
         return MealCreateDto.builder()
                 .mealType(mealType)
@@ -124,26 +95,6 @@ public class MealDtoServiceTests {
         verify(mealRepository).save(any(Meal.class));
         verify(mealMapper).toDto(testMeal);
     }
-
-
-//    @Test
-//    void testCreateMealMissingMealType() {
-//        DishDto dish = DishDto.builder()
-//                .id(UUID.randomUUID())
-//                .name("Test Dish")
-//                .build();
-//
-//        MealDto mealDto = MealDto.builder()
-//                .id(null)
-//                .mealType(null)
-//                .dateTime(LocalDateTime.now())
-//                .dishes(List.of(dish))
-//                .build();
-//
-//        assertThrows(IllegalArgumentException.class, () -> mealService.createMeal(mealDto));
-//        verify(mealRepository, never()).save(any());
-//        verify(mealMapper, never()).toEntity(any());
-//    }
 
     @Test
     void testCreateMealMissingMealType() {
@@ -199,47 +150,6 @@ public class MealDtoServiceTests {
         verify(mealMapper, never()).toDto(any());
     }
 
-//    @Test
-//    void testUpdateMealSuccess() {
-//        UUID id = UUID.randomUUID();
-//
-//        DishDto dish = DishDto.builder()
-//                .id(UUID.randomUUID())
-//                .name("Updated Dish")
-//                .build();
-//
-//        MealDto inputDto = MealDto.builder()
-//                .id(null)
-//                .mealType(MealType.LUNCH)
-//                .dateTime(LocalDateTime.now())
-//                .dishes(List.of(dish))
-//                .build();
-//
-//        MealDto expectedResult = MealDto.builder()
-//                .id(id)
-//                .mealType(MealType.LUNCH)
-//                .dateTime(LocalDateTime.now())
-//                .dishes(List.of(dish))
-//                .build();
-//
-//        Meal updatedMeal = createTestMeal(MealType.LUNCH);
-//        updatedMeal.setId(id);
-//
-//        when(mealRepository.existsById(id)).thenReturn(true);
-//        when(mealMapper.toEntity(any(MealDto.class))).thenReturn(updatedMeal);
-//        when(mealRepository.save(updatedMeal)).thenReturn(updatedMeal);
-//        when(mealMapper.toDto(updatedMeal)).thenReturn(expectedResult);
-//
-//        MealDto updated = mealService.updateMeal(id, inputDto);
-//
-//        assertEquals(expectedResult.getId(), updated.getId());
-//        assertEquals(MealType.LUNCH, updated.getMealType());
-//        verify(mealRepository).existsById(id);
-//        verify(mealMapper).toEntity(any(MealDto.class));
-//        verify(mealRepository).save(updatedMeal);
-//        verify(mealMapper).toDto(updatedMeal);
-//    }
-
     @Test
     void testUpdateMealSuccess() {
         UUID id = UUID.randomUUID();
@@ -280,31 +190,6 @@ public class MealDtoServiceTests {
         verify(mealRepository).save(updatedMeal);
         verify(mealMapper).toDto(updatedMeal);
     }
-
-//    @Test
-//    void testUpdateMealNotFound() {
-//        UUID id = UUID.randomUUID();
-//
-//        DishDto dish = DishDto.builder()
-//                .id(UUID.randomUUID())
-//                .name("Test Dish")
-//                .build();
-//
-//        MealDto mealDto = MealDto.builder()
-//                .id(id)
-//                .mealType(MealType.LUNCH)
-//                .dateTime(LocalDateTime.now())
-//                .dishes(List.of(dish))
-//                .build();
-//
-//        when(mealRepository.existsById(id)).thenReturn(false);
-//
-//        assertThrows(MealNotFoundException.class, () -> mealService.updateMeal(id, mealDto));
-//        verify(mealRepository).existsById(id);
-//        verify(mealRepository, never()).save(any());
-//        verify(mealMapper, never()).toEntity(any());
-//        verify(mealMapper, never()).toDto(any());
-//    }
 
     @Test
     void testUpdateMealNotFound() {
