@@ -64,9 +64,11 @@ public class RecipeService {
         existingRecipe.setInstructions(updated.getInstructions());
 
         List<Dish> dishes = new ArrayList<>();
-        if (updated.getDishIds() != null && !updated.getDishIds().isEmpty()) {
+        if (updated.getDishIds() != null && !updated.getDishIds()
+                .isEmpty()) {
             dishes = dishRepository.findAllByIdIn(updated.getDishIds());
-            if (dishes.size() != updated.getDishIds().size()) {
+            if (dishes.size() != updated.getDishIds()
+                    .size()) {
                 throw new IllegalArgumentException("Some dishes were not found");
             }
         }

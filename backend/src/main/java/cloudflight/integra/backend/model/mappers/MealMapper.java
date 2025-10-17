@@ -67,10 +67,10 @@ public class MealMapper {
             return null;
         }
 
-        List<Dish> dishes = dto.getDishIds() == null ? List.of()
-                : dishRepository.findAllById(dto.getDishIds());
+        List<Dish> dishes = dto.getDishIds() == null ? List.of() : dishRepository.findAllById(dto.getDishIds());
 
-        if (dishes.size() != dto.getDishIds().size()) {
+        if (dishes.size() != dto.getDishIds()
+                .size()) {
             throw new IllegalArgumentException("Some dishes were not found");
         }
 

@@ -171,9 +171,9 @@ public class MealDtoServiceTests {
                 .mealType(MealType.LUNCH)
                 .dateTime(LocalDateTime.now())
                 .dishes(List.of(DishDto.builder()
-                                        .id(UUID.randomUUID())
-                                        .name("Updated Dish")
-                                        .build()))
+                        .id(UUID.randomUUID())
+                        .name("Updated Dish")
+                        .build()))
                 .build();
 
         when(mealRepository.existsById(id)).thenReturn(true);

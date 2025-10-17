@@ -95,19 +95,19 @@ public class DishMapper {
     }
 
     public Dish fromCreateDto(DishCreateDto dto) {
-        List<Recipe> recipes = dto.getRecipeIds() != null && !dto.getRecipeIds().isEmpty()
-                ? recipeRepository.findAllByIdIn(dto.getRecipeIds())
-                : new ArrayList<>();
+        List<Recipe> recipes = dto.getRecipeIds() != null && !dto.getRecipeIds()
+                .isEmpty() ? recipeRepository.findAllByIdIn(dto.getRecipeIds()) : new ArrayList<>();
 
-        List<Ingredient> ingredients = dto.getIngredientIds() != null && !dto.getIngredientIds().isEmpty()
-                ? ingredientRepository.findAllByIdIn(dto.getIngredientIds())
-                : new ArrayList<>();
+        List<Ingredient> ingredients = dto.getIngredientIds() != null && !dto.getIngredientIds()
+                .isEmpty() ? ingredientRepository.findAllByIdIn(dto.getIngredientIds()) : new ArrayList<>();
 
-        if (recipes.size() != (dto.getRecipeIds() != null ? dto.getRecipeIds().size() : 0)) {
+        if (recipes.size() != (dto.getRecipeIds() != null ? dto.getRecipeIds()
+                .size() : 0)) {
             throw new IllegalArgumentException("Some recipes not found");
         }
 
-        if (ingredients.size() != (dto.getIngredientIds() != null ? dto.getIngredientIds().size() : 0)) {
+        if (ingredients.size() != (dto.getIngredientIds() != null ? dto.getIngredientIds()
+                .size() : 0)) {
             throw new IllegalArgumentException("Some ingredients not found");
         }
 
