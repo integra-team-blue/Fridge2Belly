@@ -208,8 +208,8 @@ public class MealDtoControllerTests {
                 .build();
 
         MvcResult result = mockMvc.perform(post("/api/meals")
-                                                   .contentType(MediaType.APPLICATION_JSON)
-                                                   .content(objectMapper.writeValueAsString(mealCreateDto)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(mealCreateDto)))
                 .andExpect(status().isOk())
                 .andReturn();
 
