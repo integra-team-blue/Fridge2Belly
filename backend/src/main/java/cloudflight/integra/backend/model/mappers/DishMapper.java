@@ -3,6 +3,7 @@ package cloudflight.integra.backend.model.mappers;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Ingredient;
 import cloudflight.integra.backend.model.Recipe;
+import cloudflight.integra.backend.model.dtos.DishCreateDto;
 import cloudflight.integra.backend.model.dtos.DishDto;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.model.dtos.RecipeDto;
@@ -80,7 +81,6 @@ public class DishMapper {
                 .stream()
                 .map(ingredientMapper::toDto)
                 .collect(Collectors.toList()) : new ArrayList<>();
-
         return DishDto.builder()
                 .id(dish.getId())
                 .name(dish.getName())
@@ -93,4 +93,34 @@ public class DishMapper {
                 .ingredients(ingredients)
                 .build();
     }
+
+    public Dish fromCreateDto(DishCreateDto dto) {
+        List<Recipe> recipes = dto.getRecipeIds() != null && !dto.getRecipeIds()
+                .isEmpty() ? recipeRepository.findAllByIdIn(dto.getRecipeIds()) : new ArrayList<>();
+
+        List<Ingredient> ingredients = dto.getIngredientIds() != null && !dto.getIngredientIds()
+                .isEmpty() ? ingredientRepository.findAllByIdIn(dto.getIngredientIds()) : new ArrayList<>();
+
+        if (recipes.size() != (dto.getRecipeIds() != null ? dto.getRecipeIds()
+                .size() : 0)) {
+            throw new IllegalArgumentException("Some recipes not found");
+        }
+
+        if (ingredients.size() != (dto.getIngredientIds() != null ? dto.getIngredientIds()
+                .size() : 0)) {
+            throw new IllegalArgumentException("Some ingredients not found");
+        }
+
+        return Dish.builder()
+                .name(dto.getName())
+                .preparedAt(dto.getPreparedAt())
+                .calories(dto.getCalories())
+                .protein(dto.getProtein())
+                .fat(dto.getFat())
+                .carbohydrates(dto.getCarbohydrates())
+                .recipes(recipes)
+                .ingredients(ingredients)
+                .build();
+    }
+
 }

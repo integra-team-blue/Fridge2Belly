@@ -9,7 +9,7 @@ const prettierPlugin = require("eslint-plugin-prettier");
 /** @type {import("eslint").Linter.FlatConfig[]} */
 module.exports = [
   {
-    ignores: ["*.json", "dist/", "node_modules/"],
+    ignores: ["*.json", "dist/", "node_modules/", "src/app/api/"],
   },
   {
     files: ["**/*.ts"],

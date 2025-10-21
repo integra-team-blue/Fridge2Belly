@@ -4,6 +4,7 @@ import cloudflight.integra.backend.exception.DishNotFoundException;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Meal;
 import cloudflight.integra.backend.model.Recipe;
+import cloudflight.integra.backend.model.dtos.DishCreateDto;
 import cloudflight.integra.backend.model.dtos.DishDto;
 import cloudflight.integra.backend.model.mappers.DishMapper;
 import cloudflight.integra.backend.repository.DishRepository;
@@ -36,8 +37,8 @@ public class DishService {
     }
 
     @Transactional
-    public DishDto create(DishDto dishDto) {
-        Dish dish = dishMapper.toEntity(dishDto);
+    public DishDto create(DishCreateDto createDto) {
+        Dish dish = dishMapper.fromCreateDto(createDto);
         Dish savedDish = dishRepository.save(dish);
         return dishMapper.toDto(savedDish);
     }

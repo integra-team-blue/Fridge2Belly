@@ -2,6 +2,7 @@ package cloudflight.integra.backend.controller.integration;
 
 import cloudflight.integra.backend.BackendApplication;
 import cloudflight.integra.backend.model.dtos.DishDto;
+import cloudflight.integra.backend.model.dtos.MealCreateDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.model.*;
 import cloudflight.integra.backend.repository.*;
@@ -49,7 +50,7 @@ public class MealDtoControllerIntegrationTests {
     @Autowired
     private MealRepository mealRepository;
 
-    private MealDto testMealDto;
+    private MealCreateDto testMealCreateDto;
     private UUID realDishId;
 
     @BeforeEach
@@ -65,11 +66,10 @@ public class MealDtoControllerIntegrationTests {
                 .id(realDishId)
                 .build();
 
-        testMealDto = MealDto.builder()
-                .id(UUID.randomUUID())
+        testMealCreateDto = MealCreateDto.builder()
                 .mealType(MealType.LUNCH)
                 .dateTime(LocalDateTime.now())
-                .dishes(List.of(dishDto))
+                .dishIds(List.of(realDishId))
                 .build();
     }
 
@@ -115,7 +115,7 @@ public class MealDtoControllerIntegrationTests {
     void testCreateMealSuccess() {
         ResponseEntity<MealDto> response = restTemplate.postForEntity(
                                                                       "/api/meals",
-                                                                      testMealDto,
+                                                                      testMealCreateDto,
                                                                       MealDto.class
         );
 
@@ -135,12 +135,16 @@ public class MealDtoControllerIntegrationTests {
     // POST /api/meals - fail, no MealType
     @Test
     void testCreateMealFailNoMealType() {
-        testMealDto.setMealType(null);
+        MealCreateDto invalidDto = MealCreateDto.builder()
+                .mealType(null)
+                .dateTime(LocalDateTime.now())
+                .dishIds(List.of(realDishId))
+                .build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        HttpEntity<MealDto> entity = new HttpEntity<>(testMealDto, headers);
+        HttpEntity<MealCreateDto> entity = new HttpEntity<>(invalidDto, headers);
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                                                                              "/api/meals",
@@ -162,9 +166,10 @@ public class MealDtoControllerIntegrationTests {
     void testGetAllMealsSuccess() {
         ResponseEntity<MealDto> createResponse = restTemplate.postForEntity(
                                                                             "/api/meals",
-                                                                            testMealDto,
+                                                                            testMealCreateDto,
                                                                             MealDto.class
         );
+
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
         ResponseEntity<MealDto[]> response = restTemplate.getForEntity(
@@ -181,7 +186,7 @@ public class MealDtoControllerIntegrationTests {
     void testGetMealByIdSuccess() {
         ResponseEntity<MealDto> createResponse = restTemplate.postForEntity(
                                                                             "/api/meals",
-                                                                            testMealDto,
+                                                                            testMealCreateDto,
                                                                             MealDto.class
         );
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -218,20 +223,26 @@ public class MealDtoControllerIntegrationTests {
     void testUpdateMealSuccess() {
         ResponseEntity<MealDto> createResponse = restTemplate.postForEntity(
                                                                             "/api/meals",
-                                                                            testMealDto,
+                                                                            testMealCreateDto,
                                                                             MealDto.class
         );
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        MealDto createdMeal = createResponse.getBody();
-        createdMeal.setMealType(MealType.DINNER);
+        UUID createdMealId = createResponse.getBody()
+                .getId();
+
+        MealCreateDto updateDto = MealCreateDto.builder()
+                .mealType(MealType.DINNER)
+                .dateTime(testMealCreateDto.getDateTime())
+                .dishIds(List.of(realDishId))
+                .build();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<MealDto> entity = new HttpEntity<>(createdMeal, headers);
+        HttpEntity<MealCreateDto> entity = new HttpEntity<>(updateDto, headers);
 
         ResponseEntity<MealDto> response = restTemplate.exchange(
-                                                                 "/api/meals/" + createdMeal.getId(),
+                                                                 "/api/meals/" + createdMealId,
                                                                  HttpMethod.PUT,
                                                                  entity,
                                                                  MealDto.class
@@ -249,7 +260,7 @@ public class MealDtoControllerIntegrationTests {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<MealDto> entity = new HttpEntity<>(testMealDto, headers);
+        HttpEntity<MealCreateDto> entity = new HttpEntity<>(testMealCreateDto, headers);
 
         ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                                                                              "/api/meals/" + randomId,
@@ -266,7 +277,7 @@ public class MealDtoControllerIntegrationTests {
     void testDeleteMealSuccess() {
         ResponseEntity<MealDto> createResponse = restTemplate.postForEntity(
                                                                             "/api/meals",
-                                                                            testMealDto,
+                                                                            testMealCreateDto,
                                                                             MealDto.class
         );
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.OK);

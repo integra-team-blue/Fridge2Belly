@@ -80,9 +80,10 @@ class DishDtoModelTests {
         DishDto d = validDish();
         d.setRecipes(null);
         Set<ConstraintViolation<DishDto>> violations = validator.validate(d);
-        assertThat(violations).anySatisfy(v -> assertThat(v.getPropertyPath()
-                .toString()).isEqualTo("recipes")
-        );
+        assertThat(violations)
+                .noneMatch(v -> v.getPropertyPath()
+                        .toString()
+                        .equals("recipes"));
     }
 
     @Test

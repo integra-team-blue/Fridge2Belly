@@ -2,6 +2,7 @@ package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.exception.DishNotFoundException;
 import cloudflight.integra.backend.model.Dish;
+import cloudflight.integra.backend.model.dtos.DishCreateDto;
 import cloudflight.integra.backend.model.dtos.DishDto;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.model.dtos.RecipeDto;
@@ -91,15 +92,28 @@ class DishDtoServiceTests {
                 .build();
     }
 
+    private DishCreateDto createTestDishCreateDto(String name) {
+        return DishCreateDto.builder()
+                .name(name)
+                .preparedAt(LocalDateTime.now())
+                .calories(100)
+                .protein(5)
+                .fat(2)
+                .carbohydrates(10)
+                .recipeIds(List.of(UUID.randomUUID()))
+                .ingredientIds(List.of(UUID.randomUUID()))
+                .build();
+    }
+
+
     @Test
     void create_setsId_andPersists() {
-        DishDto inputDto = createTestDishDto("Salad");
-        inputDto.setId(null);
+        DishCreateDto inputDto = createTestDishCreateDto("Salad");
 
         DishDto expectedDto = createTestDishDto("Salad");
         expectedDto.setId(testId);
 
-        when(dishMapper.toEntity(any(DishDto.class))).thenReturn(testDish);
+        when(dishMapper.fromCreateDto(any(DishCreateDto.class))).thenReturn(testDish);
         when(dishRepository.save(any(Dish.class))).thenReturn(testDish);
         when(dishMapper.toDto(any(Dish.class))).thenReturn(expectedDto);
 
@@ -107,7 +121,7 @@ class DishDtoServiceTests {
 
         assertNotNull(created.getId());
         assertEquals("Salad", created.getName());
-        verify(dishMapper).toEntity(inputDto);
+        verify(dishMapper).fromCreateDto(inputDto);
         verify(dishRepository).save(any(Dish.class));
         verify(dishMapper).toDto(testDish);
     }

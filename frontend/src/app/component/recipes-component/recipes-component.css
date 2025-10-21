@@ -42,3 +42,7 @@
   align-items: center;
   margin: 2rem 0;
 }
+
+.ui-dialog, .p-dialog {
+  display: block !important;
+}
