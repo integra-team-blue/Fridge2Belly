@@ -10,11 +10,4 @@ export * from './sampleDataController.service';
 import { SampleDataControllerService } from './sampleDataController.service';
 export * from './userController.service';
 import { UserControllerService } from './userController.service';
-export const APIS = [
-  DishControllerService,
-  IngredientControllerService,
-  MealControllerService,
-  RecipeControllerService,
-  SampleDataControllerService,
-  UserControllerService,
-];
+export const APIS = [DishControllerService, IngredientControllerService, MealControllerService, RecipeControllerService, SampleDataControllerService, UserControllerService];

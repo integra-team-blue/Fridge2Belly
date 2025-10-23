@@ -28,7 +28,7 @@ class RecipeDtoValidationTest {
         recipeDto.setDescription("Classic Italian");
         recipeDto.setCookingTimeMinutes(20);
         recipeDto.setInstructions("Bake in oven");
-        recipeDto.setDishIds(List.of(UUID.randomUUID()));
+        recipeDto.setDishId(UUID.randomUUID());
 
         Set violations = validator.validate(recipeDto);
         assertTrue(violations.isEmpty(), "Recipe should be valid");
@@ -39,7 +39,7 @@ class RecipeDtoValidationTest {
         RecipeDto recipeDto = new RecipeDto();
         recipeDto.setCookingTimeMinutes(10);
         recipeDto.setInstructions("Bake");
-        recipeDto.setDishIds(List.of());
+        recipeDto.setDishId(UUID.randomUUID());
 
         Set violations = validator.validate(recipeDto);
         assertFalse(violations.isEmpty(), "Recipe without name should be invalid");

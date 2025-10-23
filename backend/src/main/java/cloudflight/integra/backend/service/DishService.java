@@ -77,42 +77,6 @@ public class DishService {
             throw new DishNotFoundException("Dish not found with id: " + id);
         }
 
-        List<Meal> mealsUsingDish = new ArrayList<>();
-        mealRepository.findAll()
-                .forEach(meal -> {
-                    if (meal.getDishes() != null && meal.getDishes()
-                            .stream()
-                            .anyMatch(d -> d.getId()
-                                    .equals(id))) {
-                        mealsUsingDish.add(meal);
-                    }
-                });
-
-        for (Meal meal : mealsUsingDish) {
-            meal.getDishes()
-                    .removeIf(d -> d.getId()
-                            .equals(id));
-            mealRepository.save(meal);
-        }
-
-        List<Recipe> recipesUsingDish = new ArrayList<>();
-        recipeRepository.findAll()
-                .forEach(recipe -> {
-                    if (recipe.getDishes() != null && recipe.getDishes()
-                            .stream()
-                            .anyMatch(d -> d.getId()
-                                    .equals(id))) {
-                        recipesUsingDish.add(recipe);
-                    }
-                });
-
-        for (Recipe recipe : recipesUsingDish) {
-            recipe.getDishes()
-                    .removeIf(d -> d.getId()
-                            .equals(id));
-            recipeRepository.save(recipe);
-        }
-
         dishRepository.deleteById(id);
     }
 }

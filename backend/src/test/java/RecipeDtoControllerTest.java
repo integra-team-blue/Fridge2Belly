@@ -91,7 +91,7 @@ class RecipeDtoControllerTest {
         recipeDto.setName("ControllerTest");
         recipeDto.setCookingTimeMinutes(30);
         recipeDto.setInstructions("Bake");
-        recipeDto.setDishIds(List.of(dish.getId()));
+        recipeDto.setDishId(dish.getId());
 
         mockMvc.perform(post("/api/recipes")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -134,7 +134,7 @@ class RecipeDtoControllerTest {
         recipeDto.setDescription("Test recipe with existing dish");
         recipeDto.setCookingTimeMinutes(45);
         recipeDto.setInstructions("Cook and serve");
-        recipeDto.setDishIds(List.of(dish.getId()));
+        recipeDto.setDishId(dish.getId());
 
         mockMvc.perform(post("/api/recipes")
                 .contentType(MediaType.APPLICATION_JSON)

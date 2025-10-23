@@ -1,10 +1,10 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
                        id UUID PRIMARY KEY,
                        username VARCHAR(255) NOT NULL UNIQUE,
                        email VARCHAR(255) NOT NULL UNIQUE
 );
 
-CREATE TABLE ingredients (
+CREATE TABLE IF NOT EXISTS ingredients (
                              id UUID PRIMARY KEY,
                              name VARCHAR(255) NOT NULL,
                              quantity DOUBLE PRECISION NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE ingredients (
                              carbohydrates DOUBLE PRECISION
 );
 
-CREATE TABLE dishes (
+CREATE TABLE IF NOT EXISTS dishes (
                         id UUID PRIMARY KEY,
                         name VARCHAR(255) NOT NULL,
                         calories DOUBLE PRECISION,
@@ -26,13 +26,13 @@ CREATE TABLE dishes (
                         prepared_at TIMESTAMP
 );
 
-CREATE TABLE meals (
+CREATE TABLE IF NOT EXISTS meals (
                        id UUID PRIMARY KEY,
                        date_time TIMESTAMP,
                        meal_type VARCHAR(255)
 );
 
-CREATE TABLE recipes (
+CREATE TABLE IF NOT EXISTS recipes (
                          id UUID PRIMARY KEY,
                          name VARCHAR(255) NOT NULL,
                          description VARCHAR(255),
@@ -40,7 +40,7 @@ CREATE TABLE recipes (
                          instructions TEXT NOT NULL
 );
 
-CREATE TABLE dish_ingredients (
+CREATE TABLE IF NOT EXISTS dish_ingredients (
                                   dish_id UUID NOT NULL,
                                   ingredient_id UUID NOT NULL,
                                   PRIMARY KEY (dish_id, ingredient_id),
@@ -48,7 +48,7 @@ CREATE TABLE dish_ingredients (
                                   FOREIGN KEY (ingredient_id) REFERENCES ingredients(id)
 );
 
-CREATE TABLE meal_dishes (
+CREATE TABLE IF NOT EXISTS meal_dishes (
                              meal_id UUID NOT NULL,
                              dish_id UUID NOT NULL,
                              PRIMARY KEY (meal_id, dish_id),
@@ -56,7 +56,7 @@ CREATE TABLE meal_dishes (
                              FOREIGN KEY (dish_id) REFERENCES dishes(id)
 );
 
-CREATE TABLE recipe_dishes (
+CREATE TABLE IF NOT EXISTS recipe_dishes (
                                recipe_id UUID NOT NULL,
                                dish_id UUID NOT NULL,
                                PRIMARY KEY (recipe_id, dish_id),

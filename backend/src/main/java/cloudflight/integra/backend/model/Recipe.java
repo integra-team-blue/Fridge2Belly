@@ -2,7 +2,6 @@ package cloudflight.integra.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -30,9 +29,7 @@ public class Recipe {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String instructions;
 
-    @ManyToMany
-    @JoinTable(
-            name = "recipe_dishes", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "dish_id")
-    )
-    private List<Dish> dishes;
+    @ManyToOne
+    @JoinColumn(name = "dish_id", nullable = false)
+    private Dish dish;
 }

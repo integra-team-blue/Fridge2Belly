@@ -47,7 +47,7 @@ class RecipeDtoServiceTest {
         recipeDto.setName(name);
         recipeDto.setCookingTimeMinutes(10);
         recipeDto.setInstructions("Test");
-        recipeDto.setDishIds(List.of());
+        recipeDto.setDishId(null);
         return recipeDto;
     }
 

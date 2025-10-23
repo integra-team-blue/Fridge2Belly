@@ -22,10 +22,8 @@ public class RecipeMapper {
         if (recipe == null) {
             return null;
         }
-        List<UUID> dishIds = recipe.getDishes() != null ? recipe.getDishes()
-                .stream()
-                .map(Dish::getId)
-                .collect(Collectors.toList()) : new ArrayList<>();
+        UUID dishId = recipe.getDish() != null ? recipe.getDish()
+                .getId() : null;
 
         return RecipeDto.builder()
                 .id(recipe.getId())
@@ -33,7 +31,7 @@ public class RecipeMapper {
                 .description(recipe.getDescription())
                 .cookingTimeMinutes(recipe.getCookingTimeMinutes())
                 .instructions(recipe.getInstructions())
-                .dishIds(dishIds)
+                .dishId(dishId)
                 .build();
     }
 
@@ -42,11 +40,10 @@ public class RecipeMapper {
             return null;
         }
 
-        List<UUID> dishIds = dto.getDishIds() != null ? new ArrayList<>(dto.getDishIds()) : new ArrayList<>();
-        List<Dish> dishes = dishIds.isEmpty() ? new ArrayList<>() : dishRepository.findAllByIdIn(dishIds);
-
-        if (dishes.size() != dishIds.size()) {
-            throw new IllegalArgumentException("Some dishes were not found");
+        Dish dish = null;
+        if (dto.getDishId() != null) {
+            dish = dishRepository.findById(dto.getDishId())
+                    .orElseThrow(() -> new IllegalArgumentException("Dish not found with id: " + dto.getDishId()));
         }
 
         return Recipe.builder()
@@ -55,7 +52,7 @@ public class RecipeMapper {
                 .description(dto.getDescription())
                 .cookingTimeMinutes(dto.getCookingTimeMinutes())
                 .instructions(dto.getInstructions())
-                .dishes(dishes)
+                .dish(dish)
                 .build();
     }
 }

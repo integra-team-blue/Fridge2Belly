@@ -89,14 +89,6 @@ public class MealDtoControllerTests {
                 .build();
         ingredient = ingredientRepository.save(ingredient);
 
-        Recipe recipe = Recipe.builder()
-                .name("Test Recipe")
-                .cookingTimeMinutes(30)
-                .instructions("Test instructions")
-                .dishes(new ArrayList<>())
-                .build();
-        recipe = recipeRepository.save(recipe);
-
         Dish dish = Dish.builder()
                 .name("Test Dish")
                 .calories(100)
@@ -105,9 +97,16 @@ public class MealDtoControllerTests {
                 .carbohydrates(12)
                 .preparedAt(LocalDateTime.now())
                 .ingredients(List.of(ingredient))
-                .recipes(List.of(recipe))
                 .build();
         dish = dishRepository.save(dish);
+
+        Recipe recipe = Recipe.builder()
+                .name("Test Recipe")
+                .cookingTimeMinutes(30)
+                .instructions("Test instructions")
+                .dish(dish)
+                .build();
+        recipe = recipeRepository.save(recipe);
 
         return dish.getId();
     }

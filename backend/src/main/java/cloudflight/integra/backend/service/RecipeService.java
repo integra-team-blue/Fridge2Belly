@@ -63,17 +63,11 @@ public class RecipeService {
         existingRecipe.setCookingTimeMinutes(updated.getCookingTimeMinutes());
         existingRecipe.setInstructions(updated.getInstructions());
 
-        List<Dish> dishes = new ArrayList<>();
-        if (updated.getDishIds() != null && !updated.getDishIds()
-                .isEmpty()) {
-            dishes = dishRepository.findAllByIdIn(updated.getDishIds());
-            if (dishes.size() != updated.getDishIds()
-                    .size()) {
-                throw new IllegalArgumentException("Some dishes were not found");
-            }
+        if (updated.getDishId() != null) {
+            Dish dish = dishRepository.findById(updated.getDishId())
+                    .orElseThrow(() -> new IllegalArgumentException("Dish not found with id: " + updated.getDishId()));
+            existingRecipe.setDish(dish);
         }
-
-        existingRecipe.setDishes(dishes);
 
         Recipe savedRecipe = recipeRepository.save(existingRecipe);
         return recipeMapper.toDto(savedRecipe);
@@ -83,24 +77,6 @@ public class RecipeService {
     public void deleteRecipe(UUID id) {
         if (!recipeRepository.existsById(id)) {
             throw new RecipeNotFoundException("Recipe not found with id: " + id);
-        }
-
-        List<Dish> dishesUsingRecipe = new ArrayList<>();
-        dishRepository.findAll()
-                .forEach(dish -> {
-                    if (dish.getRecipes() != null && dish.getRecipes()
-                            .stream()
-                            .anyMatch(r -> r.getId()
-                                    .equals(id))) {
-                        dishesUsingRecipe.add(dish);
-                    }
-                });
-
-        for (Dish dish : dishesUsingRecipe) {
-            dish.getRecipes()
-                    .removeIf(r -> r.getId()
-                            .equals(id));
-            dishRepository.save(dish);
         }
 
         recipeRepository.deleteById(id);

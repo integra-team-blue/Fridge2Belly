@@ -8,7 +8,6 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
-import { Select } from 'primeng/select';
 import { DatePicker } from 'primeng/datepicker';
 import { InputNumber } from 'primeng/inputnumber';
 import {
@@ -36,7 +35,6 @@ import { ToastService } from '../../services/toast.service';
     ConfirmDialogModule,
     Button,
     InputText,
-    Select,
     DatePicker,
     InputNumber,
   ],
@@ -56,7 +54,6 @@ export class DishesComponent implements OnInit {
 
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
-    recipeId: [''],
     preparedAt: ['', Validators.required],
     calories: [0, Validators.required],
     protein: [0, Validators.required],
@@ -66,9 +63,6 @@ export class DishesComponent implements OnInit {
 
   get name() {
     return this.form.get('name')!;
-  }
-  get recipeId() {
-    return this.form.get('recipeId')!;
   }
   get preparedAt() {
     return this.form.get('preparedAt')!;
@@ -114,7 +108,6 @@ export class DishesComponent implements OnInit {
     this._editId.set(null);
     this.form.reset({
       name: '',
-      recipeId: '',
       preparedAt: '',
       calories: 0,
       protein: 0,
@@ -133,7 +126,6 @@ export class DishesComponent implements OnInit {
     this._editId.set(dish.id ?? null);
     this.form.patchValue({
       name: dish.name ?? '',
-      recipeId: dish.recipes?.[0]?.id ?? '',
       preparedAt: dish.preparedAt ? new Date(dish.preparedAt) : '',
       calories: dish.calories ?? 0,
       protein: dish.protein ?? 0,
@@ -193,7 +185,6 @@ export class DishesComponent implements OnInit {
         protein: Number(v.protein) || 0,
         fat: Number(v.fat) || 0,
         carbohydrates: Number(v.carbohydrates) || 0,
-        recipeIds: v.recipeId != null && v.recipeId !== '' ? [v.recipeId] : [],
         ingredientIds:
           id != null && existingDish?.ingredients != null && existingDish.ingredients.length > 0
             ? existingDish.ingredients.map((i) => i.id!)

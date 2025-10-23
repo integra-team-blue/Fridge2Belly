@@ -84,17 +84,6 @@
           <small *ngIf="name.touched && name.hasError('required')">Name is required.</small>
         </div>
 
-        <div class="field col-12">
-          <label>Recipe (optional)</label>
-          <p-select
-            [options]="recipes"
-            optionLabel="name"
-            optionValue="id"
-            formControlName="recipeId"
-            [filter]="true"
-          ></p-select>
-        </div>
-
         <div class="field col-6">
           <label>Calories</label>
           <p-inputNumber
