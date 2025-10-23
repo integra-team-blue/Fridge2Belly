@@ -165,15 +165,12 @@ class DishDtoServiceTests {
     void delete_removes() {
         when(dishRepository.existsById(testId)).thenReturn(true);
 
-        when(mealRepository.findAll()).thenReturn(List.of());
-        when(recipeRepository.findAll()).thenReturn(List.of());
-
         dishService.delete(testId);
 
         verify(dishRepository).existsById(testId);
-        verify(mealRepository).findAll();
-        verify(recipeRepository).findAll();
         verify(dishRepository).deleteById(testId);
+
+        verifyNoInteractions(mealRepository, recipeRepository);
     }
 
     @Test

@@ -78,7 +78,7 @@ class DishDtoControllerIntegrationTests {
                 .name("Test Recipe")
                 .cookingTimeMinutes(30)
                 .instructions("Test instructions")
-                .dishes(new ArrayList<>())
+                .dish(null)
                 .build();
         recipe = recipeRepository.save(recipe);
         realRecipeId = recipe.getId();
@@ -88,7 +88,7 @@ class DishDtoControllerIntegrationTests {
         return """
                 {
                   "name": "%s",
-                  "recipes": [{"id": "%s"}],
+                  "recipe": {"id": "%s"},
                   "preparedAt": "2025-01-01T12:00:00",
                   "calories": 100, "protein": 10, "fat": 5, "carbohydrates": 12,
                   "ingredients": [{"id": "%s"}]
@@ -187,7 +187,7 @@ class DishDtoControllerIntegrationTests {
         String bad = """
                 {
                   "name": "Bad",
-                  "recipes": [{"id": "%s"}],
+                  "recipe": {"id": "%s"},
                   "preparedAt": "2025-01-01T12:00:00",
                   "calories": -1, "protein": 10, "fat": 5, "carbohydrates": 12,
                   "ingredients": [{"id": "%s"}]

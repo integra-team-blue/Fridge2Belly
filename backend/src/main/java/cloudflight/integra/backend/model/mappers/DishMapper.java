@@ -48,7 +48,7 @@ public class DishMapper {
             throw new IllegalArgumentException("Some ingredients were not found");
         }
 
-        return Dish.builder()
+        Dish dish = Dish.builder()
                 .id(dto.getId())
                 .name(dto.getName())
                 .preparedAt(dto.getPreparedAt())
@@ -59,6 +59,12 @@ public class DishMapper {
                 .recipes(recipes)
                 .ingredients(ingredients)
                 .build();
+
+        for (Recipe recipe : recipes) {
+            recipe.setDish(dish);
+        }
+
+        return dish;
     }
 
     public DishDto toDto(Dish dish) {
@@ -70,10 +76,8 @@ public class DishMapper {
                         .description(recipe.getDescription())
                         .cookingTimeMinutes(recipe.getCookingTimeMinutes())
                         .instructions(recipe.getInstructions())
-                        .dishIds(recipe.getDishes() != null ? recipe.getDishes()
-                                .stream()
-                                .map(Dish::getId)
-                                .collect(Collectors.toList()) : new ArrayList<>())
+                        .dishId(recipe.getDish() != null ? recipe.getDish()
+                                .getId() : null)
                         .build())
                 .collect(Collectors.toList()) : new ArrayList<>();
 
@@ -111,7 +115,7 @@ public class DishMapper {
             throw new IllegalArgumentException("Some ingredients not found");
         }
 
-        return Dish.builder()
+        Dish dish = Dish.builder()
                 .name(dto.getName())
                 .preparedAt(dto.getPreparedAt())
                 .calories(dto.getCalories())
@@ -121,6 +125,12 @@ public class DishMapper {
                 .recipes(recipes)
                 .ingredients(ingredients)
                 .build();
+
+        for (Recipe recipe : recipes) {
+            recipe.setDish(dish);
+        }
+
+        return dish;
     }
 
 }

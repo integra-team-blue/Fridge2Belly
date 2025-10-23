@@ -2,6 +2,9 @@ package cloudflight.integra.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +47,7 @@ public class Dish {
     )
     private List<Ingredient> ingredients;
 
-    @ManyToMany(mappedBy = "dishes", cascade = {CascadeType.MERGE})
+    @OneToMany(mappedBy = "dish", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Recipe> recipes;
 }

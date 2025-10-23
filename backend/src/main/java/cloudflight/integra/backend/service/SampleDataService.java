@@ -40,8 +40,8 @@ public class SampleDataService {
     // For deleting existing data to avoid duplication
     private void clearExistingData() {
         mealRepository.deleteAll();
-        dishRepository.deleteAll();
         recipeRepository.deleteAll();
+        dishRepository.deleteAll();
         ingredientRepository.deleteAll();
     }
 
@@ -245,16 +245,10 @@ public class SampleDataService {
 
     private void linkRecipesToDishes(List<Recipe> recipes, List<Dish> dishes) {
         try {
-            recipes.get(0)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(0))));
-            recipes.get(1)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(1))));
-            recipes.get(2)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(2))));
-            recipes.get(3)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(3))));
-            recipes.get(4)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(4))));
+            for (int i = 0; i < recipes.size(); i++) {
+                recipes.get(i)
+                        .setDish(dishes.get(i));
+            }
 
             recipeRepository.saveAll(recipes);
         } catch (Exception e) {

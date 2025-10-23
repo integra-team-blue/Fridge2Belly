@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Dialog } from 'primeng/dialog';
 import { Button } from 'primeng/button';
-import { MultiSelect } from 'primeng/multiselect';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ContextMenu } from 'primeng/contextmenu';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -28,7 +27,6 @@ import { Textarea } from 'primeng/textarea';
     Button,
     Dialog,
     ReactiveFormsModule,
-    MultiSelect,
     InputText,
     Textarea,
   ],
@@ -67,10 +65,7 @@ export class RecipesComponent {
         }),
       );
 
-      this.recipes = (recipesResponse ?? []).map((r) => ({
-        ...r,
-        dishIds: Array.isArray(r.dishIds) ? r.dishIds : r.dishIds != null ? [r.dishIds] : [],
-      }));
+      this.recipes = recipesResponse ?? [];
 
       console.log('Recipes loaded:', this.recipes);
 
@@ -90,7 +85,7 @@ export class RecipesComponent {
     description: new FormControl('', { nonNullable: true }),
     cookingTimeMinutes: new FormControl(1, { nonNullable: true, validators: [Validators.min(1)] }),
     instructions: new FormControl('', { nonNullable: true }),
-    dishIds: new FormControl<string[]>([], { nonNullable: true }),
+    dishId: new FormControl<string | null>(null),
   });
 
   editForm = new FormGroup({
@@ -98,7 +93,7 @@ export class RecipesComponent {
     description: new FormControl('', { nonNullable: true }),
     cookingTimeMinutes: new FormControl(1, { nonNullable: true, validators: [Validators.min(1)] }),
     instructions: new FormControl('', { nonNullable: true }),
-    dishIds: new FormControl<string[]>([], { nonNullable: true }),
+    dishId: new FormControl<string | null>(null, { nonNullable: false }),
   });
 
   async openAddDialog() {
@@ -115,7 +110,7 @@ export class RecipesComponent {
       description: '',
       cookingTimeMinutes: 1,
       instructions: '',
-      dishIds: [],
+      dishId: null,
     });
     this.showDialog = true;
   }
@@ -134,19 +129,18 @@ export class RecipesComponent {
 
     const recipeToSave: RecipeDto = {
       name: formValue.name,
-      description: formValue.description || undefined,
+      description:
+        formValue.description != null && formValue.description !== ''
+          ? formValue.description
+          : undefined,
       cookingTimeMinutes: formValue.cookingTimeMinutes || undefined,
       instructions: formValue.instructions,
-      dishIds: formValue.dishIds ?? [],
-    };
+      dishId: formValue.dishId != null ? formValue.dishId : undefined,
+    } as RecipeDto;
 
     try {
       const saved = await firstValueFrom(this.recipeService.createRecipe(recipeToSave));
-      const normalizedSaved = {
-        ...saved,
-        dishIds: Array.isArray(saved.dishIds) ? saved.dishIds : [],
-      };
-      this.recipes.push(normalizedSaved);
+      this.recipes.push(saved);
       this.showDialog = false;
 
       this.recipeForm.reset({
@@ -154,7 +148,7 @@ export class RecipesComponent {
         description: '',
         cookingTimeMinutes: 1,
         instructions: '',
-        dishIds: [],
+        dishId: null,
       });
 
       this.messageService.add({
@@ -184,7 +178,7 @@ export class RecipesComponent {
       description: r.description ?? '',
       cookingTimeMinutes: r.cookingTimeMinutes ?? 1,
       instructions: r.instructions ?? '',
-      dishIds: Array.isArray(r.dishIds) ? r.dishIds : [],
+      dishId: r.dishId ?? null,
     });
     this.editDialogVisible = true;
   }
@@ -203,21 +197,21 @@ export class RecipesComponent {
       const formValue = this.editForm.getRawValue();
       const updatedRecipe: RecipeDto = {
         name: formValue.name,
-        description: formValue.description || undefined,
+        description:
+          formValue.description != null && formValue.description !== ''
+            ? formValue.description
+            : undefined,
         cookingTimeMinutes: formValue.cookingTimeMinutes || undefined,
         instructions: formValue.instructions,
-        dishIds: formValue.dishIds ?? [],
-      };
+        dishId: formValue.dishId != null ? formValue.dishId : undefined,
+      } as RecipeDto;
       const saved = await firstValueFrom(
         this.recipeService.updateRecipe(this.selectedRecipe!.id!, updatedRecipe),
       );
 
       const idx = this.recipes.findIndex((r) => r.id === this.selectedRecipe!.id);
       if (idx !== -1) {
-        this.recipes[idx] = {
-          ...saved,
-          dishIds: Array.isArray(saved.dishIds) ? saved.dishIds : [],
-        };
+        this.recipes[idx] = saved;
       }
 
       this.editDialogVisible = false;
@@ -270,7 +264,7 @@ export class RecipesComponent {
     });
   }
 
-  getDishName(id: string): string {
+  getDishName(id: string | undefined): string {
     const dish = this.dishes.find((d) => d.id === id);
     return dish ? dish.name : 'Unknown';
   }

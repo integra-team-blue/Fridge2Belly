@@ -28,14 +28,14 @@
       <td>{{ recipe.description || '-' }}</td>
       <td>{{ recipe.cookingTimeMinutes ?? '-' }}</td>
       <td>{{ recipe.instructions }}</td>
-      <td>
-        <ul>
-          <li *ngFor="let id of recipe.dishIds ?? []">
-            {{ getDishName(id) }}
-          </li>
-        </ul>
-      </td>
-
+<!--      <td>-->
+<!--        <ul>-->
+<!--          <li *ngFor="let id of recipe.dishIds ?? []">-->
+<!--            {{ getDishName(id) }}-->
+<!--          </li>-->
+<!--        </ul>-->
+<!--      </td>-->
+      <td>{{ getDishName(recipe.dishId) }}</td>
     </tr>
   </ng-template>
 
@@ -69,17 +69,13 @@
         ><input pInputText type="number" formControlName="cookingTimeMinutes" />
       </div>
       <div class="form-row">
-        <label>Dishes</label>
-        <p-multiSelect
-          [options]="dishes"
-          optionLabel="name"
-          optionValue="id"
-          formControlName="dishIds"
-          display="chip"
-          [style]="{ width: '100%' }"
-          [panelStyle]="{ width: '500px', maxHeight: '400px' }"
-          [scrollHeight]="'300px'"
-        ></p-multiSelect>
+        <label>Dish</label>
+        <select formControlName="dishId">
+          <option [ngValue]="null" disabled selected>Select a dish</option>
+          <option *ngFor="let dish of dishes" [ngValue]="dish.id">
+            {{ dish.name }}
+          </option>
+        </select>
       </div>
       <div class="form-row">
         <label>Instructions</label
@@ -114,18 +110,16 @@
       ><input pInputText type="number" formControlName="cookingTimeMinutes" />
     </div>
     <div class="form-row">
-      <label>Dishes</label>
-      <p-multiSelect
-        [options]="dishes"
-        optionLabel="name"
-        optionValue="id"
-        formControlName="dishIds"
-        display="chip"
-        [style]="{ width: '100%' }"
-        [panelStyle]="{ width: '500px', maxHeight: '400px' }"
-        [scrollHeight]="'300px'"
-      ></p-multiSelect>
+      <label>Dish</label>
+      <select formControlName="dishId" style="width: 100%; padding: 4px;">
+        <option [ngValue]="null" disabled selected>Select a dish</option>
+        <option *ngFor="let dish of dishes" [ngValue]="dish.id">
+          {{ dish.name }}
+        </option>
+      </select>
+
     </div>
+
     <div class="form-row">
       <label>Instructions</label><textarea pInputTextarea formControlName="instructions"></textarea>
     </div>

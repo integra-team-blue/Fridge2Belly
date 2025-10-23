@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
 
-import { IngredientsControllerService, IngredientDto } from '../../api';
+import { IngredientControllerService, IngredientDto } from '../../api';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -42,7 +42,7 @@ export class IngredientsComponent {
   menuItems: MenuItem[];
 
   constructor(
-    private ingredientsService: IngredientsControllerService,
+    private ingredientsService: IngredientControllerService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
   ) {
