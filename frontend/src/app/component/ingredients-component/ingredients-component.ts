@@ -34,7 +34,7 @@ import { DatePickerModule } from 'primeng/datepicker';
     FormsModule,
     ContextMenu,
     ConfirmDialog,
-    DatePickerModule
+    DatePickerModule,
   ],
   styleUrls: ['./ingredients-component.css'],
 })

@@ -64,18 +64,5 @@ public class IngredientController {
                 .build();
     }
 
-    @GetMapping("/user/{userId}")
-    public List<IngredientDto> getIngredientsForUser(@PathVariable UUID userId) {
-        return ingredientsService.getIngredientsForUser(userId);
-    }
-
-    @DeleteMapping("/{ingredientId}/removeUser/{userId}")
-    public ResponseEntity<Void> removeUserFromIngredient(
-            @PathVariable UUID ingredientId,
-            @PathVariable UUID userId
-    ) {
-        ingredientsService.removeUserFromIngredient(ingredientId, userId);
-        return ResponseEntity.ok().build();
-    }
 }
 

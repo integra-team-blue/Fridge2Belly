@@ -20,14 +20,12 @@ public class UserIngredientController {
 
     private final UserIngredientService userIngredientService;
     private final UserIngredientMapper mapper;
-    private final UserIngredientRepository userIngredientRepository;
 
     public UserIngredientController(UserIngredientService userIngredientService,
                                     UserIngredientMapper mapper, UserIngredientRepository userIngredientRepository
     ) {
         this.userIngredientService = userIngredientService;
         this.mapper = mapper;
-        this.userIngredientRepository = userIngredientRepository;
     }
 
     @GetMapping("/user/{userId}")

@@ -6,7 +6,7 @@ import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { SampleDataService } from '../../services/sample-data/sample-data-service';
-import {Menu} from 'primeng/menu';
+import { Menu } from 'primeng/menu';
 import { ImageModule } from 'primeng/image';
 
 @Component({

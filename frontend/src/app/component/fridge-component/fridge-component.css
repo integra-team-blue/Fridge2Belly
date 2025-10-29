@@ -127,7 +127,6 @@
   border-top: 1px solid #bbdefb !important;
 }
 
-/* ===== Text inside dialog ===== */
 p-dialog h3 {
   color: #0d47a1;
   font-size: 1.4rem;
@@ -139,11 +138,10 @@ p-dialog p {
 }
 
 
-/* ===== Grid pentru câmpurile de editare ===== */
 ::ng-deep #edit-ingredient-dialog .edit-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr); /* două coloane egale */
-  gap: 1rem 2rem; /* rând / coloană */
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem 2rem;
   padding-top: 1rem;
 }
 
@@ -200,8 +198,8 @@ p-dialog p {
 
 ::ng-deep #edit-ingredient-dialog .p-select {
   width: 100%;
-  background-color: #e3f2fd;      /* fundal albastru pal */
-  border: 2px solid #0288d1;      /* bordură albastră */
+  background-color: #e3f2fd;
+  border: 2px solid #0288d1;
   border-radius: 6px;
   color: #0288d1;
   font-size: 0.9rem;
@@ -236,21 +234,21 @@ p-dialog p {
 }
 
 ::ng-deep #edit-ingredient-dialog .p-select {
-  height: 2.2rem; /* înălțimea container-ului */
+  height: 2.2rem;
 }
 
 ::ng-deep #edit-ingredient-dialog .p-select .p-select-label {
-  line-height: 2.2rem; /* aliniază textul vertical */
+  line-height: 2.2rem;
   padding: 0 0.5rem;
-  font-size: 0.95rem; /* font puțin mai mic dacă vrei */
+  font-size: 0.95rem;
 }
 
 ::ng-deep #edit-ingredient-dialog .p-select .p-select-trigger {
-  height: 2.2rem;   /* aceeași înălțime ca label */
+  height: 2.2rem;
 }
 
 ::ng-deep #edit-ingredient-dialog .p-select-panel {
-  max-height: 150px; /* înălțimea dropdown-ului când îl deschizi */
+  max-height: 150px;
 }
 
 

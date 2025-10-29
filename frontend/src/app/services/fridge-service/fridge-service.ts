@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
-export interface FridgeIngredient {
+export type FridgeIngredient = {
   id?: number;
   ingredientId: number;
   ingredientName: string;
@@ -12,11 +12,9 @@ export interface FridgeIngredient {
   protein: number;
   carbs: number;
   fat: number;
-}
+};
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
-export class FridgeService {
-
-}
+export class FridgeService {}

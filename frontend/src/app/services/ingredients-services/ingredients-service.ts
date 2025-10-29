@@ -1,21 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import {UserDto} from '../auth-services/auth.service';
 
 export type Ingredient = {
   id?: string;
   name: string;
-  quantity: number;
-  unit: string;
-  expirationDate: Date;
-  calories: number;
-  protein: number;
-  fat: number;
-  carbohydrates: number;
-};
-
-export type UserIngredientUpdate = {
   quantity: number;
   unit: string;
   expirationDate: Date;
@@ -47,29 +36,5 @@ export class IngredientsService {
 
   deleteIngredient(id: string): Observable<Ingredient> {
     return this.http.delete<Ingredient>(`${this.apiUrl}/${id}`);
-  }
-
-  addIngredientToUser(ingredientId: string, userId: string | undefined) {
-    console.log(ingredientId, userId);
-    return this.http.post<void>(
-      `http://localhost:8080/api/user-ingredients/user/${userId}/ingredient/${ingredientId}`,
-      {}
-    );
-  }
-
-  getIngredientsForUser(userId: string| undefined) {
-    return this.http.get<Ingredient[]>(`http://localhost:8080/api/user-ingredients/user/${userId}`);
-  }
-
-  removeIngredientFromUser(ingredientUserId: string) {
-    console.log(ingredientUserId);
-    return this.http.delete<void>(`http://localhost:8080/api/user-ingredients/${ingredientUserId}`);
-  }
-
-  updateIngredientFromUser(id: string, dto: UserIngredientUpdate): Observable<Ingredient> {
-    return this.http.put<Ingredient>(
-        `http://localhost:8080/api/user-ingredients/${id}`,
-        dto
-    );
   }
 }

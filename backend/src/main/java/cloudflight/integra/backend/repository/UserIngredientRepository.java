@@ -16,9 +16,6 @@ public interface UserIngredientRepository extends JpaRepository<UserIngredient, 
     @Query("SELECT ui FROM UserIngredient ui JOIN FETCH ui.ingredient WHERE ui.user.id = :userId")
     List<UserIngredient> findAllByUserId(@Param("userId") UUID userId);
 
-    @Query("SELECT ui FROM UserIngredient ui WHERE ui.user.id = :userId AND ui.ingredient.id = :ingredientId")
-    UserIngredient findByUserIdAndIngredientId(@Param("userId") UUID userId, @Param("ingredientId") UUID ingredientId);
-
     @Query("SELECT ui FROM UserIngredient ui JOIN FETCH ui.user JOIN FETCH ui.ingredient WHERE ui.id = :id")
     Optional<UserIngredient> findByIdWithUserAndIngredient(@Param("id") UUID id);
 
