@@ -8,9 +8,6 @@
   (onRowSelect)="openEditDialog($event.data)"
   (onContextMenuSelect)="selectedRecipe = $event.data"
   [contextMenu]="cm"
-  [paginator]="true"
-  [rows]="10"
-  [responsiveLayout]="'scroll'"
 >
   <ng-template pTemplate="header">
     <tr>
@@ -18,24 +15,23 @@
       <th>Description</th>
       <th>Cooking Time (min)</th>
       <th>Instructions</th>
-      <th>Dish</th>
+      <th>Dishes IDs</th>
     </tr>
   </ng-template>
 
   <ng-template pTemplate="body" let-recipe>
     <tr [pSelectableRow]="recipe" [pContextMenuRow]="recipe">
-      <td>{{ recipe.name || '-' }}</td>
-      <td>{{ recipe.description || '-' }}</td>
-      <td>{{ recipe.cookingTimeMinutes ?? '-' }}</td>
+      <td>{{ recipe.name }}</td>
+      <td>{{ recipe.description }}</td>
+      <td>{{ recipe.cookingTimeMinutes }}</td>
       <td>{{ recipe.instructions }}</td>
       <td>
         <ul>
-          <li *ngFor="let id of recipe.dishIds ?? []">
-            {{ getDishName(id) }}
+          <li *ngFor="let dish of recipe.dishes">
+            {{ dish.name }}
           </li>
         </ul>
       </td>
-
     </tr>
   </ng-template>
 

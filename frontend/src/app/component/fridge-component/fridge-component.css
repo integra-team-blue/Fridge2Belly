@@ -1,0 +1,202 @@
+.fridge-title {
+  font-size: 4rem;           /* text mare */
+  font-weight: bold;
+  color: #0288d1;            /* albastru frigider */
+  line-height: 1.2;
+  margin-top: 200px;     /* mută textul mai jos */
+  margin-left: 150px;
+}
+
+
+.fridge-card {
+  width: 70%;
+  max-width: 900px;
+  margin: -330px auto 0 auto;
+  height: 85vh;
+  background: #e0f7fa;
+  border-radius: 20px;
+  padding: 1rem;
+  align-items: flex-start;
+  color: #0288d1;
+  text-align: center;
+  font-weight: bold;
+
+  border: 5px solid #0288d1;
+}
+
+.fridge-shelves {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding-top: 5rem;
+  max-height: 75vh;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  padding-left: 4.5rem;    /* mută tot conținutul spre dreapta */
+  padding-right: 4.5rem;
+
+}
+
+.add-ingredient {
+  margin-top: 50px;    /* cât să coboare */
+  margin-left: 180px;   /* cât să se ducă spre dreapta */
+  align-items: center;
+  gap: 0.5rem;         /* distanță între input și buton */
+}
+
+
+.p-inputtext {
+  background-color: #e0f7fa; /* fundal portocaliu pal */
+  border: 2px solid #0288d1; /* bordură portocalie */
+  color: #0288d1;            /* culoare text */
+  border-radius: 5px;         /* colțuri rotunjite */
+  padding: 0.5rem;
+}
+
+
+.p-button-success {
+  background-color: #e0f7fa !important; /* portocaliu */
+  border-color: #0288d1 !important;     /* portocaliu mai închis pentru bordură */
+  color: #0288d1;                         /* text alb */
+}
+
+.shelf {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 4px solid #0288d1;
+  padding: 0.5rem 0;
+  min-height: 100px;
+}
+
+.ingredient-box {
+  width: 120px;
+  height: 75px;
+  background: #fff8e1;
+  border: 2px solid #ffcc80;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #6d4c41;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+.remove-btn {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  width: 22px;
+  height: 22px;
+  line-height: 22px;
+}
+
+
+/* ===== Dialog general styling ===== */
+::ng-deep .p-dialog {
+  border-radius: 16px !important;
+  overflow: hidden;
+  background: #f9fcff !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.25s ease-out;
+}
+
+::ng-deep .p-dialog-header {
+  background: #e3f2fd !important;
+  color: #0d47a1 !important;
+  font-weight: 600;
+  font-size: 1.2rem;
+  border-bottom: 1px solid #bbdefb !important;
+}
+
+::ng-deep .p-dialog-content {
+  padding: 1.5rem !important;
+  color: #1a237e;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+::ng-deep .p-dialog-footer {
+  background: #f1f8ff !important;
+  border-top: 1px solid #bbdefb !important;
+}
+
+/* ===== Text inside dialog ===== */
+p-dialog h3 {
+  color: #0d47a1;
+  font-size: 1.4rem;
+  margin-bottom: 0.8rem;
+}
+
+p-dialog p {
+  margin: 0.4rem 0;
+}
+
+------------------
+
+
+  /* ====== MULTISELECT (buton principal) ====== */
+  /* ===== Câmp principal (fundal alb) ===== */
+::ng-deep .p-multiselect {
+  background-color: #ffffff !important;   /* fundal alb */
+  border: 2px solid #0288d1 !important;   /* border albastru */
+  border-radius: 8px !important;
+  display: flex;
+  align-items: center;
+}
+
+/* ===== Textul afișat ===== */
+::ng-deep .p-multiselect-label {
+  color: #0288d1 !important;              /* text albastru */
+  padding-left: 0.5rem;
+  flex: 1;
+}
+
+/* ===== Sageata dropdown ===== */
+::ng-deep .p-multiselect-trigger {
+  background-color: #0288d1 !important;   /* fundal albastru */
+  color: #ffffff !important;              /* sageata albă */
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  width: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ===== Dropdown panel (opțiuni) ===== */
+::ng-deep .p-multiselect-panel {
+  background-color: #ffffff !important;   /* fundal alb */
+  border: 2px solid #0288d1 !important;   /* border albastru */
+  border-radius: 10px !important;
+}
+
+/* ===== Opțiuni din dropdown ===== */
+::ng-deep .p-multiselect-item {
+  color: #0288d1 !important;              /* text albastru */
+}
+
+::ng-deep .p-multiselect-item.p-highlight {
+  background-color: #0288d1 !important;   /* highlight albastru */
+  color: #ffffff !important;              /* text alb când este selectat */
+}
+
+/* ===== Checkbox-uri ===== */
+::ng-deep .p-checkbox .p-checkbox-box {
+  border-color: #0288d1 !important;
+  background-color: #ffffff !important;
+}
+
+::ng-deep .p-checkbox .p-checkbox-box.p-highlight {
+  background-color: #0288d1 !important;
+  border-color: #0288d1 !important;
+}
+
+
+

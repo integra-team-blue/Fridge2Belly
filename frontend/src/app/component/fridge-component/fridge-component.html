@@ -1,0 +1,64 @@
+<p-confirmDialog header="Confirm" icon="pi pi-exclamation-triangle"></p-confirmDialog>
+
+<div class="fridge-page">
+  <div class="fridge-title">
+    🧊 My Fridge
+  </div>
+
+  <div class="p-d-flex p-ai-center p-mb-3 add-ingredient">
+    <p-multiSelect
+      [options]="allIngredients"
+      [(ngModel)]="selectedIngredientToAdd"
+      optionLabel="name"
+      placeholder="Select an ingredient"
+      [maxSelectedLabels]="1">
+    </p-multiSelect>
+    <button
+      pButton
+      type="button"
+      label="Add Ingredient"
+      class="p-button-success"
+      (click)="addSelectedIngredient()"
+      [disabled]="!selectedIngredientToAdd"
+    ></button>
+  </div>
+
+
+  <p-card styleClass="fridge-card">
+    <div class="fridge-shelves">
+      <div class="shelf" *ngFor="let shelf of shelves; let si = index">
+        <div
+          class="ingredient-box"
+          *ngFor="let item of shelf; let ii = index"
+          (contextmenu)="onRightClick($event, cm, si, ii, item)"
+          (click)="showDetails(item)"
+        >
+          {{ item.name }}
+        </div>
+      </div>
+    </div>
+  </p-card>
+
+  <p-dialog
+    header="Ingredient Details"
+    [(visible)]="displayDialog"
+    [modal]="true"
+    [dismissableMask]="true"
+    [style]="{ width: '30vw' }"
+    [closable]="true"
+  >
+    <ng-container *ngIf="selectedIngredient">
+      <h3>{{ selectedIngredient.name }}</h3>
+      <p><strong>Details:</strong></p>
+      <p>{{ "Fat  :  " + selectedIngredient.fat}}</p>
+      <p>{{ "Calories  :  " + selectedIngredient.calories}}</p>
+      <p>{{ "Unit  :  " + selectedIngredient.unit}}</p>
+      <p>{{ "Carbohydrates  :  " + selectedIngredient.carbohydrates}}</p>
+      <p>{{ "ExpirationDate  :  " + selectedIngredient.expirationDate}}</p>
+      <p>{{ "Protein  :  " + selectedIngredient.protein}}</p>
+      <p>{{ "Quantity  :  " + selectedIngredient.quantity}}</p>
+    </ng-container>
+  </p-dialog>
+</div>
+
+<p-contextMenu #cm [model]="menuItems"></p-contextMenu>

@@ -1,7 +1,11 @@
 package cloudflight.integra.backend.controller;
 
+import cloudflight.integra.backend.model.Ingredient;
+import cloudflight.integra.backend.model.User;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
+import cloudflight.integra.backend.model.dtos.UserDto;
 import cloudflight.integra.backend.service.IngredientService;
+import cloudflight.integra.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +62,20 @@ public class IngredientController {
         ingredientsService.deleteIngredient(id);
         return ResponseEntity.noContent()
                 .build();
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<IngredientDto> getIngredientsForUser(@PathVariable UUID userId) {
+        return ingredientsService.getIngredientsForUser(userId);
+    }
+
+    @DeleteMapping("/{ingredientId}/removeUser/{userId}")
+    public ResponseEntity<Void> removeUserFromIngredient(
+            @PathVariable UUID ingredientId,
+            @PathVariable UUID userId
+    ) {
+        ingredientsService.removeUserFromIngredient(ingredientId, userId);
+        return ResponseEntity.ok().build();
     }
 }
 

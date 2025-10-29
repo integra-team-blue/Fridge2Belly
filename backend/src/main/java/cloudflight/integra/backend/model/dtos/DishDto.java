@@ -37,10 +37,10 @@ public class DishDto {
     @PositiveOrZero(message = "Carbohydrates must be >= 0")
     private double carbohydrates;
 
-    //@NotNull(message = "Recipes cannot be null")
+    @NotNull(message = "Recipes cannot be null")
     private List<RecipeDto> recipes;
 
-    //@NotNull(message = "Ingredients cannot be null")
+    @NotNull(message = "Ingredients cannot be null")
     private List<IngredientDto> ingredients;
 }
 

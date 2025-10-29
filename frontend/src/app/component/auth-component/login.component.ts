@@ -2,8 +2,7 @@ import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { NgIf } from '@angular/common';
-import { UserControllerService, AuthResponse, LoginRequest } from '../../api';
-import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../services/auth-services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { LoadingService } from '../../services/loading.service';
 import { InputTextModule } from 'primeng/inputtext';
@@ -59,7 +58,7 @@ import { buildErrorMessage } from '../../utils/error-utils';
 })
 export class LoginComponent {
   private formBuilder = inject(FormBuilder);
-  private userApi = inject(UserControllerService);
+  private auth = inject(AuthService);
   private toast = inject(ToastService);
   loading = inject(LoadingService);
   private router = inject(Router);
@@ -75,22 +74,15 @@ export class LoginComponent {
   get password() {
     return this.form.get('password')!;
   }
+
   async submit() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
-
     this.loading.show();
     try {
-      const loginRequest: LoginRequest = { email: this.email.value };
-
-      const authResponse: AuthResponse = (await firstValueFrom(
-        this.userApi.login(loginRequest),
-      )) as AuthResponse;
-
-      localStorage.setItem('token', authResponse?.token ?? 'temp-token');
-
+      await this.auth.login(this.form.getRawValue());
       const msg = 'Logged in successfully';
       this.toast.push(msg, 'success');
       this.router.navigateByUrl('/dishes');

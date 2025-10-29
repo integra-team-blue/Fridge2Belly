@@ -2,7 +2,6 @@ package cloudflight.integra.backend.service;
 
 import cloudflight.integra.backend.exception.MealNotFoundException;
 import cloudflight.integra.backend.model.Meal;
-import cloudflight.integra.backend.model.dtos.MealCreateDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.model.mappers.MealMapper;
 import cloudflight.integra.backend.repository.MealRepository;
@@ -29,12 +28,15 @@ public class MealService {
     }
 
     @Transactional
-    public MealDto createMeal(MealCreateDto mealCreateDto) {
-        if (mealCreateDto.getMealType() == null) {
+    public MealDto createMeal(MealDto mealDto) {
+        if (mealDto.getMealType() == null) {
             throw new IllegalArgumentException("MealType is required.");
         }
+        if (mealDto.getId() == null) {
+            mealDto.setId(UUID.randomUUID());
+        }
 
-        Meal meal = mealMapper.fromCreateDto(mealCreateDto);
+        Meal meal = mealMapper.toEntity(mealDto);
         Meal savedMeal = mealRepository.save(meal);
         return mealMapper.toDto(savedMeal);
     }
@@ -55,14 +57,13 @@ public class MealService {
     }
 
     @Transactional
-    public MealDto updateMeal(UUID id, MealCreateDto updatedMealDto) {
+    public MealDto updateMeal(UUID id, MealDto updatedMealDto) {
         if (!mealRepository.existsById(id)) {
             throw new MealNotFoundException("Meal not found with id: " + id);
         }
+        updatedMealDto.setId(id);
 
-        Meal meal = mealMapper.fromCreateDto(updatedMealDto);
-        meal.setId(id);
-
+        Meal meal = mealMapper.toEntity(updatedMealDto);
         Meal savedMeal = mealRepository.save(meal);
         return mealMapper.toDto(savedMeal);
     }

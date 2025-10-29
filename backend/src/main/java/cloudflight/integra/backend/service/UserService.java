@@ -75,8 +75,14 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Optional<UserDto> findByEmail(String email) {
+
         return userRepository.findByEmailIgnoreCase(email)
-                .map(u -> new UserDto(u.getId(), u.getUsername(), u.getEmail()));
+                .map(u -> UserDto.builder()
+                        .id(u.getId())
+                        .username(u.getUsername())
+                        .email(u.getEmail())
+                        .build()
+                );
     }
 
 }

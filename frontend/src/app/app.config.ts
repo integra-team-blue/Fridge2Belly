@@ -1,7 +1,6 @@
 import {
   ApplicationConfig,
   provideBrowserGlobalErrorListeners,
-  importProvidersFrom,
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter } from '@angular/router';
@@ -14,7 +13,6 @@ import { providePrimeNG } from 'primeng/config';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import Lara from '@primeuix/themes/lara';
-import { ApiModule, Configuration } from './api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -34,13 +32,5 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     MessageService,
     ConfirmationService,
-    importProvidersFrom(
-      ApiModule.forRoot(
-        () =>
-          new Configuration({
-            basePath: 'http://localhost:8080',
-          }),
-      ),
-    ),
   ],
 };

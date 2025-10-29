@@ -3,9 +3,11 @@ package cloudflight.integra.backend.service;
 import cloudflight.integra.backend.exception.IngredientsException;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.Ingredient;
+import cloudflight.integra.backend.model.User;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.model.mappers.IngredientMapper;
 import cloudflight.integra.backend.repository.DishRepository;
+import cloudflight.integra.backend.repository.UserRepository;
 import cloudflight.integra.backend.repository.IngredientRepository;
 import cloudflight.integra.backend.validation.IngredientsValidator;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import java.util.stream.Collectors;
 public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
+    private final UserRepository userRepository;
     private final DishRepository dishRepository;
     private final IngredientsValidator validator;
     private final IngredientMapper ingredientMapper;
@@ -29,11 +32,13 @@ public class IngredientService {
     public IngredientService(IngredientRepository ingredientRepository,
                              DishRepository dishRepository,
                              IngredientsValidator validator,
-                             IngredientMapper ingredientMapper) {
+                             IngredientMapper ingredientMapper,
+                             UserRepository userRepository) {
         this.ingredientRepository = ingredientRepository;
         this.dishRepository = dishRepository;
         this.validator = validator;
         this.ingredientMapper = ingredientMapper;
+        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
@@ -110,6 +115,30 @@ public class IngredientService {
         }
 
         ingredientRepository.deleteById(id);
+    }
+
+    public List<IngredientDto> getIngredientsForUser(UUID userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return user.getIngredients().stream()
+                .map(ingredientMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void removeUserFromIngredient(UUID ingredientId, UUID userId) {
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new RuntimeException("Ingredient not found"));
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (ingredient.getUsers() != null) {
+            ingredient.getUsers().remove(user);
+        }
+
+        ingredientRepository.save(ingredient);
     }
 
     private void validateId(UUID id) {

@@ -1,19 +1,29 @@
-<p-menubar [model]="items">
+<p-menubar [model]="items" style="justify-content: space-between;">
+  <!-- Start: brand -->
   <ng-template pTemplate="start">
     <a routerLink="" class="brand">Fridge2Belly</a>
   </ng-template>
+  <!-- End: avatar -->
   <ng-template pTemplate="end">
-    <p-button
-      [label]="isLoading ? 'Generating...' : 'Generate Sample Data'"
-      icon="pi pi-database"
-      [disabled]="isLoading"
-      (click)="generateSampleData()"
-      size="small"
-      severity="secondary"
-      class="sample-data-btn"
-    >
-    </p-button>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <p-button
+        [label]="isLoading ? 'Generating...' : 'Generate Sample Data'"
+        icon="pi pi-database"
+        [disabled]="isLoading"
+        size="large"
+        severity="secondary"
+        class="sample-data-btn"
+        [style]="{
+        'min-width.px': 200,
+        'font-size': '1.1rem',
+        'padding': '0.8rem 1.5rem'
+      }"
+        (click)="generateSampleData()"
+      >
+      </p-button>
+
+      <p-menu #avatarMenu [popup]="true" [model]="avatarItems"></p-menu>
+      <p-image src="avatar.png" alt="Image" width="50" (click)="avatarMenu.toggle($event)"/>
+    </div>
   </ng-template>
 </p-menubar>
-
-<p-toast></p-toast>
