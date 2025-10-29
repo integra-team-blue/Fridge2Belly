@@ -157,7 +157,7 @@ export class FridgeComponent {
       });
     } catch (err) {
       this.messageService.add({
-        severity: 'Error',
+        severity: 'error',
         summary: 'Error',
         detail: 'Failed to edit the ingredient. Please try again.',
       });
