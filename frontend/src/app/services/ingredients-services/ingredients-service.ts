@@ -15,6 +15,16 @@ export type Ingredient = {
   carbohydrates: number;
 };
 
+export type UserIngredientUpdate = {
+  quantity: number;
+  unit: string;
+  expirationDate: Date;
+  calories: number;
+  protein: number;
+  fat: number;
+  carbohydrates: number;
+};
+
 @Injectable({
   providedIn: 'root',
 })
@@ -51,8 +61,15 @@ export class IngredientsService {
     return this.http.get<Ingredient[]>(`http://localhost:8080/api/user-ingredients/user/${userId}`);
   }
 
-  removeIngredientFromUser(ingredientId: string , userId: string | undefined) {
-    console.log(ingredientId, userId);
-    return this.http.delete<void>(`http://localhost:8080/api/user-ingredients/user/${userId}/ingredient/${ingredientId}`);
+  removeIngredientFromUser(ingredientUserId: string) {
+    console.log(ingredientUserId);
+    return this.http.delete<void>(`http://localhost:8080/api/user-ingredients/${ingredientUserId}`);
+  }
+
+  updateIngredientFromUser(id: string, dto: UserIngredientUpdate): Observable<Ingredient> {
+    return this.http.put<Ingredient>(
+        `http://localhost:8080/api/user-ingredients/${id}`,
+        dto
+    );
   }
 }

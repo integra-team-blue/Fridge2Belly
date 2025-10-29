@@ -3,11 +3,13 @@ package cloudflight.integra.backend.controller;
 import cloudflight.integra.backend.model.UserIngredient;
 import cloudflight.integra.backend.model.dtos.UserIngredientDto;
 import cloudflight.integra.backend.model.mappers.UserIngredientMapper;
+import cloudflight.integra.backend.repository.UserIngredientRepository;
 import cloudflight.integra.backend.service.UserIngredientService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -18,11 +20,14 @@ public class UserIngredientController {
 
     private final UserIngredientService userIngredientService;
     private final UserIngredientMapper mapper;
+    private final UserIngredientRepository userIngredientRepository;
 
     public UserIngredientController(UserIngredientService userIngredientService,
-                                    UserIngredientMapper mapper) {
+                                    UserIngredientMapper mapper, UserIngredientRepository userIngredientRepository
+    ) {
         this.userIngredientService = userIngredientService;
         this.mapper = mapper;
+        this.userIngredientRepository = userIngredientRepository;
     }
 
     @GetMapping("/user/{userId}")
@@ -44,22 +49,21 @@ public class UserIngredientController {
         return ResponseEntity.ok(mapper.toDto(saved));
     }
 
-    @DeleteMapping("/user/{userId}/ingredient/{ingredientId}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> removeIngredient(
-            @PathVariable UUID userId,
-            @PathVariable UUID ingredientId
+            @PathVariable UUID id
     ) {
-        userIngredientService.removeIngredientFromUser(userId, ingredientId);
+        userIngredientService.removeIngredientFromUser(id);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/user/{userId}/ingredient/{ingredientId}")
+    @PutMapping("/{id}")
     public ResponseEntity<UserIngredientDto> updateIngredient(
-            @PathVariable UUID userId,
-            @PathVariable UUID ingredientId,
+            @PathVariable UUID id,
             @RequestBody UserIngredientDto dto
     ) {
-        UserIngredient updated = userIngredientService.updateUserIngredient(userId, ingredientId, mapper.toEntity(dto));
+        UserIngredient updated = userIngredientService.updateUserIngredient(id, mapper.toEntity(dto));
         return ResponseEntity.ok(mapper.toDto(updated));
     }
+
 }

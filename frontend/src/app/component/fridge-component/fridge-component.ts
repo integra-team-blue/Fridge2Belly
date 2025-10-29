@@ -8,7 +8,11 @@ import { DialogModule } from 'primeng/dialog';
 import {ConfirmDialog} from 'primeng/confirmdialog';
 import {ContextMenu} from 'primeng/contextmenu';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
-import {Ingredient, IngredientsService} from '../../services/ingredients-services/ingredients-service';
+import {
+  Ingredient,
+  IngredientsService,
+  UserIngredientUpdate
+} from '../../services/ingredients-services/ingredients-service';
 import {firstValueFrom} from 'rxjs';
 import {Select} from 'primeng/select';
 import {MultiSelect} from 'primeng/multiselect';
@@ -19,7 +23,7 @@ import {AuthService} from '../../services/auth-services/auth.service'
   standalone: true,
   templateUrl: './fridge-component.html',
   styleUrls: ['./fridge-component.css'],
-  imports: [FormsModule, CommonModule, CardModule, ButtonModule, InputTextModule, DialogModule, ConfirmDialog, ContextMenu, MultiSelect],
+  imports: [FormsModule, CommonModule, CardModule, ButtonModule, InputTextModule, DialogModule, ConfirmDialog, ContextMenu, MultiSelect, Select],
 })
 export class FridgeComponent {
   maxPerShelf = 5;
@@ -32,6 +36,23 @@ export class FridgeComponent {
   allIngredients: Ingredient[] = [];
   allIngredientsFromUser: Ingredient[] = [];
   selectedIngredientToAdd: Ingredient[] = [];
+  displayEditDialog = false;
+  ingredientToEdit: Ingredient | null = null;
+  editedQuantity = 0;
+  editedUnit: string = '';
+  editedExpirationDate: string = '';
+  editedCalories = 0;
+  editedProtein = 0;
+  editedFat = 0;
+  editedCarbohydrates = 0;
+
+  unitOptions = [
+    { name: 'kg', code: 'kg' },
+    { name: 'g', code: 'g' },
+    { name: 'l', code: 'l' },
+    { name: 'ml', code: 'ml' },
+    { name: 'pcs', code: 'pcs' },
+  ];
 
 
   constructor(
@@ -43,23 +64,89 @@ export class FridgeComponent {
 
     this.menuItems = [
       {
+        label: 'Edit',
+        icon: 'pi pi-pencil',
+        command: () => {
+          if (
+            this.selectedIngredient &&
+            this.selectedShelfIndex !== null &&
+            this.selectedIngredientIndex !== null
+          ) {
+            this.openEditDialog(this.selectedIngredient);
+          }
+        },
+      },
+      {
         label: 'Delete',
         icon: 'pi pi-times',
         command: () => {
           if (
-            this.selectedIngredient && // acum este Ingredient complet
+            this.selectedIngredient &&
             this.selectedShelfIndex !== null &&
             this.selectedIngredientIndex !== null
           ) {
             this.confirmDelete(
               this.selectedShelfIndex,
               this.selectedIngredientIndex,
-              this.selectedIngredient // Ingredient complet
+              this.selectedIngredient
             );
           }
         },
       },
     ];
+  }
+
+  async saveIngredientEdit() {
+    if (!this.ingredientToEdit) return;
+
+    try {
+      const user = this.authService.getCurrentUser();
+      if (!user) return;
+
+      const dto: UserIngredientUpdate = {
+        quantity: this.editedQuantity,
+        unit: this.editedUnit,
+        expirationDate: new Date(this.editedExpirationDate), // convert string -> Date
+        calories: this.editedCalories,
+        protein: this.editedProtein,
+        fat: this.editedFat,
+        carbohydrates: this.editedCarbohydrates
+      };
+
+      await firstValueFrom(
+        this.ingredientsService.updateIngredientFromUser(this.ingredientToEdit.id!, dto)
+      );
+
+      // Actualizează shelf-ul local
+      for (let shelf of this.shelves) {
+        const index = shelf.findIndex(i => i.id === this.ingredientToEdit!.id);
+        if (index !== -1) {
+          shelf[index] = {
+            ...this.ingredientToEdit!,
+            ...dto
+          };
+          break;
+        }
+      }
+
+      this.displayEditDialog = false;
+    } catch (err) {
+      console.error('Failed to update ingredient', err);
+    }
+  }
+
+  openEditDialog(ingredient: Ingredient) {
+    this.ingredientToEdit = { ...ingredient };
+    this.editedQuantity = ingredient.quantity ?? 0;
+    this.editedUnit = ingredient.unit;
+    this.editedExpirationDate = ingredient.expirationDate
+      ? new Date(ingredient.expirationDate).toISOString().split('T')[0]
+      : '';
+    this.editedCalories = ingredient.calories ?? 0;
+    this.editedProtein = ingredient.protein ?? 0;
+    this.editedFat = ingredient.fat ?? 0;
+    this.editedCarbohydrates = ingredient.carbohydrates ?? 0;
+    this.displayEditDialog = true;
   }
 
   async ngOnInit() {
@@ -84,7 +171,6 @@ export class FridgeComponent {
     for (let i = 0; i < allNewIngredients.length; i++) {
       tempShelf.push(allNewIngredients[i]);
       if (tempShelf.length === this.maxPerShelf || i === allNewIngredients.length - 1) {
-        // adaugă raftul complet
         this.shelves.push(tempShelf);
         tempShelf = [];
       }
@@ -172,15 +258,15 @@ export class FridgeComponent {
     const user = this.authService.getCurrentUser();
     if (!user) return;
 
-    const ingredient = this.shelves[shelfIndex][ingredientIndex];
-    if (!ingredient?.id) return;
+    const ingredientUser = this.shelves[shelfIndex][ingredientIndex];
+    if (!ingredientUser?.id) return;
 
     try {
       await firstValueFrom(
-        this.ingredientsService.removeIngredientFromUser(ingredient.id, user.id)
+        this.ingredientsService.removeIngredientFromUser(ingredientUser.id)
       );
     } catch (err) {
-      console.error('Failed to remove ingredient from user', ingredient.name, err);
+      console.error('Failed to remove ingredient from user', ingredientUser.name, err);
     }
 
     this.shelves[shelfIndex].splice(ingredientIndex, 1);

@@ -61,4 +61,61 @@
   </p-dialog>
 </div>
 
+<p-dialog
+        id="edit-ingredient-dialog"
+        header="Edit Ingredient"
+        [(visible)]="displayEditDialog"
+        [modal]="true"
+        [dismissableMask]="true"
+        [style]="{ width: '40vw' }"
+        [closable]="true"
+>
+    <ng-container *ngIf="ingredientToEdit">
+        <h3>{{ ingredientToEdit.name }}</h3>
+
+        <div class="edit-grid">
+            <div class="p-field">
+                <label for="quantity">Quantity:</label>
+                <input id="quantity" type="number" [(ngModel)]="editedQuantity" pInputText />
+            </div>
+            <div class="p-field">
+                <label>Unit:</label>
+                <p-select
+                        inputId="unitDropdown"
+                        [options]="unitOptions"
+                        [(ngModel)]="editedUnit"
+                        optionLabel="name"
+                        optionValue="code"
+                        placeholder="Select unit"
+                ></p-select>
+            </div>
+            <div class="p-field">
+                <label for="expirationDate">Expiration Date:</label>
+                <input id="expirationDate" type="date" [(ngModel)]="editedExpirationDate" pInputText />
+            </div>
+            <div class="p-field">
+                <label for="calories">Calories:</label>
+                <input id="calories" type="number" [(ngModel)]="editedCalories" pInputText />
+            </div>
+            <div class="p-field">
+                <label for="protein">Protein:</label>
+                <input id="protein" type="number" [(ngModel)]="editedProtein" pInputText />
+            </div>
+            <div class="p-field">
+                <label for="fat">Fat:</label>
+                <input id="fat" type="number" [(ngModel)]="editedFat" pInputText />
+            </div>
+            <div class="p-field">
+                <label for="carbohydrates">Carbohydrates:</label>
+                <input id="carbohydrates" type="number" [(ngModel)]="editedCarbohydrates" pInputText />
+            </div>
+        </div>
+
+        <div class="p-d-flex p-jc-end p-mt-3">
+            <button pButton type="button" label="Cancel" class="p-button-secondary" (click)="displayEditDialog=false"></button>
+            <button pButton type="button" label="Save" class="p-button-success p-ml-2" (click)="saveIngredientEdit()"></button>
+        </div>
+    </ng-container>
+</p-dialog>
+
 <p-contextMenu #cm [model]="menuItems"></p-contextMenu>

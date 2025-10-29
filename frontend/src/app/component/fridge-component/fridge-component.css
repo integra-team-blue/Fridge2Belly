@@ -138,65 +138,119 @@ p-dialog p {
   margin: 0.4rem 0;
 }
 
-------------------
 
-
-  /* ====== MULTISELECT (buton principal) ====== */
-  /* ===== Câmp principal (fundal alb) ===== */
-::ng-deep .p-multiselect {
-  background-color: #ffffff !important;   /* fundal alb */
-  border: 2px solid #0288d1 !important;   /* border albastru */
-  border-radius: 8px !important;
-  display: flex;
-  align-items: center;
+/* ===== Grid pentru câmpurile de editare ===== */
+::ng-deep #edit-ingredient-dialog .edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* două coloane egale */
+  gap: 1rem 2rem; /* rând / coloană */
+  padding-top: 1rem;
 }
 
-/* ===== Textul afișat ===== */
-::ng-deep .p-multiselect-label {
-  color: #0288d1 !important;              /* text albastru */
-  padding-left: 0.5rem;
-  flex: 1;
+::ng-deep #edit-ingredient-dialog .p-field label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-weight: 500;
+  color: #0d47a1;
 }
 
-/* ===== Sageata dropdown ===== */
-::ng-deep .p-multiselect-trigger {
-  background-color: #0288d1 !important;   /* fundal albastru */
-  color: #ffffff !important;              /* sageata albă */
+::ng-deep #edit-ingredient-dialog .p-field input {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border: 2px solid #0288d1;
+  border-radius: 6px;
+  font-size: 1rem;
+  color: #0288d1;
+  background-color: #e3f2fd;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+::ng-deep #edit-ingredient-dialog .p-field input:focus {
+  border-color: #02669b;
+  box-shadow: 0 0 5px rgba(2, 136, 209, 0.5);
+  outline: none;
+}
+
+/* ===== Butoane ===== */
+::ng-deep #edit-ingredient-dialog .p-d-flex.p-jc-end {
+  margin-top: 1rem;
+  gap: 0.5rem;
+}
+
+::ng-deep #edit-ingredient-dialog .p-button-success {
+  background-color: #0288d1 !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-weight: 500;
+}
+
+::ng-deep #edit-ingredient-dialog .p-button-secondary {
+  background-color: #b3e5fc !important;
+  color: #0288d1 !important;
+  border: 1px solid #0288d1 !important;
+}
+
+::ng-deep #edit-ingredient-dialog .p-button-success:hover {
+  background-color: #02669b !important;
+}
+
+::ng-deep #edit-ingredient-dialog .p-button-secondary:hover {
+  background-color: #81d4fa !important;
+}
+
+::ng-deep #edit-ingredient-dialog .p-select {
+  width: 100%;
+  background-color: #e3f2fd;      /* fundal albastru pal */
+  border: 2px solid #0288d1;      /* bordură albastră */
+  border-radius: 6px;
+  color: #0288d1;
+  font-size: 0.9rem;
+}
+
+::ng-deep #edit-ingredient-dialog .p-select .p-select-label {
+  color: #0288d1;
+}
+
+::ng-deep #edit-ingredient-dialog .p-select .p-select-trigger {
+  background-color: #0288d1;
+  border-left: 1px solid #0288d1;
+  color: #ffffff;
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
-  width: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
-/* ===== Dropdown panel (opțiuni) ===== */
-::ng-deep .p-multiselect-panel {
-  background-color: #ffffff !important;   /* fundal alb */
-  border: 2px solid #0288d1 !important;   /* border albastru */
-  border-radius: 10px !important;
+::ng-deep #edit-ingredient-dialog .p-select-panel {
+  background-color: #ffffff;
+  border: 2px solid #0288d1;
+  border-radius: 6px;
+  color: #0288d1;
 }
 
-/* ===== Opțiuni din dropdown ===== */
-::ng-deep .p-multiselect-item {
-  color: #0288d1 !important;              /* text albastru */
+::ng-deep #edit-ingredient-dialog .p-select-item {
+  color: #0288d1;
 }
 
-::ng-deep .p-multiselect-item.p-highlight {
-  background-color: #0288d1 !important;   /* highlight albastru */
-  color: #ffffff !important;              /* text alb când este selectat */
+::ng-deep #edit-ingredient-dialog .p-select-item.p-highlight {
+  background-color: #0288d1;
+  color: #ffffff;
 }
 
-/* ===== Checkbox-uri ===== */
-::ng-deep .p-checkbox .p-checkbox-box {
-  border-color: #0288d1 !important;
-  background-color: #ffffff !important;
+::ng-deep #edit-ingredient-dialog .p-select {
+  height: 2.2rem; /* înălțimea container-ului */
 }
 
-::ng-deep .p-checkbox .p-checkbox-box.p-highlight {
-  background-color: #0288d1 !important;
-  border-color: #0288d1 !important;
+::ng-deep #edit-ingredient-dialog .p-select .p-select-label {
+  line-height: 2.2rem; /* aliniază textul vertical */
+  padding: 0 0.5rem;
+  font-size: 0.95rem; /* font puțin mai mic dacă vrei */
 }
 
+::ng-deep #edit-ingredient-dialog .p-select .p-select-trigger {
+  height: 2.2rem;   /* aceeași înălțime ca label */
+}
+
+::ng-deep #edit-ingredient-dialog .p-select-panel {
+  max-height: 150px; /* înălțimea dropdown-ului când îl deschizi */
+}
 
 

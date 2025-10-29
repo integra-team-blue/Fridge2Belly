@@ -1,5 +1,6 @@
 package cloudflight.integra.backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -19,10 +20,12 @@ public class UserIngredient {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id", nullable = false)
+    @JsonBackReference
     private Ingredient ingredient;
 
     @Column(nullable = false)

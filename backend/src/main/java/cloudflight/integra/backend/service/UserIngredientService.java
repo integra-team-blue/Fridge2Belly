@@ -7,10 +7,12 @@ import cloudflight.integra.backend.model.dtos.IngredientDto;
 import cloudflight.integra.backend.repository.IngredientRepository;
 import cloudflight.integra.backend.repository.UserIngredientRepository;
 import cloudflight.integra.backend.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -58,19 +60,26 @@ public class UserIngredientService {
 
 
     @Transactional
-    public void removeIngredientFromUser(UUID userId, UUID ingredientId) {
-        System.out.println("dasdasda");
-        UserIngredient ui = userIngredientRepository.findByUserIdAndIngredientId(userId, ingredientId);
-        System.out.println(ui);
-        if (ui != null) {
-            userIngredientRepository.delete(ui);
+    public void removeIngredientFromUser(UUID id) {
+        Optional<UserIngredient> uiOpt = userIngredientRepository.findByIdWithUserAndIngredient(id);
+
+        if (uiOpt.isEmpty()) {
+            throw new EntityNotFoundException("UserIngredient not found with id: " + id);
         }
+
+        UserIngredient ui = uiOpt.get();
+
+        userIngredientRepository.delete(ui);
     }
 
     @Transactional
-    public UserIngredient updateUserIngredient(UUID userId, UUID ingredientId, UserIngredient userIngredientData) {
-        UserIngredient ui = userIngredientRepository.findByUserIdAndIngredientId(userId, ingredientId);
-        if (ui == null) throw new RuntimeException("UserIngredient not found");
+    public UserIngredient updateUserIngredient(UUID id, UserIngredient userIngredientData) {
+        Optional<UserIngredient> uiOpt = userIngredientRepository.findByIdWithUserAndIngredient(id);
+        if (uiOpt.isEmpty()) {
+            throw new EntityNotFoundException("UserIngredient not found with id: " + id);
+        }
+
+        UserIngredient ui = uiOpt.get();
 
         ui.setQuantity(userIngredientData.getQuantity());
         ui.setUnit(userIngredientData.getUnit());
