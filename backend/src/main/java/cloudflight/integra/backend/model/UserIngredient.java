@@ -1,26 +1,32 @@
 package cloudflight.integra.backend.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "ingredients")
+@Table(name = "user_ingredients")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Ingredient {
+public class UserIngredient {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ingredient_id", nullable = false)
+    @JsonBackReference
+    private Ingredient ingredient;
 
     @Column(nullable = false)
     private Double quantity;
@@ -34,13 +40,4 @@ public class Ingredient {
     private Double protein;
     private Double fat;
     private Double carbohydrates;
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "user_ingredients",
-            joinColumns = @JoinColumn(name = "ingredient_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    @JsonIgnore
-    private List<User> users;
 }

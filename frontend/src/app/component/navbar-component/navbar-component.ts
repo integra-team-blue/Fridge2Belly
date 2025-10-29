@@ -6,18 +6,25 @@ import { Toast } from 'primeng/toast';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { SampleDataService } from '../../services/sample-data/sample-data-service';
+import { Menu } from 'primeng/menu';
+import { ImageModule } from 'primeng/image';
 
 @Component({
   selector: 'app-navbar-component',
   standalone: true,
   templateUrl: './navbar-component.html',
-  imports: [MenubarModule, RouterLink, Toast, ButtonModule, CommonModule],
+  imports: [MenubarModule, RouterLink, ButtonModule, CommonModule, Menu, ImageModule],
   styleUrls: ['./navbar-component.css'],
 })
 export class NavbarComponent {
   items: MenuItem[] = [];
 
   constructor(private sampleDataService: SampleDataService) {}
+
+  avatarItems: MenuItem[] = [
+    { label: 'My Fridge', icon: 'pi pi-fw pi-box', routerLink: '/fridge' },
+    { separator: true },
+  ];
 
   ngOnInit() {
     this.items = [

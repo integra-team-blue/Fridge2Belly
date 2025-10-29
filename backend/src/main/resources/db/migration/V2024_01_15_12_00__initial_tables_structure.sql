@@ -64,3 +64,26 @@ CREATE TABLE recipe_dishes (
                                FOREIGN KEY (dish_id) REFERENCES dishes(id) ON DELETE CASCADE
 );
 
+CREATE TABLE user_ingredients (
+                                  id UUID PRIMARY KEY,
+                                  user_id UUID NOT NULL,
+                                  ingredient_id UUID NOT NULL,
+
+                                  quantity DOUBLE PRECISION NOT NULL,
+                                  unit VARCHAR(50) NOT NULL,
+                                  expiration_date DATE,
+                                  calories DOUBLE PRECISION,
+                                  protein DOUBLE PRECISION,
+                                  fat DOUBLE PRECISION,
+                                  carbohydrates DOUBLE PRECISION,
+
+                                  CONSTRAINT fk_user
+                                      FOREIGN KEY(user_id)
+                                          REFERENCES users(id)
+                                          ON DELETE CASCADE,
+
+                                  CONSTRAINT fk_ingredient
+                                      FOREIGN KEY(ingredient_id)
+                                          REFERENCES ingredients(id)
+                                          ON DELETE CASCADE
+);

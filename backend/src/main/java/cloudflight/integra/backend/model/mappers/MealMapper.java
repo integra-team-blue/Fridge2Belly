@@ -3,7 +3,6 @@ package cloudflight.integra.backend.model.mappers;
 import cloudflight.integra.backend.model.Meal;
 import cloudflight.integra.backend.model.Dish;
 import cloudflight.integra.backend.model.dtos.DishDto;
-import cloudflight.integra.backend.model.dtos.MealCreateDto;
 import cloudflight.integra.backend.model.dtos.MealDto;
 import cloudflight.integra.backend.repository.DishRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,25 +55,6 @@ public class MealMapper {
 
         return Meal.builder()
                 .id(dto.getId())
-                .mealType(dto.getMealType())
-                .dateTime(dto.getDateTime())
-                .dishes(dishes)
-                .build();
-    }
-
-    public Meal fromCreateDto(MealCreateDto dto) {
-        if (dto == null) {
-            return null;
-        }
-
-        List<Dish> dishes = dto.getDishIds() == null ? List.of() : dishRepository.findAllById(dto.getDishIds());
-
-        if (dishes.size() != dto.getDishIds()
-                .size()) {
-            throw new IllegalArgumentException("Some dishes were not found");
-        }
-
-        return Meal.builder()
                 .mealType(dto.getMealType())
                 .dateTime(dto.getDateTime())
                 .dishes(dishes)

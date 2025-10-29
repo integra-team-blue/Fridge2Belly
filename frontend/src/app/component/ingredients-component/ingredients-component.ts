@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { TableModule } from 'primeng/table';
-
-import { IngredientsControllerService, IngredientDto } from '../../api';
+import {
+  Ingredient,
+  IngredientsService,
+} from '../../services/ingredients-services/ingredients-service';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -13,6 +15,7 @@ import { SelectModule } from 'primeng/select';
 import { ConfirmationService, MenuItem, MessageService } from 'primeng/api';
 import { ContextMenu } from 'primeng/contextmenu';
 import { ConfirmDialog } from 'primeng/confirmdialog';
+import { DatePickerModule } from 'primeng/datepicker';
 
 @Component({
   selector: 'app-ingredients-component',
@@ -31,18 +34,19 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
     FormsModule,
     ContextMenu,
     ConfirmDialog,
+    DatePickerModule,
   ],
   styleUrls: ['./ingredients-component.css'],
 })
 export class IngredientsComponent {
-  ingredients: IngredientDto[] = [];
+  ingredients: Ingredient[] = [];
   showDialog = false;
-  selectedIngredient: IngredientDto | null = null;
+  selectedIngredient: Ingredient | null = null;
   editDialogVisible = false;
   menuItems: MenuItem[];
 
   constructor(
-    private ingredientsService: IngredientsControllerService,
+    private ingredientsService: IngredientsService,
     private messageService: MessageService,
     private confirmationService: ConfirmationService,
   ) {
@@ -56,11 +60,7 @@ export class IngredientsComponent {
   }
 
   async ngOnInit() {
-    this.ingredients = await firstValueFrom(
-      this.ingredientsService.getAllIngredients('body', false, {
-        httpHeaderAccept: 'application/json' as '*/*',
-      }),
-    );
+    this.ingredients = await firstValueFrom(this.ingredientsService.getIngredients());
   }
 
   ingredientForm = new FormGroup({
@@ -84,13 +84,11 @@ export class IngredientsComponent {
 
   async addIngredient() {
     if (this.ingredientForm.valid) {
-      const ingredientToSave: IngredientDto = {
+      const ingredientToSave: Ingredient = {
         name: this.ingredientForm.value.name ?? '',
-        quantity: Number(this.ingredientForm.value.quantity ?? 0),
         unit: this.ingredientForm.value.unit ?? '',
-        expirationDate: this.ingredientForm.value.expirationDate
-          ? new Date(this.ingredientForm.value.expirationDate).toISOString()
-          : new Date().toISOString(),
+        quantity: Number(this.ingredientForm.value.quantity ?? 0),
+        expirationDate: this.ingredientForm.value.expirationDate ?? new Date(),
         calories: Number(this.ingredientForm.value.calories ?? 0),
         protein: Number(this.ingredientForm.value.protein ?? 0),
         fat: Number(this.ingredientForm.value.fat ?? 0),
@@ -99,9 +97,7 @@ export class IngredientsComponent {
 
       try {
         const savedIngredient = await firstValueFrom(
-          this.ingredientsService.addIngredient(ingredientToSave, 'body', false, {
-            httpHeaderAccept: 'application/json' as '*/*',
-          }),
+          this.ingredientsService.addIngredient(ingredientToSave),
         );
         this.ingredients.push(savedIngredient);
         this.showDialog = false;
@@ -121,7 +117,7 @@ export class IngredientsComponent {
     }
   }
 
-  openEditDialog(ingredient: IngredientDto[] | IngredientDto | undefined) {
+  openEditDialog(ingredient: Ingredient[] | Ingredient | undefined) {
     if (ingredient == null || Array.isArray(ingredient)) {
       return;
     }
@@ -133,9 +129,7 @@ export class IngredientsComponent {
       quantity: ingredient.quantity,
       unit: ingredient.unit,
       expirationDate:
-        ingredient.expirationDate != null && ingredient.expirationDate !== ''
-          ? new Date(ingredient.expirationDate).toISOString().split('T')[0]
-          : null,
+        ingredient.expirationDate != null ? new Date(ingredient.expirationDate) : new Date(),
       calories: ingredient.calories,
       protein: ingredient.protein,
       fat: ingredient.fat,
@@ -149,7 +143,7 @@ export class IngredientsComponent {
     name: new FormControl('', { nonNullable: true }),
     quantity: new FormControl(0, { nonNullable: true }),
     unit: new FormControl('', { nonNullable: true }),
-    expirationDate: new FormControl<string | null>(null),
+    expirationDate: new FormControl<Date | null>(null),
     calories: new FormControl(0, { nonNullable: true }),
     protein: new FormControl(0, { nonNullable: true }),
     fat: new FormControl(0, { nonNullable: true }),
@@ -158,15 +152,12 @@ export class IngredientsComponent {
 
   async editIngredient() {
     if (this.editForm.valid && this.selectedIngredient?.id != null) {
-      const updatedIngredient: IngredientDto = {
+      const updatedIngredient: Ingredient = {
         ...this.selectedIngredient,
         name: this.editForm.value.name ?? '',
         quantity: Number(this.editForm.value.quantity ?? 0),
         unit: this.editForm.value.unit ?? '',
-        expirationDate:
-          this.editForm.value.expirationDate != null && this.editForm.value.expirationDate !== ''
-            ? new Date(this.editForm.value.expirationDate).toISOString()
-            : new Date().toISOString(),
+        expirationDate: this.editForm.value.expirationDate ?? new Date(),
         calories: Number(this.editForm.value.calories ?? 0),
         protein: Number(this.editForm.value.protein ?? 0),
         fat: Number(this.editForm.value.fat ?? 0),
@@ -175,13 +166,7 @@ export class IngredientsComponent {
 
       try {
         const saved = await firstValueFrom(
-          this.ingredientsService.updateIngredient(
-            this.selectedIngredient.id!,
-            updatedIngredient,
-            'body',
-            false,
-            { httpHeaderAccept: 'application/json' as '*/*' },
-          ),
+          this.ingredientsService.updateIngredient(this.selectedIngredient.id, updatedIngredient),
         );
 
         const index = this.ingredients.findIndex((i) => i.id === this.selectedIngredient!.id);
@@ -191,7 +176,7 @@ export class IngredientsComponent {
 
         this.editDialogVisible = false;
         this.selectedIngredient = null;
-        this.editForm.reset();
+        this.ingredientForm.reset();
         this.messageService.add({
           severity: 'success',
           summary: 'Success',
@@ -207,7 +192,7 @@ export class IngredientsComponent {
     }
   }
 
-  async deleteIngredient(ingredient: IngredientDto | null) {
+  async deleteIngredient(ingredient: Ingredient | null) {
     if (ingredient?.id == null) {
       return;
     }
@@ -234,7 +219,7 @@ export class IngredientsComponent {
     }
   }
 
-  confirmDelete(ingredient: IngredientDto | null) {
+  confirmDelete(ingredient: Ingredient | null) {
     if (ingredient == null) {
       return;
     }

@@ -22,12 +22,21 @@ export class AuthService {
     return await firstValueFrom(this.http.get<UserDto[]>(`${this.api}/users`));
   }
 
+  private currentUser: UserDto | null = null; // 🔹 adaugăm user curent
+
   async login(body: { email: string; password: string }): Promise<AuthResponse> {
     const response = await firstValueFrom(
       this.http.post<AuthResponse>(`${this.api}/auth/login`, { email: body.email }),
     );
+
     localStorage.setItem('token', response.token);
+    this.currentUser = response.user; // 🔹 salvăm userul logat
+
     return response;
+  }
+
+  getCurrentUser(): UserDto | null {
+    return this.currentUser;
   }
 
   async signup(body: { username: string; email: string }): Promise<AuthResponse> {

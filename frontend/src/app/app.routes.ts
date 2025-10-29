@@ -8,6 +8,7 @@ import { LoginComponent } from './component/auth-component/login.component';
 import { SignupComponent } from './component/auth-component/signup.component';
 import { authGuard } from './services/auth-services/auth.guard';
 import { DashboardComponent } from './component/dashboard.component';
+import { FridgeComponent } from './component/fridge-component/fridge-component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -18,5 +19,6 @@ export const routes: Routes = [
   { path: 'recipes', canActivate: [authGuard], component: RecipesComponent },
   { path: 'ingredients', canActivate: [authGuard], component: IngredientsComponent },
   { path: 'meals', canActivate: [authGuard], component: MealsComponent },
+  { path: 'fridge', canActivate: [authGuard], component: FridgeComponent },
   { path: '**', redirectTo: 'login' },
 ];

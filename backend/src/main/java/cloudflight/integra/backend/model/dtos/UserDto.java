@@ -1,9 +1,10 @@
 package cloudflight.integra.backend.model.dtos;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Data
@@ -20,5 +21,15 @@ public class UserDto {
     @NotBlank(message = "Email is required")
     @Email(message = "Email must be valid")
     private String email;
+
+    @Builder.Default
+    private List<UUID> ingredientIds = new ArrayList<>();
+
+    public UserDto(UUID id, String username, String email) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.ingredientIds = new ArrayList<>();
+    }
 
 }

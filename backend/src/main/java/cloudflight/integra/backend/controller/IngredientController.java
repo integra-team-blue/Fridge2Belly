@@ -1,7 +1,11 @@
 package cloudflight.integra.backend.controller;
 
+import cloudflight.integra.backend.model.Ingredient;
+import cloudflight.integra.backend.model.User;
 import cloudflight.integra.backend.model.dtos.IngredientDto;
+import cloudflight.integra.backend.model.dtos.UserDto;
 import cloudflight.integra.backend.service.IngredientService;
+import cloudflight.integra.backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -59,5 +63,6 @@ public class IngredientController {
         return ResponseEntity.noContent()
                 .build();
     }
+
 }
 

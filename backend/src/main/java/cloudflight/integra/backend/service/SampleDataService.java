@@ -33,7 +33,7 @@ public class SampleDataService {
         List<Ingredient> ingredients = generateIngredients();
         List<Recipe> recipes = generateRecipes();
         List<Dish> dishes = generateDishes(ingredients);
-        linkRecipesToDishes(recipes, dishes);
+        //linkRecipesToDishes(recipes, dishes);
         generateMeals(dishes);
     }
 
@@ -243,25 +243,25 @@ public class SampleDataService {
         return dishes;
     }
 
-    private void linkRecipesToDishes(List<Recipe> recipes, List<Dish> dishes) {
-        try {
-            recipes.get(0)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(0))));
-            recipes.get(1)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(1))));
-            recipes.get(2)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(2))));
-            recipes.get(3)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(3))));
-            recipes.get(4)
-                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(4))));
-
-            recipeRepository.saveAll(recipes);
-        } catch (Exception e) {
-            System.err.println("Error linking recipes to dishes: " + e.getMessage());
-            e.printStackTrace();
-        }
-    }
+//    private void linkRecipesToDishes(List<Recipe> recipes, List<Dish> dishes) {
+//        try {
+//            recipes.get(0)
+//                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(0))));
+//            recipes.get(1)
+//                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(1))));
+//            recipes.get(2)
+//                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(2))));
+//            recipes.get(3)
+//                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(3))));
+//            recipes.get(4)
+//                    .setDishes(new ArrayList<>(Arrays.asList(dishes.get(4))));
+//
+//            recipeRepository.saveAll(recipes);
+//        } catch (Exception e) {
+//            System.err.println("Error linking recipes to dishes: " + e.getMessage());
+//            e.printStackTrace();
+//        }
+//    }
 
     private void generateMeals(List<Dish> dishes) {
         List<Meal> meals = new ArrayList<>(Arrays.asList(
